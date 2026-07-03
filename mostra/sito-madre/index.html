@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiDisciplinary Lab</title>
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #FFFFFF;
+            --hi-color: #FFFFFF;
+            --text-color: #000000;
+            --menu-red: #E23624; 
+        }
+
+        body, html, a, .nav-link, .page-scroll-area, .interactable {
+            cursor: none !important; 
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100vw; height: 100vh;
+            overflow: hidden; 
+            background-color: var(--bg-color);
+            font-family: 'Arial Narrow', Arial, sans-serif;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- CURSORE CUSTOM --- */
+        @media (pointer: fine) {
+            #custom-cursor {
+                position: fixed; top: 0; left: 0;
+                width: 1.2vw; height: 1.2vw;
+                background-color: var(--hi-color);
+                border-radius: 50%; pointer-events: none; z-index: 9999;
+                mix-blend-mode: difference;
+                transform: translate(-50%, -50%);
+                transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+                will-change: transform, width, height;
+            }
+            #custom-cursor.hovering { width: 3vw; height: 3vw; }
+        }
+        @media (pointer: coarse) { #custom-cursor { display: none; } }
+
+        /* --- HIGHLIGHTER --- */
+        .hl {
+            background-color: transparent !important; color: var(--text-color);
+            display: inline; padding: 0 !important; line-height: 1.4; 
+            box-decoration-break: clone; -webkit-box-decoration-break: clone;
+            clip-path: inset(0 100% 0 0); 
+        }
+        .media-reveal { clip-path: inset(0 100% 0 0); }
+
+        /* --- TIPOGRAFIA BLINDATA --- */
+        .title {
+            font-size: clamp(24px, 1.8vw, 60px); font-weight: bold;
+            margin: 0 0 2vw 0; line-height: 0.9; letter-spacing: -0.02em;
+        }
+        .content-block { margin-bottom: 2.5vw; max-width: 38vw; }
+        
+        .lead-paragraph {
+            font-size: clamp(16px, 1.45vw, 26px);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+            width: 100%;
+        }
+        .body-text {
+            font-size: clamp(13px, 1.05vw, 17px);
+            line-height: 1.45;
+            color: #000;
+            width: 100%;
+        }
+        .subsection-title {
+            font-size: clamp(15px, 1.2vw, 22px);
+            font-weight: 800;
+            margin-top: 3vw;
+            margin-bottom: 1vw;
+            width: 100%;
+            text-transform: none;
+            display: block;
+        }
+        .subsection-title.list-header {
+            border-bottom: 2px solid #000;
+            padding-bottom: 0.4vw;
+        }
+        
+        .list-item { 
+            font-size: clamp(13px, 1.05vw, 17px); 
+            padding: 0.8vw 0;
+            border-bottom: 1px solid #000;
+            width: 100%;
+            display: block;
+            line-height: 1.4;
+            transition: letter-spacing 0.2s steps(4);
+            box-sizing: border-box;
+        }
+        .list-item:hover {
+            letter-spacing: 0.04em;
+        }
+
+        /* --- HEADER VERTICALE BRUTALISTA --- */
+        .desktop-header {
+            position: fixed; top: 2vw; left: 2vw; 
+            width: clamp(220px, 18vw, 300px);
+            background-color: var(--menu-red);
+            border: 2px solid #000;
+            display: flex; flex-direction: column;
+            padding: 0; box-sizing: border-box; z-index: 2000; 
+            pointer-events: auto; 
+        }
+        .nav-row {
+            display: flex; align-items: center;
+            border-bottom: 1px solid #000;
+            padding: 1vw 1.5vw;
+            font-family: 'Arial Narrow', Arial, sans-serif;
+            font-size: clamp(14px, 1.1vw, 20px);
+            font-weight: 900;
+            color: #000;
+            text-transform: none;
+            cursor: pointer;
+            transition: letter-spacing 0.25s steps(3, end);
+        }
+        .nav-row:last-child { border-bottom: none; }
+        .logo-row { font-size: clamp(11px, 0.9vw, 15px); line-height: 1.1; }
+        .menu-logo-img { height: 1.5vw; min-height: 18px; margin-right: 0.8vw; flex-shrink: 0; }
+        .nav-row:hover:not(.logo-row) {
+            letter-spacing: 0.25em;
+        }
+        .nav-row.active {
+            letter-spacing: 0.25em;
+        }
+        .lang-switch { display: flex; align-items: center; gap: 0.5vw; }
+        .lang-btn {
+            color: rgba(0,0,0,0.4);
+            transition: color 0.1s steps(2), letter-spacing 0.25s steps(3, end);
+            cursor: pointer;
+        }
+        .lang-btn.active {
+            color: #000 !important;
+        }
+        .lang-btn:hover {
+            letter-spacing: 0.15em;
+        }
+
+        /* --- STRUTTURA SPAZIALE --- */
+        .viewport { position: relative; width: 100vw; height: 100vh; }
+        .canvas { position: absolute; top: 0; left: 0; width: 500vw; height: 500vh; will-change: transform; }
+        #connection-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .ephemeral-line { stroke: var(--menu-red); stroke-width: 2px; fill: none; }
+
+        .page-wrapper { position: absolute; transform: translate(-50%, -50%); width: clamp(450px, 40vw, 800px); }
+        .page-footprint-canvas { position: absolute; top: 2vw; left: 2vw; width: 100%; height: 100%; z-index: 1; pointer-events: none; will-change: transform; }
+        
+        .page-scroll-area {
+            position: relative; z-index: 2; max-height: 70vh; overflow-y: auto; overflow-x: hidden;
+            display: flex; flex-direction: column; align-items: flex-start; pointer-events: auto; scrollbar-width: none; 
+            padding-bottom: 5vw; 
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .page-scroll-area::-webkit-scrollbar { display: none; }
+
+        /* --- CAROSELLI (EDIZIONI E PROGETTI) --- */
+        .editions-carousel {
+            display: flex; gap: 1.5vw; width: 100%; min-height: 18vw; 
+            overflow-x: auto; padding-bottom: 1.5vw; scrollbar-width: none;
+        }
+        .editions-carousel::-webkit-scrollbar { display: none; }
+        
+        .edition-slide { flex: 0 0 clamp(300px, 30vw, 500px); display: flex; flex-direction: column; cursor: pointer; }
+        .edition-slide .slide-inner { aspect-ratio: 16/9; border: 1px solid #000; background: #eee; position: relative; }
+        .edition-slide .slide-inner img { width: 100%; height: 100%; object-fit: cover; }
+        .edition-label { margin-top: 0.5vw; font-size: 14px; font-weight: bold; line-height: 1.2; }
+
+        /* --- PROJECT SLIDER --- */
+        .project-slider-container {
+            position: relative;
+            width: 100%;
+            height: clamp(200px, 22vw, 400px);
+            background-color: #eee;
+            overflow: hidden;
+            border: 2px solid #000;
+            margin-top: 1vw;
+            margin-bottom: 1vw;
+        }
+        .project-slider-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #000;
+            font-size: clamp(14px, 1.5vw, 24px);
+            font-weight: bold;
+            padding: 0.8vw 1.2vw;
+            cursor: pointer;
+            z-index: 10;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .slider-arrow:hover {
+            background-color: #fff;
+        }
+        .slider-arrow:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        .prev-arrow { left: 1.5vw; }
+        .next-arrow { right: 1.5vw; }
+        .project-slide-active { width: 100%; height: 100%; }
+        #project-img { pointer-events: none; }
+
+        /* --- EVENTS LAYOUT --- */
+        .event-item {
+            border-bottom: 1px solid #000;
+            padding: 1.2vw 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3vw;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .event-type {
+            font-size: clamp(10px, 0.8vw, 14px);
+            color: #555;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .event-title {
+            font-size: clamp(14px, 1.2vw, 22px);
+            font-weight: bold;
+            cursor: pointer;
+            transition: letter-spacing 0.25s steps(3, end);
+        }
+        .event-title:hover {
+            letter-spacing: 0.08em;
+        }
+        .event-details {
+            font-size: clamp(11px, 0.9vw, 16px);
+            color: #666;
+        }
+        .see-more-btn {
+            font-size: clamp(12px, 1vw, 18px);
+            font-weight: bold;
+            color: #888;
+            cursor: pointer;
+            margin-top: 1.5vw;
+            transition: color 0.2s, letter-spacing 0.25s steps(3, end);
+            text-decoration: underline;
+        }
+        .see-more-btn:hover {
+            letter-spacing: 0.08em;
+            color: #000;
+        }
+
+        .slide-inner { width: 100%; height: 100%; position: relative; }
+        .slide-inner img, .slide-inner video { width: 100%; height: 100%; object-fit: cover; opacity: 1; transition: opacity 0.3s; pointer-events: none; }
+        .edition-slide:hover .slide-inner img, .edition-slide:hover .slide-inner video { opacity: 0.85; }
+        .edition-label a { color: inherit; text-decoration: none; display: block; }
+
+        /* --- IMMAGINI --- */
+        .hero-video { width: 100%; height: 18vw; background-color: var(--hi-color); margin-top: 2vw; margin-bottom: 2vw; }
+        .diagram-img { width: 100%; height: auto; background-color: var(--hi-color); margin: 2vw 0; }
+        .media-container { width: 100%; height: auto; margin-top: 2vw; margin-bottom: 2vw; border: 2px solid #000; overflow: hidden; box-sizing: border-box; }
+        .media-container img, .media-container video { width: 100%; height: auto; display: block; }
+        .project-caption { font-size: clamp(12px, 1vw, 16px); line-height: 1.4; margin-top: 1vw; margin-bottom: 2vw; width: 100%; }
+
+        /* COORDINATE PAGINE */
+        #wrapper-hero     { top: 100vh; left: 100vw; opacity: 0; pointer-events: none; }
+        #wrapper-studio   { top: 100vh; left: 300vw; }
+        #wrapper-research { top: 300vh; left: 100vw; }
+        #wrapper-about    { top: 300vh; left: 300vw; }
+
+        /* --- DESKTOP COVER SHUTTER --- */
+        #desktop-cover {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: var(--bg-color);
+            z-index: 1500;
+            transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+        }
+        #desktop-cover.shutter-open {
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+        #desktop-cover .cover-media {
+            position: absolute; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1;
+        }
+        #desktop-cover .cover-media video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            filter: grayscale(100%);
+        }
+        #desktop-cover .cover-content {
+            position: relative; z-index: 2;
+            width: clamp(450px, 40vw, 800px);
+            display: flex; flex-direction: column;
+            align-items: flex-start;
+            pointer-events: none;
+        }
+
+        /* --- MOBILE LAYOUT --- */
+        .mobile-header-red { display: none; }
+        .desktop-only { display: inline; }
+
+        @media (max-width: 768px) {
+            body, html { 
+                height: auto !important;
+                width: 100% !important;
+                overflow-y: auto !important; 
+                overflow-x: hidden !important; 
+                background-color: var(--bg-color); 
+                color: #000; 
+            }
+            body, html, a, .nav-link, .page-scroll-area, .interactable {
+                cursor: auto !important;
+            }
+            #custom-cursor { display: none !important; }
+            .desktop-header, #connection-layer { display: none; } 
+            .desktop-only { display: none !important; }
+
+            .mobile-header-red {
+                display: flex; 
+                flex-direction: column;
+                position: fixed; top: 0; left: 0; width: 100vw;
+                background-color: var(--menu-red);
+                z-index: 3000;
+                border-bottom: 2px solid #000;
+            }
+            .mobile-menu-items {
+                display: flex;
+                flex-direction: column;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            }
+            .mobile-header-red.expanded .mobile-menu-items {
+                max-height: 400px;
+            }
+            .nav-row {
+                display: flex; align-items: center;
+                border-bottom: 1px solid #000;
+                padding: 3vw 4vw;
+                font-size: 5.5vw;
+                font-weight: 900;
+                color: #000;
+                text-transform: none;
+                cursor: pointer;
+                transition: letter-spacing 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            }
+            .nav-row:last-child { border-bottom: none; }
+            .logo-row { font-size: 4.2vw; justify-content: space-between; }
+            .logo-left { display: flex; align-items: center; }
+            .mobile-logo-img { height: 4.5vw; margin-right: 2vw; }
+            .menu-arrow {
+                font-size: 3.5vw;
+                transition: transform 0.3s ease;
+            }
+            .mobile-header-red.expanded .menu-arrow {
+                transform: rotate(180deg);
+            }
+            .nav-row.active { letter-spacing: 0.25em; }
+            .nav-row.logo-row.active { letter-spacing: normal; }
+            .nav-row:hover:not(.logo-row) {
+                letter-spacing: 0.25em;
+            }
+
+            .viewport { height: auto; padding-top: 25vw; padding-bottom: 20vw; background-color: var(--bg-color); }
+            .canvas { position: relative; width: 100vw; height: auto; transform: none !important; }
+            
+            .page-wrapper {
+                position: relative; top: 0 !important; left: 0 !important;
+                transform: none; width: 100vw; padding: 0 5vw; box-sizing: border-box;
+                margin-bottom: 12vw; border-bottom: none;
+            }
+            #wrapper-hero { opacity: 1 !important; pointer-events: auto !important; }
+            #wrapper-hero { animation: mobileFloatHero 14s ease-in-out infinite alternate; }
+            #wrapper-studio { animation: mobileFloatStudio 16s ease-in-out infinite alternate; }
+            #wrapper-research { animation: mobileFloatResearch 18s ease-in-out infinite alternate; }
+            #wrapper-about { animation: mobileFloatAbout 20s ease-in-out infinite alternate; }
+
+            @keyframes mobileFloatHero {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(1.5vw, 1vw); }
+            }
+            @keyframes mobileFloatStudio {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(-1vw, 1.5vw); }
+            }
+            @keyframes mobileFloatResearch {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(1vw, -1vw); }
+            }
+            @keyframes mobileFloatAbout {
+                0% { transform: translate(0, 0); }
+                100% { transform: translate(-1.5vw, -0.5vw); }
+            }
+            .page-scroll-area { max-height: none; overflow: visible; padding-bottom: 0; width: 100%; display: flex; flex-direction: column; }
+            .page-footprint-canvas { display: none; }
+
+            .hl { 
+                background-color: transparent !important; 
+                color: var(--text-color);
+                display: inline; padding: 0 !important; line-height: 1.4; 
+            }
+            
+            .project-slider-container {
+                height: 55vw;
+                margin-top: 3vw;
+                margin-bottom: 3vw;
+            }
+            .slider-arrow {
+                padding: 2vw 3vw;
+            }
+            .event-item {
+                padding: 4vw 0;
+            }
+            .see-more-btn {
+                margin-top: 4vw;
+                transition: color 0.2s, letter-spacing 0.35s steps(3, end);
+            }
+            .see-more-btn:hover {
+                letter-spacing: 0.15em;
+            }
+            .project-caption { font-size: 3.8vw; margin-top: 3vw; margin-bottom: 6vw; }
+            
+            /* HERO SECTION */
+            #wrapper-hero .page-scroll-area { display: flex; flex-direction: column; }
+            #wrapper-hero .title { display: block; order: 0; font-size: 8vw; }
+            #wrapper-hero .content-block:nth-child(2) { display: block; order: 1; font-size: 4vw; max-width: 100%; margin-bottom: 6vw; line-height: 1.3; }
+            #wrapper-hero .hero-video { 
+                order: -1; 
+                margin-top: -25vw; 
+                margin-left: -5vw; 
+                width: 100vw; 
+                height: 100vh; 
+                background-color: #ddd; 
+                overflow: hidden; 
+                margin-bottom: 6vw;
+            }
+            #wrapper-hero .hero-video img { width: 100%; height: 100%; object-fit: cover; }
+            #wrapper-hero .content-block:nth-child(3) { order: 2; font-size: 8vw; font-weight: bold; line-height: 1; margin-top: 6vw; margin-bottom: 4vw; letter-spacing: -0.02em; max-width: 100%; } 
+            #wrapper-hero .content-block:nth-child(4) { order: 3; font-size: 4vw; max-width: 100%; margin-bottom: 6vw; line-height: 1.3; }
+
+            .title { font-size: 8vw; margin-bottom: 4vw; font-weight: bold; line-height: 1; letter-spacing: -0.02em; }
+            .content-block { max-width: 100%; margin-bottom: 6vw; }
+            
+            .lead-paragraph {
+                font-size: 6.5vw;
+                line-height: 1.2;
+                margin-bottom: 4vw;
+            }
+            .body-text {
+                font-size: 4vw;
+                line-height: 1.4;
+                margin-bottom: 6vw;
+            }
+            .subsection-title {
+                font-size: 5.5vw;
+                margin-top: 8vw;
+                margin-bottom: 3vw;
+                font-weight: 800;
+            }
+            .subsection-title.list-header {
+                border-bottom: 2px solid #000;
+                padding-bottom: 1.5vw;
+            }
+            .list-item {
+                font-size: 4.2vw;
+                padding: 3.5vw 0;
+                line-height: 1.35;
+                border-bottom: 1px solid #000;
+            }
+
+            /* Editions mobile: carosello orizzontale con snap */
+            .editions-carousel { 
+                display: flex;
+                flex-direction: row;
+                gap: 4vw;
+                overflow-x: auto;
+                overflow-y: visible;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 3vw;
+                min-height: auto;
+                width: 100%;
+            }
+            .edition-slide { 
+                flex: 0 0 78vw;
+                scroll-snap-align: start;
+                width: 78vw;
+                height: auto;
+                display: flex;
+                flex-direction: column;
+            }
+            .edition-slide .slide-inner { aspect-ratio: 16/9; background: transparent; }
+            .edition-slide .slide-inner video, .edition-slide .slide-inner img { opacity: 1; filter: none; object-fit: cover; }
+            .edition-label { position: static; font-size: 3.2vw; font-weight: bold; margin-top: 2vw; z-index: auto; color: #000; padding: 0; line-height: 1.3; }
+            .edition-label .hl { background: transparent; color: #000; padding: 0; }
+
+            .project-slide { flex: none; width: 100%; margin-bottom: 6vw; }
+            .project-slide .slide-inner { height: 50vw; opacity: 1; filter: none; }
+            .project-slide .slide-inner img, .project-slide .slide-inner video { opacity: 1; filter: none; }
+            .project-caption { font-size: 3.5vw; margin-top: 2vw; }
+
+            .diagram-img { background-color: transparent; margin: 6vw 0; height: auto; }
+            .diagram-img img { filter: none !important; mix-blend-mode: multiply; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="custom-cursor"></div>
+
+<!-- DESKTOP COVER SHUTTER -->
+<div id="desktop-cover" class="desktop-only">
+    <div class="cover-media">
+        <img src="assets/images/home.png" alt="Cover Image" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+    </div>
+    <div class="cover-content">
+        <div class="title"><span class="hl" data-ita="AntiDisciplinary Lab" data-eng="AntiDisciplinary Lab">AntiDisciplinary Lab</span></div>
+        <div class="content-block body-text"><span class="hl" data-ita="Siamo abituati ad assegnare valore alle foto di famiglia o alle persone con cui condividiamo le nostre case, le nostre vite." data-eng="We are used to assigning value to photos of family or the people we share our homes, lives.">We are used to assigning value to photos of family or the people we share our homes, lives.</span></div>
+        <div class="content-block lead-paragraph"><span class="hl" data-ita="Scenari speculativi, sistemi di comunicazione e prototipi interattivi." data-eng="Speculative scenarios, communication systems and interactive prototypes.">Speculative scenarios, communication systems and interactive prototypes.</span></div>
+        <div class="content-block body-text"><span class="hl" data-ita="I progetti nascono dalla costruzione di mondi finzionali che affrontano questioni sociali, culturali e tecnologiche contemporanee. Attraverso marchi, narrazioni e manufatti pubblici, domande complesse vengono tradotte in esperienze tangibili che possono essere esplorate, discusse ed esaminate criticamente." data-eng="Projects emerge from the construction of fictional worlds that address contemporary social, cultural and technological issues. Through brands, narratives and public-facing artefacts, complex questions are translated into tangible experiences that can be explored, discussed and critically examined.">Projects emerge from the construction of fictional worlds that address contemporary social, cultural and technological issues. Through brands, narratives and public-facing artefacts, complex questions are translated into tangible experiences that can be explored, discussed and critically examined.</span></div>
+    </div>
+</div>
+
+<!-- HEADER DESKTOP -->
+<header class="desktop-header">
+    <div class="nav-row logo-row interactable" onclick="goToRegion('wrapper-hero')">
+        <img src="assets/images/logo.svg" alt="Logo" class="menu-logo-img">
+        <span>Antidisciplinary Communication Design Lab</span>
+    </div>
+    <div class="nav-row interactable" onclick="goToRegion('wrapper-studio')" id="desk-nav-studio">Studio</div>
+    <div class="nav-row interactable" onclick="goToRegion('wrapper-research')" id="desk-nav-research">Research</div>
+    <div class="nav-row interactable" onclick="goToRegion('wrapper-about')" id="desk-nav-about">About</div>
+    <div class="nav-row lang-switch">
+        <span class="lang-btn active interactable" onclick="toggleLang(this, 'ITA')">ITA</span>
+        <span style="margin: 0 0.3vw; pointer-events: none; color: rgba(0,0,0,0.4);">/</span>
+        <span class="lang-btn interactable" onclick="toggleLang(this, 'ENG')">ENG</span>
+    </div>
+</header>
+
+<!-- HEADER MOBILE -->
+<div class="mobile-header-red" id="mobile-header">
+    <div class="nav-row logo-row interactable" onclick="toggleMobileMenu()">
+        <div class="logo-left">
+            <img src="assets/images/logo.svg" alt="Logo" class="mobile-logo-img">
+            <span>Antidisciplinary Communication Design Lab</span>
+        </div>
+        <span class="menu-arrow">▼</span>
+    </div>
+    <div class="mobile-menu-items">
+        <div class="nav-row interactable" onclick="selectMobileSection('wrapper-studio')" id="nav-studio">Studio</div>
+        <div class="nav-row interactable" onclick="selectMobileSection('wrapper-research')" id="nav-research">Research</div>
+        <div class="nav-row interactable" onclick="selectMobileSection('wrapper-about')" id="nav-about">About</div>
+        <div class="nav-row lang-switch">
+            <span class="lang-btn active interactable" onclick="toggleLang(this, 'ITA')">ITA</span>
+            <span style="margin: 0 1vw; pointer-events: none; color: rgba(0,0,0,0.4);">/</span>
+            <span class="lang-btn interactable" onclick="toggleLang(this, 'ENG')">ENG</span>
+        </div>
+    </div>
+</div>
+<div class="viewport">
+    <div class="canvas" id="canvas">
+        <svg id="connection-layer"></svg>
+
+        <!-- 1. HERO PAGE -->
+        <div class="page-wrapper" id="wrapper-hero">
+            <canvas class="page-footprint-canvas"></canvas>
+            <div class="page-scroll-area">
+                <div class="title"><span class="hl" data-ita="AntiDisciplinary Lab" data-eng="AntiDisciplinary Lab">AntiDisciplinary Lab</span></div>
+                <div class="content-block body-text"><span class="hl" data-ita="Siamo abituati ad assegnare valore alle foto di famiglia o alle persone con cui condividiamo le nostre case, le nostre vite." data-eng="We are used to assigning value to photos of family or the people we share our homes, lives.">We are used to assigning value to photos of family or the people we share our homes, lives.</span></div>
+                <div class="content-block lead-paragraph"><span class="hl" data-ita="Scenari speculativi, sistemi di comunicazione e prototipi interattivi" data-eng="Speculative scenarios, communication systems and interactive prototypes">Speculative scenarios, communication systems and interactive prototypes</span></div>
+                <div class="content-block body-text"><span class="hl" data-ita="I progetti nascono dalla costruzione di mondi finzionali che affrontano questioni sociali, culturali e tecnologiche contemporanee. Attraverso marchi, narrazioni e manufatti pubblici, domande complesse vengono tradotte in esperienze tangibili che possono essere esplorate, discusse ed esaminate criticamente." data-eng="Projects emerge from the construction of fictional worlds that address contemporary social, cultural and technological issues. Through brands, narratives and public-facing artefacts, complex questions are translated into tangible experiences that can be explored, discussed and critically examined.">Projects emerge from the construction of fictional worlds that address contemporary social, cultural and technological issues. Through brands, narratives and public-facing artefacts, complex questions are translated into tangible experiences that can be explored, discussed and critically examined.</span></div>
+                <div class="hero-video media-reveal">
+                    <img src="assets/images/home.png" alt="Hero Image">
+                </div> 
+            </div>
+        </div>
+
+        <!-- 2. STUDIO PAGE -->
+        <div class="page-wrapper" id="wrapper-studio">
+            <canvas class="page-footprint-canvas"></canvas>
+            <div class="page-scroll-area">
+                <div class="title"><span class="hl" data-ita="Studio" data-eng="Studio">Studio</span></div>
+                
+                <div class="content-block lead-paragraph">
+                    <span class="hl" data-ita="Scenari speculativi, sistemi di comunicazione e prototipi interattivi" data-eng="Speculative scenarios, communication systems and interactive prototypes">Speculative scenarios, communication systems and interactive prototypes</span>
+                </div>
+                <div class="content-block body-text">
+                    <span class="hl" data-ita="I progetti nascono dalla costruzione di mondi finzionali che affrontano questioni sociali, culturali e tecnologiche contemporanee. Attraverso marchi, narrazioni e manufatti pubblici, domande complesse vengono tradotte in esperienze tangibili che possono essere esplorate, discusse ed esaminate criticamente." data-eng="Projects emerge from the construction of fictional worlds that address contemporary social, cultural and technological issues. Through brands, narratives and public-facing artefacts, complex questions are translated into tangible experiences that can be explored, discussed and critically examined.">Projects emerge from the construction of fictional worlds that address contemporary social, cultural and technological issues. Through brands, narratives and public-facing artefacts, complex questions are translated into tangible experiences that can be explored, discussed and critically examined.</span>
+                </div>
+
+                <div class="subsection-title">
+                    <span class="hl" data-ita="Edizioni" data-eng="Editions">Editions</span>
+                </div>
+                
+                <div class="editions-carousel interactable">
+                    <div class="edition-slide" onclick="window.open('https://www.antidisciplinarylab.it/video1', '_blank')">
+                        <div class="slide-inner media-reveal">
+                            <video src="assets/videos/video1.mov" autoplay muted loop playsinline></video>
+                        </div>
+                        <div class="edition-label">
+                            <a href="https://www.antidisciplinarylab.it/video1" target="_blank" class="hl">
+                                <span style="font-weight: bold;" data-ita="Video 1 (2021) ↗" data-eng="Video 1 (2021) ↗">Video 1 (2021) ↗</span><br>
+                                <span data-ita="Descrizione video 1" data-eng="Video 1 description">Video 1 description</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="edition-slide" onclick="window.open('https://www.antidisciplinarylab.it/video2', '_blank')">
+                        <div class="slide-inner media-reveal">
+                            <video src="assets/videos/video2.mov" autoplay muted loop playsinline></video>
+                        </div>
+                        <div class="edition-label">
+                            <a href="https://www.antidisciplinarylab.it/video2" target="_blank" class="hl">
+                                <span style="font-weight: bold;" data-ita="Video 2 (2022) ↗" data-eng="Video 2 (2022) ↗">Video 2 (2022) ↗</span><br>
+                                <span data-ita="Descrizione video 2" data-eng="Video 2 description">Video 2 description</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="edition-slide" onclick="window.open('https://www.antidisciplinarylab.it/video3', '_blank')">
+                        <div class="slide-inner media-reveal">
+                            <video src="assets/videos/video3.mov" autoplay muted loop playsinline></video>
+                        </div>
+                        <div class="edition-label">
+                            <a href="https://www.antidisciplinarylab.it/video3" target="_blank" class="hl">
+                                <span style="font-weight: bold;" data-ita="Video 3 (2023) ↗" data-eng="Video 3 (2023) ↗">Video 3 (2023) ↗</span><br>
+                                <span data-ita="Descrizione video 3" data-eng="Video 3 description">Video 3 description</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="edition-slide" onclick="window.open('https://www.antidisciplinarylab.it/video4', '_blank')">
+                        <div class="slide-inner media-reveal">
+                            <video src="assets/videos/video4.mov" autoplay muted loop playsinline></video>
+                        </div>
+                        <div class="edition-label">
+                            <a href="https://www.antidisciplinarylab.it/video4" target="_blank" class="hl">
+                                <span style="font-weight: bold;" data-ita="Video 4 (2024) ↗" data-eng="Video 4 (2024) ↗">Video 4 (2024) ↗</span><br>
+                                <span data-ita="Descrizione video 4" data-eng="Video 4 description">Video 4 description</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="edition-slide" onclick="window.open('https://www.antidisciplinarylab.it/video5', '_blank')">
+                        <div class="slide-inner media-reveal">
+                            <video src="assets/videos/video6.mov" autoplay muted loop playsinline></video>
+                        </div>
+                        <div class="edition-label">
+                            <a href="https://www.antidisciplinarylab.it/video5" target="_blank" class="hl">
+                                <span style="font-weight: bold;" data-ita="Video 5 (2025) ↗" data-eng="Video 5 (2025) ↗">Video 5 (2025) ↗</span><br>
+                                <span data-ita="Descrizione video 5" data-eng="Video 5 description">Video 5 description</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="edition-slide" onclick="window.open('https://www.antidisciplinarylab.it/video6', '_blank')">
+                        <div class="slide-inner media-reveal">
+                            <video src="assets/videos/video8.mov" autoplay muted loop playsinline></video>
+                        </div>
+                        <div class="edition-label">
+                            <a href="https://www.antidisciplinarylab.it/video6" target="_blank" class="hl">
+                                <span style="font-weight: bold;" data-ita="Video 6 (2026) ↗" data-eng="Video 6 (2026) ↗">Video 6 (2026) ↗</span><br>
+                                <span data-ita="Descrizione video 6" data-eng="Video 6 description">Video 6 description</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="edition-slide" onclick="window.open('https://www.antidisciplinarylab.it/video7', '_blank')">
+                        <div class="slide-inner media-reveal">
+                            <video src="assets/videos/video9.mov" autoplay muted loop playsinline></video>
+                        </div>
+                        <div class="edition-label">
+                            <a href="https://www.antidisciplinarylab.it/video7" target="_blank" class="hl">
+                                <span style="font-weight: bold;" data-ita="Video 7 (2027) ↗" data-eng="Video 7 (2027) ↗">Video 7 (2027) ↗</span><br>
+                                <span data-ita="Descrizione video 7" data-eng="Video 7 description">Video 7 description</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAROSELLO: PROJECTS -->
+                <div class="subsection-title">
+                    <span class="hl" data-ita="Progetti" data-eng="Projects">Projects</span>
+                </div>
+                
+                <div class="project-slider-container">
+                    <button class="slider-arrow prev-arrow interactable" onclick="changeProject(-1)">&#10094;</button>
+                    <div class="project-slide-active">
+                        <img id="project-img" src="https://picsum.photos/640/360?random=10" alt="Project Image">
+                    </div>
+                    <button class="slider-arrow next-arrow interactable" onclick="changeProject(1)">&#10095;</button>
+                </div>
+                
+                <div class="project-caption" style="margin-top: 1vw; margin-bottom: 3vw; line-height: 1.3;">
+                    <span class="hl" id="project-title" style="font-weight: bold;" data-ita="Micromort (2019/2020)" data-eng="Micromort (2019/2020)">Micromort (2019/2020)</span><br>
+                    <span class="hl" id="project-authors" data-ita="Studenti: Autori: Davide Perucchini, Alvise Aspesi, Carlotta Bacchini, Elisa Carbone, Pietro Forino, Enzo Taboada." data-eng="Students: Authors: Davide Perucchini, Alvise Aspesi, Carlotta Bacchini, Elisa Carbone, Pietro Forino, Enzo Taboada.">Students: Authors: Davide Perucchini, Alvise Aspesi, Carlotta Bacchini, Elisa Carbone, Pietro Forino, Enzo Taboada.</span>
+                </div>
+
+                <!-- LISTA EVENTI -->
+                <div class="subsection-title list-header">
+                    <span class="hl" data-ita="Eventi" data-eng="Events">Events</span>
+                </div>
+                
+                <div class="event-item">
+                    <div class="event-type" data-ita="Mostra" data-eng="Exhibition">Exhibition</div>
+                    <div class="event-title interactable" onclick="window.open('#', '_blank')"><span class="hl" data-ita="Stories Make Worlds ↗" data-eng="Stories Make Worlds ↗">Stories Make Worlds ↗</span></div>
+                    <div class="event-details" data-ita="Location e Occasione 2026" data-eng="Location and Occasion 2026">Location e Occasione 2026</div>
+                </div>
+                <div class="event-item">
+                    <div class="event-type" data-ita="Mostra" data-eng="Exhibition">Exhibition</div>
+                    <div class="event-title interactable" onclick="window.open('#', '_blank')"><span class="hl" data-ita="Raw Scenarios ↗" data-eng="Raw Scenarios ↗">Raw Scenarios ↗</span></div>
+                    <div class="event-details" data-ita="DotDotDot 2025..." data-eng="DotDotDot 2025...">DotDotDot 2025...</div>
+                </div>
+                <div class="event-item">
+                    <div class="event-type" data-ita="Conferenza" data-eng="Talk">Talk</div>
+                    <div class="event-title interactable" onclick="window.open('#', '_blank')"><span class="hl" data-ita="Transmedia Research Institute ↗" data-eng="Transmedia Research Institute ↗">Transmedia Research Institute ↗</span></div>
+                    <div class="event-details" data-ita="DotDotDot 2025..." data-eng="DotDotDot 2025...">DotDotDot 2025...</div>
+                </div>
+                
+                <div class="see-more-btn interactable" onclick="window.open('#', '_blank')">
+                    <span class="hl" data-ita="Vedi altro" data-eng="See more">See more</span>
+                </div>
+                
+                <div class="media-reveal media-container">
+                    <img src="https://picsum.photos/800/400?random=12" alt="Super Salone">
+                </div>
+                <div class="content-block body-text" style="text-align: center; margin-top: 1vw; max-width: 100%;"><span class="hl" data-ita="Esposizione Super Salone" data-eng="Exhibition Super Salone">Esposizione Super Salone</span></div>
+
+                <!-- PRESS & AWARDS -->
+                <div class="subsection-title list-header">
+                    <span class="hl" data-ita="Stampa" data-eng="Press">Press</span>
+                </div>
+                <div class="list-item interactable" onclick="window.open('#', '_blank')"><span class="hl" data-ita="Articolo ↗" data-eng="Article ↗">Articolo ↗</span></div>
+                <div class="list-item interactable" onclick="window.open('#', '_blank')"><span class="hl" data-ita="Articolo" data-eng="Article">Articolo</span></div>
+                <div class="list-item interactable" onclick="window.open('#', '_blank')"><span class="hl" data-ita="Articolo" data-eng="Article">Articolo</span></div>
+                <div class="list-item"><span class="hl" data-ita="[...]" data-eng="[...]">[...]</span></div>
+
+                <div class="subsection-title list-header">
+                    <span class="hl" data-ita="Premi" data-eng="Awards">Awards</span>
+                </div>
+                <div class="list-item"><span class="hl" data-ita="Premio" data-eng="Award">Premio</span></div>
+                <div class="list-item"><span class="hl" data-ita="Premio" data-eng="Award">Premio</span></div>
+                <div class="list-item"><span class="hl" data-ita="Premio" data-eng="Award">Premio</span></div>
+                <div class="list-item"><span class="hl" data-ita="[...]" data-eng="[...]">[...]</span></div>
+            </div>
+        </div>
+
+        <!-- 3. RESEARCH PAGE -->
+        <div class="page-wrapper" id="wrapper-research">
+            <canvas class="page-footprint-canvas"></canvas>
+            <div class="page-scroll-area">
+                <div class="title" style="margin-bottom: 3vw;"><span class="hl" data-ita="Ricerca attraverso l'insegnamento nella pratica del design" data-eng="Research through teaching in design practice">Research through teaching<br>in design practice</span></div>
+                
+                <div class="content-block" style="max-width: 100%;">
+                    <span class="hl" data-ita="La ricerca viene condotta attraverso l'insegnamento come pratica di studio, in cui l'attività di progettazione funge contemporaneamente da strumento pedagogico ed epistemico. All'interno di questo quadro, ricerca e insegnamento si integrano in un processo che produce conoscenza attraverso la realizzazione, la sperimentazione e la riflessione sui risultati del design." data-eng="Research is conducted through teaching as a studio-based practice, where design activity functions simultaneously as a pedagogical and epistemic tool. Within this framework, research and teaching are integrated in a process that produces knowledge through making, testing and reflecting on design outcomes.">Research is conducted through teaching as a studio-based practice, where design activity functions simultaneously as a pedagogical and epistemic tool. Within this framework, research and teaching are integrated in a process that produces knowledge through making, testing and reflecting on design outcomes.</span>
+                </div>
+
+                <!-- DIAGRAMMA CON DIDASCALIA -->
+                <div class="diagram-img media-reveal" style="border: 2px solid #000; padding: 2vw; background-color: #fff; width: 100%; box-sizing: border-box; margin: 2vw 0;">
+                    <svg viewBox="0 0 800 500" style="width: 100%; height: auto; display: block; font-family: 'Arial Narrow', Arial, sans-serif;">
+                        <!-- Background grid or border lines -->
+                        <rect x="0" y="0" width="800" height="500" fill="none" />
+                        
+                        <!-- Rotated Diamond/Square -->
+                        <polygon points="400,30 750,250 400,470 50,250" fill="none" stroke="#000" stroke-width="2" />
+                        
+                        <!-- Overlapping Circles -->
+                        <circle cx="330" cy="230" r="140" fill="none" stroke="#000" stroke-width="1.5" />
+                        <circle cx="470" cy="230" r="140" fill="none" stroke="#000" stroke-width="1.5" />
+                        <circle cx="400" cy="280" r="140" fill="none" stroke="#000" stroke-width="1.5" />
+                        <circle cx="400" cy="180" r="140" fill="none" stroke="#000" stroke-width="1.5" />
+                        
+                        <!-- Text Labels -->
+                        <text x="110" y="255" font-size="16" font-weight="bold" text-anchor="middle">Exploration</text>
+                        <text x="270" y="235" font-size="16" font-weight="bold" text-anchor="middle">Speculative</text>
+                        <text x="400" y="110" font-size="16" font-weight="bold" text-anchor="middle">Interaction</text>
+                        <text x="400" y="235" font-size="16" font-weight="bold" text-anchor="middle">Synthesis</text>
+                        <text x="400" y="410" font-size="16" font-weight="bold" text-anchor="middle">Communication</text>
+                        <text x="530" y="235" font-size="16" font-weight="bold" text-anchor="middle">Making</text>
+                    </svg>
+                </div>
+                <div class="content-block" style="text-align: center; max-width:100%; margin-top: 1vw;">
+                    <span class="hl" data-ita="Un modello operativo che descrive come la ricerca e la pratica del design si sviluppano attraverso processi iterativi e non lineari di esplorazione, sviluppo e riflessione all'interno del laboratorio (Isidori, 2023)." data-eng="An operational model describing how research and design practice unfold through iterative, non-linear processes of exploration, development and reflection within the lab (Isidori, 2023).">An operational model describing how research and design practice unfold through iterative, non-linear processes of exploration, development and reflection within the lab (Isidori, 2023).</span>
+                </div>
+
+                <div class="subsection-title list-header">
+                    <span class="hl" data-ita="Pubblicazioni" data-eng="Publications">Publications</span>
+                </div>
+                <div class="list-item interactable" onclick="window.open('#', '_blank')">
+                    <span class="hl" data-ita="La finzione cospirativa come strumento per il pensiero critico: progettare narrazioni per riflettere sul sistema informativo contemporaneo ↗" data-eng="Conspiracy Fiction as a Tool for Critical Thinking: Designing Narratives to Reflect on the Contemporary Information System ↗">Conspiracy Fiction as a Tool for Critical Thinking: Designing Narratives to Reflect on the Contemporary Information System ↗</span>
+                </div>
+                <div class="list-item interactable" onclick="window.open('#', '_blank')">
+                    <span class="hl" data-ita="La finzione cospirativa come strumento per il pensiero critico: progettare narrazioni per riflettere sul sistema informativo contemporaneo ↗" data-eng="Conspiracy Fiction as a Tool for Critical Thinking: Designing Narratives to Reflect on the Contemporary Information System ↗">Conspiracy Fiction as a Tool for Critical Thinking: Designing Narratives to Reflect on the Contemporary Information System ↗</span>
+                </div>
+                
+                <div class="see-more-btn interactable" onclick="window.open('#', '_blank')">
+                    <span class="hl" data-ita="Vedi altro" data-eng="See more">See more</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. ABOUT PAGE -->
+        <div class="page-wrapper" id="wrapper-about">
+            <canvas class="page-footprint-canvas"></canvas>
+            <div class="page-scroll-area">
+                <div class="title"><span class="hl" data-ita="Contesto" data-eng="Context">Context</span></div>
+                <div class="content-block body-text" style="max-width: 100%;">
+                    <span class="hl" data-ita="L'Antidisciplinary Communication Design Lab fa parte del Final Synthesis Studio C1 all'interno del Corso di Laurea Triennale in Design della Comunicazione presso il Politecnico di Milano, Scuola del Design, Dipartimento di Design. Opera come un ambiente accademico in cui insegnamento e ricerca sono integrati attraverso la pratica del design, combinando attività didattiche con progetti sperimentali e orientati alla ricerca nel design della comunicazione." data-eng="The Antidisciplinary Communication Design Lab is part of the Final Synthesis Studio C1 within the Bachelor’s Degree in Communication Design at Politecnico di Milano, School of Design, Department of Design. It operates as an academic environment where teaching and research are integrated through design practice, combining educational activities with experimental and research-driven projects in communication design.">The Antidisciplinary Communication Design Lab is part of the Final Synthesis Studio C1 within the Bachelor’s Degree in Communication Design at Politecnico di Milano, School of Design, Department of Design. It operates as an academic environment where teaching and research are integrated through design practice, combining educational activities with experimental and research-driven projects in communication design.</span>
+                </div>
+
+                <div class="subsection-title list-header">
+                    <span class="hl" data-ita="Gruppo" data-eng="Team">Team</span>
+                </div>
+                <div class="list-item"><span class="hl" data-ita="Francesco E. Guida - Ruolo e info su più righe" data-eng="Francesco E. Guida - Role and info on multiple lines">Francesco E. Guida - Role and info on multiple lines</span></div>
+                <div class="list-item"><span class="hl" data-ita="Francesco E. Guida" data-eng="Francesco E. Guida">Francesco E. Guida</span></div>
+                <div class="list-item"><span class="hl" data-ita="Membri attivi e non attivi" data-eng="Active and inactive members">Membri attivi and inactive members</span></div>
+                <div class="list-item"><span class="hl" data-ita="[...]" data-eng="[...]">[...]</span></div>
+
+                <div class="subsection-title list-header">
+                    <span class="hl" data-ita="Contatti" data-eng="Contact">Contact</span>
+                </div>
+                <div class="list-item"><span class="hl" data-ita="Scuola del Design, Politecnico di Milano" data-eng="School of Design, Politecnico di Milano">School of Design, Politecnico di Milano</span></div>
+                <div class="list-item"><span class="hl" data-ita="Via Candiani 72, 20158 Milano, Italia" data-eng="Via Candiani 72, 20158 Milano, Italy">Via Candiani 72, 20158 Milano, Italy</span></div>
+                <div class="list-item interactable" onclick="window.open('mailto:info@antidisciplinarylab.it')"><span class="hl" style="text-decoration: underline;">info@antidisciplinarylab.it</span></div>
+                <div class="list-item interactable" onclick="window.open('https://instagram.com/antidisciplinarylab', '_blank')"><span class="hl" style="text-decoration: underline;">@antidisciplinarylab</span></div>
+
+                <div class="media-reveal" style="margin-top: 4vw; width: 15vw;">
+                    <img src="assets/images/logo.svg" alt="Logo" style="width:100%; height:auto; display:block;">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<script>
+    const isMobile = () => window.innerWidth <= 768;
+    let wasMobile = isMobile();
+
+    // ─── Resize con debounce ────────────────────────────────────────────────
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            const currentlyMobile = isMobile();
+            if (wasMobile !== currentlyMobile) { location.reload(); return; }
+            wasMobile = currentlyMobile;
+            if (!currentlyMobile && !isAutoNavigating) {
+                const region = document.getElementById(currentRegionId);
+                if (region) {
+                    baseCanvasX = (window.innerWidth / 2) - parseFloat(getComputedStyle(region).left);
+                    baseCanvasY = (window.innerHeight / 2) - parseFloat(getComputedStyle(region).top);
+                    currentX = baseCanvasX; currentY = baseCanvasY;
+                    gsap.set(canvasEl, { x: currentX, y: currentY });
+                }
+            }
+        }, 150);
+    });
+
+    // ─── Video: play/pause via IntersectionObserver ─────────────────────────
+    const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const vid = entry.target;
+            if (entry.isIntersecting) vid.play().catch(() => {});
+            else vid.pause();
+        });
+    }, { threshold: 0.25, rootMargin: '100px' });
+    document.querySelectorAll('video').forEach(v => videoObserver.observe(v));
+
+    // ─── Mobile Menu ─────────────────────────────────────────────────────────
+    let mobileMenuExpanded = false;
+    window.toggleMobileMenu = function() {
+        const header = document.getElementById('mobile-header');
+        mobileMenuExpanded = !mobileMenuExpanded;
+        header.classList.toggle('expanded', mobileMenuExpanded);
+    };
+
+    // ─── Toggle Lingua (batched con stagger leggero) ─────────────────────────
+    window.toggleLang = function(el, lang) {
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.innerText.trim() === lang);
+        });
+
+        const elements = Array.from(document.querySelectorAll('.hl[data-ita]'));
+        const STAGGER = 18;
+
+        elements.forEach((el, i) => {
+            const newText = lang === 'ITA' ? el.getAttribute('data-ita') : el.getAttribute('data-eng');
+            if (!newText) return;
+
+            setTimeout(() => {
+                const wasStatic = getComputedStyle(el).position === 'static';
+                if (wasStatic) el.style.position = 'relative';
+
+                const block = document.createElement('span');
+                Object.assign(block.style, {
+                    position: 'absolute', top: '0', left: '0',
+                    width: '0%', height: '100%',
+                    backgroundColor: '#000', zIndex: '5',
+                    transition: 'width 0.12s steps(3, end)'
+                });
+                el.appendChild(block);
+
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    block.style.width = '100%';
+                }));
+
+                setTimeout(() => {
+                    el.textContent = newText;
+                    el.appendChild(block);
+                    block.style.transition = 'none';
+                    block.style.left = '0'; block.style.width = '100%';
+                    block.offsetHeight;
+                    block.style.transition = 'left 0.12s steps(3, end), width 0.12s steps(3, end)';
+                    block.style.left = '100%'; block.style.width = '0%';
+
+                    setTimeout(() => {
+                        block.remove();
+                        if (wasStatic) el.style.position = '';
+                    }, 130);
+                }, 130);
+            }, i * STAGGER);
+        });
+    };
+
+    window.selectMobileSection = function(targetId) {
+        document.getElementById('mobile-header').classList.remove('expanded');
+        mobileMenuExpanded = false;
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+            setTimeout(() => {
+                const headerH = document.getElementById('mobile-header').offsetHeight;
+                window.scrollTo({ top: targetEl.offsetTop - headerH - 10, behavior: 'smooth' });
+            }, 200);
+        }
+    };
+
+    window.goToRegion = function(targetId) {
+        if (isMobile()) return;
+        const cover = document.getElementById('desktop-cover');
+        cover.classList.toggle('shutter-open', targetId !== 'wrapper-hero');
+
+        document.querySelectorAll('.desktop-header .nav-row').forEach(r => r.classList.remove('active'));
+        const navMap = { 'wrapper-studio': 'desk-nav-studio', 'wrapper-research': 'desk-nav-research', 'wrapper-about': 'desk-nav-about' };
+        if (navMap[targetId]) document.getElementById(navMap[targetId])?.classList.add('active');
+
+        if (isAutoNavigating || targetId === currentRegionId) return;
+        drawEphemeralLine(currentRegionId, targetId);
+
+        isAutoNavigating = true; ignoreMouse = true; mouseX = 0; mouseY = 0;
+        const region = document.getElementById(targetId);
+        region.querySelectorAll('.editions-carousel').forEach(c => c.scrollLeft = 0);
+
+        baseCanvasX = (window.innerWidth / 2) - parseFloat(getComputedStyle(region).left);
+        baseCanvasY = (window.innerHeight / 2) - parseFloat(getComputedStyle(region).top);
+        const oldRegion = currentRegionId;
+
+        gsap.to(canvasEl, {
+            x: baseCanvasX, y: baseCanvasY, duration: 2.0, ease: 'power3.inOut',
+            onUpdate() { currentX = gsap.getProperty(canvasEl, 'x'); currentY = gsap.getProperty(canvasEl, 'y'); },
+            onStart() {
+                setTimeout(() => {
+                    revealRegionContent(targetId);
+                    const area = region.querySelector('.page-scroll-area');
+                    area.style.display = 'none'; area.offsetHeight; area.style.display = 'block';
+                }, 1100);
+            },
+            onComplete() {
+                isAutoNavigating = false; currentRegionId = targetId;
+                resetRegionContent(oldRegion);
+            }
+        });
+    };
+
+    // ─── MagneticGrid (ottimizzata) ──────────────────────────────────────────
+    class MagneticGrid {
+        constructor(canvas) {
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d');
+            this.points = [];
+            this.spacing = 22;
+            this.mouse = { x: -9999, y: -9999 };
+            this.repulsionRadius = 80;
+            this.repulsionForce = 12;
+            this.init();
+
+            const parent = this.canvas.parentElement;
+            parent.addEventListener('mousemove', (e) => {
+                if (isMobile()) return;
+                const rect = this.canvas.getBoundingClientRect();
+                this.mouse.x = e.clientX - rect.left;
+                this.mouse.y = e.clientY - rect.top;
+            }, { passive: true });
+            parent.addEventListener('mouseleave', () => {
+                this.mouse.x = -9999; this.mouse.y = -9999;
+            });
+        }
+
+        init() {
+            if (isMobile()) return;
+            const p = this.canvas.parentElement;
+            this.canvas.width = p.clientWidth;
+            this.canvas.height = p.clientHeight;
+            this.points = [];
+            for (let x = 0; x <= this.canvas.width; x += this.spacing)
+                for (let y = 0; y <= this.canvas.height; y += this.spacing)
+                    this.points.push({ ox: x, oy: y, x, y });
+        }
+
+        update() {
+            const ctx = this.ctx;
+            ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            const rr = this.repulsionRadius, rf = this.repulsionForce;
+            const mx = this.mouse.x, my = this.mouse.y;
+            const hasMouse = mx > -1000;
+
+            // due passate: una per i punti normali (rosso), una per i punti vicini al cursore (nero)
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.55)'; // nero, 2px, ben visibile
+
+            for (const p of this.points) {
+                const dx = mx - p.ox, dy = my - p.oy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                let tx = p.ox, ty = p.oy;
+                if (dist < rr && dist > 0) {
+                    const force = (rr - dist) / rr;
+                    const inv = 1 / dist;
+                    tx = p.ox - dx * inv * force * rf;
+                    ty = p.oy - dy * inv * force * rf;
+                }
+                p.x += (tx - p.x) * 0.12;
+                p.y += (ty - p.y) * 0.12;
+
+                if (!hasMouse || dist >= rr) {
+                    ctx.moveTo(p.x + 1, p.y);
+                    ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+                }
+            }
+            ctx.fill();
+
+            // punti nel raggio: neri e più grandi
+            if (hasMouse) {
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(0,0,0,0.85)';
+                for (const p of this.points) {
+                    const dx = mx - p.ox, dy = my - p.oy;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < rr) {
+                        const scale = 1 + (1 - dist / rr) * 1; // da 1 a 2px avvicinandosi
+                        ctx.moveTo(p.x + scale, p.y);
+                        ctx.arc(p.x, p.y, scale, 0, Math.PI * 2);
+                    }
+                }
+                ctx.fill();
+            }
+        }
+    }
+
+    const magneticGrids = Array.from(document.querySelectorAll('.page-footprint-canvas'))
+        .map(c => new MagneticGrid(c));
+
+    // ─── Cursore ─────────────────────────────────────────────────────────────
+    const cursor = document.getElementById('custom-cursor');
+    const footprintCanvases = Array.from(document.querySelectorAll('.page-footprint-canvas'));
+
+    let mouseX = 0, mouseY = 0;
+    let _lastCX = 0, _lastCY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+        if (isMobile()) return;
+        if (e.clientX === _lastCX && e.clientY === _lastCY) return;
+        _lastCX = e.clientX; _lastCY = e.clientY;
+        gsap.set(cursor, { x: e.clientX, y: e.clientY });
+        if (!isAutoNavigating) {
+            ignoreMouse = false;
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+        }
+    }, { passive: true });
+
+    document.querySelectorAll('.interactable').forEach(el => {
+        el.addEventListener('mouseenter', () => { if (!isMobile()) cursor.classList.add('hovering'); });
+        el.addEventListener('mouseleave', () => { if (!isMobile()) cursor.classList.remove('hovering'); });
+    });
+
+    // ─── Content reveal ───────────────────────────────────────────────────────
+    function revealRegionContent(regionId) {
+        const targets = document.getElementById(regionId).querySelectorAll('.hl, .media-reveal');
+        gsap.to(targets, { clipPath: 'inset(0 0% 0 0)', duration: 0.8, stagger: 0.04, ease: 'expo.inOut',
+            onComplete() { gsap.set(targets, { clipPath: 'none' }); }
+        });
+    }
+    function resetRegionContent(regionId) {
+        if (isMobile()) return;
+        gsap.set(document.getElementById(regionId).querySelectorAll('.hl, .media-reveal'), { clipPath: 'inset(0 100% 0 0)' });
+    }
+
+    // ─── Canvas physics (con frame-skip quando idle) ─────────────────────────
+    const canvasEl = document.getElementById('canvas');
+    const svgLayer = document.getElementById('connection-layer');
+    const LERP = 0.018, MAX_OFFSET = 120;
+    let baseCanvasX = 0, baseCanvasY = 0;
+    let currentX = 0, currentY = 0;
+    let gridX = 0, gridY = 0;
+    let isAutoNavigating = false, ignoreMouse = false;
+    let currentRegionId = 'wrapper-hero';
+    let _frameSkip = 0;
+
+    function renderPhysics() {
+        requestAnimationFrame(renderPhysics);
+        if (isMobile()) return;
+
+        if (!isAutoNavigating) {
+            const ax = ignoreMouse ? 0 : mouseX;
+            const ay = ignoreMouse ? 0 : mouseY;
+            const tX = baseCanvasX - ax * MAX_OFFSET, tY = baseCanvasY - ay * MAX_OFFSET;
+            const dX = tX - currentX, dY = tY - currentY;
+
+            if (Math.abs(dX) > 0.05 || Math.abs(dY) > 0.05) {
+                currentX += dX * LERP; currentY += dY * LERP;
+                gsap.set(canvasEl, { x: currentX, y: currentY });
+            }
+
+            const gTx = ax * 80, gTy = ay * 80;
+            const gdX = gTx - gridX, gdY = gTy - gridY;
+            if (Math.abs(gdX) > 0.05 || Math.abs(gdY) > 0.05) {
+                gridX += gdX * LERP; gridY += gdY * LERP;
+                footprintCanvases.forEach(c => { c.style.transform = `translate(${gridX}px,${gridY}px)`; });
+            }
+        }
+
+        // Griglia magnetica solo sulla regione attiva, ogni 2 frame
+        if (++_frameSkip % 2 === 0) {
+            magneticGrids.forEach(g => {
+                if (g.canvas.closest('.page-wrapper').id === currentRegionId) g.update();
+            });
+        }
+    }
+
+    // ─── Linea effimera ──────────────────────────────────────────────────────
+    function drawEphemeralLine(startId, endId) {
+        if (isMobile() || startId === endId) return;
+        const s = document.getElementById(startId), e = document.getElementById(endId);
+        const x1 = parseFloat(getComputedStyle(s).left), y1 = parseFloat(getComputedStyle(s).top);
+        const x2 = parseFloat(getComputedStyle(e).left), y2 = parseFloat(getComputedStyle(e).top);
+        const dx = x2 - x1, dy = y2 - y1, dist = Math.sqrt(dx*dx + dy*dy);
+        const gap = window.innerWidth * 0.15, ix = dx / dist, iy = dy / dist;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1 + ix * gap); line.setAttribute('y1', y1 + iy * gap);
+        line.setAttribute('x2', x2 - ix * gap); line.setAttribute('y2', y2 - iy * gap);
+        line.classList.add('ephemeral-line'); svgLayer.appendChild(line);
+        const len = dist - gap * 2;
+        gsap.set(line, { strokeDasharray: len, strokeDashoffset: len });
+        gsap.to(line, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' });
+        gsap.to(line, { opacity: 0, duration: 0.7, delay: 1.5, ease: 'power1.out', onComplete: () => line.remove() });
+    }
+
+    // ─── Scroll spy mobile (throttled via rAF) ────────────────────────────────
+    let _scrollTick = false;
+    window.addEventListener('scroll', () => {
+        if (!isMobile() || _scrollTick) return;
+        _scrollTick = true;
+        requestAnimationFrame(() => {
+            const scrollPos = window.scrollY + document.getElementById('mobile-header').offsetHeight + 50;
+            let activeId = 'wrapper-hero';
+            for (const id of ['wrapper-hero', 'wrapper-studio', 'wrapper-research', 'wrapper-about']) {
+                const el = document.getElementById(id);
+                if (el && el.offsetTop <= scrollPos) activeId = id;
+            }
+            document.querySelectorAll('.mobile-header-red .nav-row').forEach(r => r.classList.remove('active'));
+            const mMap = { 'wrapper-studio': 'nav-studio', 'wrapper-research': 'nav-research', 'wrapper-about': 'nav-about' };
+            if (mMap[activeId]) document.getElementById(mMap[activeId])?.classList.add('active');
+            _scrollTick = false;
+        });
+    }, { passive: true });
+
+    // ─── Init Desktop ─────────────────────────────────────────────────────────
+    if (!isMobile()) {
+        const initRegion = document.getElementById('wrapper-hero');
+        baseCanvasX = (window.innerWidth / 2) - parseFloat(getComputedStyle(initRegion).left);
+        baseCanvasY = (window.innerHeight / 2) - parseFloat(getComputedStyle(initRegion).top);
+        currentX = baseCanvasX; currentY = baseCanvasY;
+        gsap.set(canvasEl, { x: currentX, y: currentY });
+    }
+
+    renderPhysics();
+
+    setTimeout(() => {
+        revealRegionContent('wrapper-hero');
+        if (!isMobile()) {
+            const area = document.getElementById('wrapper-hero').querySelector('.page-scroll-area');
+            area.style.display = 'none'; area.offsetHeight; area.style.display = 'block';
+        } else {
+            revealRegionContent('wrapper-studio');
+            revealRegionContent('wrapper-research');
+            revealRegionContent('wrapper-about');
+        }
+    }, 300);
+
+    // ─── Projects Slider ──────────────────────────────────────────────────────
+    const projectList = [
+        {
+            img: 'https://picsum.photos/640/360?random=10',
+            title_ita: 'Micromort (2019/2020)',
+            authors_ita: 'Studenti: Davide Perucchini, Alvise Aspesi, Carlotta Bacchini, Elisa Carbone, Pietro Forino, Enzo Taboada.',
+            title_eng: 'Micromort (2019/2020)',
+            authors_eng: 'Students: Davide Perucchini, Alvise Aspesi, Carlotta Bacchini, Elisa Carbone, Pietro Forino, Enzo Taboada.'
+        },
+        {
+            img: 'https://picsum.photos/640/360?random=11',
+            title_ita: 'RAW SCENARIOS (2024)',
+            authors_ita: 'Studenti del corso di Laurea Triennale in Design della Comunicazione.',
+            title_eng: 'RAW SCENARIOS (2024)',
+            authors_eng: 'Students of the Bachelor Degree in Communication Design.'
+        }
+    ];
+    let currentProjectIdx = 0;
+
+    window.changeProject = function(dir) {
+        currentProjectIdx = (currentProjectIdx + dir + projectList.length) % projectList.length;
+        const p = projectList[currentProjectIdx];
+        document.getElementById('project-img').src = p.img;
+        const lang = document.querySelector('.lang-btn.active')?.innerText.trim() || 'ITA';
+        const titleEl = document.getElementById('project-title');
+        const authorsEl = document.getElementById('project-authors');
+        authorsEl.setAttribute('data-eng', project.authors_eng);
+        
+        const activeLangBtn = document.querySelector('.lang-btn.active');
+        const currentLang = activeLangBtn ? activeLangBtn.innerText.trim() : 'ITA';
+        
+        titleEl.innerHTML = currentLang === 'ITA' ? project.title_ita : project.title_eng;
+        authorsEl.innerHTML = currentLang === 'ITA' ? project.authors_ita : project.authors_eng;
+    };
+</script>
+</body>
+</html>

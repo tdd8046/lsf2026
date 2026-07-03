@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiDisciplinary Lab</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #b4b8bc;
+            --hi-color: #FFFFFF;
+            --text-color: #000000;
+        }
+
+        body, html, a, .nav-link, .page-scroll-area, .event-more {
+            cursor: none !important; 
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100vw; height: 100vh;
+            overflow: hidden; 
+            background-color: var(--bg-color);
+            font-family: 'Arial Narrow', Arial, sans-serif;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #custom-cursor {
+            position: fixed; top: 0; left: 0;
+            width: 1.2vw; height: 1.2vw;
+            background-color: var(--hi-color);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, width, height;
+        }
+
+        #custom-cursor.hovering { width: 3vw; height: 3vw; }
+
+        .hl {
+            background-color: var(--hi-color);
+            color: var(--text-color);
+            display: inline;
+            padding: 0.01em 0.1em;
+            line-height: 1.4; 
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+            clip-path: inset(0 100% 0 0); 
+        }
+
+        .txt-white { color: var(--hi-color); display: block; }
+        .media-reveal { clip-path: inset(0 100% 0 0); }
+
+        .title {
+            font-size: 1.8vw; font-weight: bold;
+            margin: 0 0 2vw 0; line-height: 0.9; letter-spacing: -0.02em;
+        }
+
+        .content-block { font-size: 1.2vw; margin-bottom: 2.5vw; max-width: 35vw; }
+        .list-item { margin-bottom: 0.6vw; }
+
+        /* --- HEADER FIX --- */
+        header {
+            position: fixed; top: 0; left: 0; width: 100vw;
+            padding: 2vw; box-sizing: border-box; z-index: 2000; 
+            font-size: 1vw; letter-spacing: 0.05em; text-transform: uppercase;
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            pointer-events: auto; 
+        }
+        .header-left { display: flex; flex-direction: column; gap: 0.4vw; }
+
+        footer { bottom: 0; pointer-events: auto; display: flex; justify-content: space-between; }
+        .nav-link { text-decoration: none; transition: opacity 0.3s ease; display: inline-block;}
+        .nav-link:hover { opacity: 0.6; }
+
+        .viewport { position: relative; width: 100vw; height: 100vh; }
+        .canvas { position: absolute; top: 0; left: 0; width: 500vw; height: 500vh; will-change: transform; }
+
+        #connection-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .ephemeral-line { stroke: var(--hi-color); stroke-width: 1px; fill: none; }
+
+        .page-wrapper { position: absolute; transform: translate(-50%, -50%); width: 40vw; }
+
+        .page-footprint-canvas {
+            position: absolute; 
+            top: 2vw; left: 2vw; 
+            width: 100%; height: 100%; 
+            z-index: 1; 
+            pointer-events: none;
+        }
+
+        .page-scroll-area {
+            position: relative; z-index: 2; max-height: 70vh; overflow-y: auto; overflow-x: hidden;
+            display: flex; flex-direction: column; align-items: flex-start; pointer-events: auto; scrollbar-width: none; 
+            padding-bottom: 5vw;
+        }
+        .page-scroll-area::-webkit-scrollbar { display: none; }
+
+        /* --- CAROSELLO FIX --- */
+        .editions-carousel {
+            display: flex; gap: 1vw; width: 100%;
+            min-height: 16vw; 
+            overflow-x: auto; padding-bottom: 1.5vw;
+            scrollbar-width: none; 
+            scroll-snap-type: x mandatory; 
+        }
+        .editions-carousel::-webkit-scrollbar { display: none; }
+        
+        .edition-slide {
+            flex: 0 0 24vw; 
+            height: 15vw;
+            position: relative;
+            scroll-snap-align: start; 
+        }
+
+        .slide-inner {
+            width: 100%; height: 100%;
+            background: #000;
+            position: relative;
+        }
+        .slide-inner img, .slide-inner video { 
+            width: 100%; height: 100%; object-fit: cover; 
+            opacity: 0.6; filter: grayscale(100%); 
+            transition: opacity 0.3s, filter 0.3s; 
+            pointer-events: none;
+        }
+        .edition-slide:hover .slide-inner img,
+        .edition-slide:hover .slide-inner video { 
+            opacity: 1; filter: grayscale(0%); 
+        }
+        
+        /* L'etichetta del progetto rimane sempre intatta e visibile sopra il filtro */
+        .edition-label { position: absolute; top: 1vw; left: 1vw; z-index: 2;}
+
+        /* --- EVENT CARDS --- */
+        .event-card {
+            display: flex; gap: 1.5vw; margin-bottom: 3vw; width: 100%; align-items: flex-start;
+        }
+        .event-img { width: 14vw; height: 14vw; background: #000; flex-shrink: 0; position: relative; }
+        .event-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); }
+        
+        .event-info { display: flex; flex-direction: column; align-items: flex-start; flex-grow: 1; }
+        
+        .event-hidden-text {
+            height: 0; overflow: hidden; margin-top: 1vw; font-size: 1.2vw; line-height: 1.4;
+        }
+
+        .hero-video { width: 35vw; height: 18vw; background-color: var(--hi-color); margin-top: 2vw; margin-bottom: 2vw; }
+
+        #wrapper-hero     { top: 100vh; left: 100vw; }
+        #wrapper-studio   { top: 100vh; left: 300vw; }
+        #wrapper-research { top: 300vh; left: 100vw; }
+        #wrapper-about    { top: 300vh; left: 300vw; }
+    </style>
+</head>
+<body>
+
+<div id="custom-cursor"></div>
+
+<header>
+    <div class="header-col">
+        <span class="txt-white">SCUOLA DEL DESIGN - DDC POLIMI</span>
+        <div><span class="hl" style="clip-path: inset(0 0 0 0);">Antidisciplinary Communication Design Lab</span></div>
+        <span class="txt-white">[ TERZA RIGA DA DEFINIRE ]</span>
+    </div>
+    <div class="header-col nav-links">
+        <div class="nav-link interactable" onclick="goToRegion('wrapper-hero')"><span class="hl" style="clip-path: inset(0 0 0 0);">[ 01 ] HERO</span></div>
+        <div class="nav-link interactable" onclick="goToRegion('wrapper-studio')"><span class="hl" style="clip-path: inset(0 0 0 0);">[ 02 ] STUDIO</span></div>
+    </div>
+    <div class="header-col nav-links">
+        <div class="nav-link interactable" onclick="goToRegion('wrapper-research')"><span class="hl" style="clip-path: inset(0 0 0 0);">[ 03 ] RESEARCH</span></div>
+        <div class="nav-link interactable" onclick="goToRegion('wrapper-about')"><span class="hl" style="clip-path: inset(0 0 0 0);">[ 04 ] ABOUT</span></div>
+    </div>
+</header>
+
+<div class="viewport">
+    <div class="canvas" id="canvas">
+        <svg id="connection-layer"></svg>
+
+        <div class="page-wrapper" id="wrapper-hero">
+            <canvas class="page-footprint-canvas"></canvas>
+            <div class="page-scroll-area">
+                <div class="title"><span class="hl">AntiDisciplinary Lab</span></div>
+                <div class="content-block"><span class="hl">We are used to assigning value to photos of family or the people we share our homes, lives.</span></div>
+                <div class="content-block"><span class="hl">People at different times, alone, together, always during a movement, an action. These entities are the smart sensors populating our homes. Privacy and personal data are certainly key. However, other entities have now joined in that actively and autonomously take photographs of these same.</span></div>
+                <div class="hero-video media-reveal"></div> 
+            </div>
+        </div>
+
+        <div class="page-wrapper" id="wrapper-studio">
+            <canvas class="page-footprint-canvas"></canvas>
+            <div class="page-scroll-area">
+                <div class="title"><span class="hl">Studio</span></div>
+                
+                <div class="content-block"><span class="hl">STATEMENT & VISIONE</span></div>
+                <div class="content-block"><span class="hl">Descrizione breve del laboratorio. Un approccio speculativo al design dell'interazione e ai sistemi complessi.</span></div>
+
+                <div class="content-block" style="margin-bottom: 1vw; max-width:100%;"><span class="hl">EDIZIONI [ LIVE SITES ] - SCORRI ORIZZONTALMENTE →</span></div>
+                
+                <div class="editions-carousel interactable">
+                    <div class="edition-slide" data-url="https://www.antidisciplinarylab.it/believeitornot/">
+                        <div class="slide-inner media-reveal">
+                            <div class="edition-label"><span class="hl">2025: BELIEVE IT OR NOT</span></div>
+                            <video autoplay loop muted playsinline src="../assets/videos/video1.mov"></video>
+                        </div>
+                    </div>
+                    <div class="edition-slide" data-url="https://www.antidisciplinarylab.it/rawscenarios/">
+                        <div class="slide-inner media-reveal">
+                            <div class="edition-label"><span class="hl">2024:RAW SCENARIOS</span></div>
+                             <video autoplay loop muted playsinline src="../assets/videos/video2.mov"></video>
+                        </div>
+                    </div>
+                    <div class="edition-slide" data-url="https://www.antidisciplinarylab.it/anthropogenicnarratives/index.html">
+                        <div class="slide-inner media-reveal">
+                            <div class="edition-label"><span class="hl">2022: ANTHROPOGENIC NARRATIVES</span></div>
+                            <video autoplay loop muted playsinline src="../assets/videos/video3.mov"></video>
+                        </div>
+                    </div>
+                    <div class="edition-slide" data-url="https://www.antidisciplinarylab.it/fattididati/home.html">
+                        <div class="slide-inner media-reveal">
+                            <div class="edition-label"><span class="hl">2021: FATTI DI DATI</span></div>
+                            <video autoplay loop muted playsinline src="../assets/videos/video4.mov"></video>
+                        </div>
+                    </div>
+                    <div class="edition-slide" data-url="https://www.antidisciplinarylab.it/retuals/visualizer.html">
+                        <div class="slide-inner media-reveal">
+                            <div class="edition-label"><span class="hl">2020: RETUALS</span></div>
+                            <video autoplay loop muted playsinline src="../assets/videos/video5.mov"></video>
+                        </div>
+                    </div>
+                    <div class="edition-slide" data-url="https://www.antidisciplinarylab.it/morte13/">
+                        <div class="slide-inner media-reveal">
+                            <div class="edition-label"><span class="hl">2019: MORTE - 13 SOLIDI DUBBI</span></div>
+                            <video autoplay loop muted playsinline src="../assets/videos/video6.mov"></video>
+                        </div>
+                    </div>
+                    <div class="edition-slide" data-url="https://www.antidisciplinarylab.it/humans/">
+                        <div class="slide-inner media-reveal">
+                            <div class="edition-label"><span class="hl">2018: WHAT MAKES HUMANS HUMAN?</span></div>
+                            <video autoplay loop muted playsinline src="../assets/videos/video7.mov"></video>
+                        </div>
+                    </div>
+                    <div class="edition-slide" data-url="https://www.antidisciplinarylab.it/wordsworks/">
+                        <div class="slide-inner media-reveal">
+                            <div class="edition-label"><span class="hl">2017: WORDSWORKS</span></div>
+                            <video autoplay loop muted playsinline src="../assets/videos/video8.mov"></video>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block" style="margin-top: 3vw;"><span class="hl">SELEZIONE DI PROGETTI</span></div>
+                <div class="list-item interactable"><span class="hl">→ ALGORITHM DECONSTRUCTION [HIGHLIGHT]</span></div>
+                <div class="list-item interactable"><span class="hl">→ SPATIAL INTERFACES</span></div>
+                <div class="list-item interactable"><span class="hl">→ DATA BRUTALISM</span></div>
+
+                <div class="content-block" style="margin-top: 4vw;"><span class="hl">EVENTI E SEMINARI</span></div>
+                
+                <div class="event-card">
+                    <div class="event-img media-reveal">
+                        <img src="https://picsum.photos/400/400?random=9" alt="Event Image">
+                    </div> 
+                    <div class="event-info">
+                        <div><span class="hl" style="font-weight: bold;">Milano Design Week 2024</span></div>
+                        <div style="margin-top: 0.5vw;"><span class="hl">Mostra Collaterale / Campus Bovisa</span></div>
+                        <div style="margin-top: 1vw; font-size: 1.2vw; line-height: 1.4;">
+                            <span class="hl">Questo è un testo di approfondimento sull'evento. Ora è statico, leggibile immediatamente e non causa salti o bug strutturali, mantenendo l'approccio diretto e brutalista.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block" style="margin-top: 3vw;"><span class="hl">RASSEGNA STAMPA</span></div>
+                <div class="list-item interactable"><span class="hl">Domus: "L'estetica dell'Anti-Design al PoliMi"</span></div>
+                <div class="list-item interactable"><span class="hl">Wired: "Oltre la UX tradizionale"</span></div>
+
+                <div class="content-block" style="margin-top: 3vw;"><span class="hl">PREMI E RICONOSCIMENTI</span></div>
+                <div class="list-item"><span class="hl">Compasso d'Oro (Menzione d'Onore 2023)</span></div>
+
+            </div>
+        </div>
+
+        <div class="page-wrapper" id="wrapper-research">
+            <canvas class="page-footprint-canvas"></canvas>
+            <div class="page-scroll-area">
+                <div class="title"><span class="hl">Research</span></div>
+                <div class="content-block"><span class="hl">Statement di ricerca e inquadramento teorico del laboratorio.</span></div>
+            </div>
+        </div>
+
+        <div class="page-wrapper" id="wrapper-about">
+            <canvas class="page-footprint-canvas"></canvas>
+            <div class="page-scroll-area">
+                <div class="title"><span class="hl">About</span></div>
+                <div class="content-block"><span class="hl">Contesto istituzionale del Politecnico di Milano.</span></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // --- GESTIONE CLIC SUI CAROSELLI DINAMICI ---
+    document.querySelectorAll('.edition-slide').forEach(slide => {
+        slide.addEventListener('click', () => {
+            const url = slide.getAttribute('data-url');
+            if (url) window.open(url, '_blank');
+        });
+    });
+
+    // --- GRIGLIA MAGNETICA ---
+    class MagneticGrid {
+        constructor(canvas) {
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d');
+            this.points = [];
+            this.spacing = 10; 
+            this.mouse = { x: -1000, y: -1000 };
+            this.repulsionRadius = 100; 
+            this.repulsionForce = 15;   
+            this.init();
+
+            this.canvas.parentElement.addEventListener('mousemove', (e) => {
+                const rect = this.canvas.getBoundingClientRect();
+                this.mouse.x = e.clientX - rect.left;
+                this.mouse.y = e.clientY - rect.top;
+            });
+            this.canvas.parentElement.addEventListener('mouseleave', () => {
+                this.mouse.x = -1000; this.mouse.y = -1000;
+            });
+            window.addEventListener('resize', () => this.init());
+        }
+
+        init() {
+            const parent = this.canvas.parentElement;
+            this.canvas.width = parent.clientWidth;
+            this.canvas.height = parent.clientHeight;
+            this.points = [];
+            for (let x = 0; x <= this.canvas.width; x += this.spacing) {
+                for (let y = 0; y <= this.canvas.height; y += this.spacing) {
+                    this.points.push({ ox: x, oy: y, x: x, y: y });
+                }
+            }
+        }
+
+        update() {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.fillStyle = 'rgba(256, 256,256, 1)'; 
+            
+            this.points.forEach(p => {
+                let dx = this.mouse.x - p.ox;
+                let dy = this.mouse.y - p.oy;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let targetX = p.ox; let targetY = p.oy;
+
+                if (distance < this.repulsionRadius) {
+                    let force = (this.repulsionRadius - distance) / this.repulsionRadius;
+                    let angle = Math.atan2(dy, dx);
+                    targetX = p.ox - Math.cos(angle) * (force * this.repulsionForce);
+                    targetY = p.oy - Math.sin(angle) * (force * this.repulsionForce);
+                }
+                p.x += (targetX - p.x) * 0.1;
+                p.y += (targetY - p.y) * 0.1;
+
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+                this.ctx.fill();
+            });
+        }
+    }
+
+    const magneticGrids = Array.from(document.querySelectorAll('.page-footprint-canvas'))
+                               .map(canvas => new MagneticGrid(canvas));
+
+    // --- CURSORE ---
+    const cursor = document.getElementById('custom-cursor');
+    const interactables = document.querySelectorAll('.interactable');
+
+    window.addEventListener('mousemove', (e) => {
+        gsap.set(cursor, { x: e.clientX, y: e.clientY });
+    });
+
+    interactables.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    // --- RIVELAZIONE E FIX BUG ---
+    function revealRegionContent(regionId) {
+        const region = document.getElementById(regionId);
+        const wipeTargets = region.querySelectorAll('.hl, .media-reveal');
+        
+        gsap.to(wipeTargets, { 
+            clipPath: 'inset(0 0% 0 0)', 
+            duration: 0.9, 
+            stagger: 0.05, 
+            ease: "expo.inOut",
+            onComplete: () => {
+                // IL FIX CORRETTO: Applica 'none' invece di cancellare la proprietà.
+                // Disabilita il motore clip-path mantenendo visibile l'elemento.
+                gsap.set(wipeTargets, { clipPath: "none" });
+            }
+        });
+    }
+
+    function resetRegionContent(regionId) {
+        const region = document.getElementById(regionId);
+        const targets = region.querySelectorAll('.hl, .media-reveal');
+        gsap.set(targets, { clipPath: 'inset(0 100% 0 0)' });
+    }
+
+    // --- MOTORE FISICO SPAZIALE ---
+    const canvasEl = document.getElementById('canvas');
+    const svgLayer = document.getElementById('connection-layer');
+    const inertiaLerp = 0.015; 
+    const maxLocalOffset = 150; 
+    
+    let baseCanvasX = 0, baseCanvasY = 0;
+    let currentX = 0, currentY = 0;
+    let mouseX = 0, mouseY = 0;
+    let isAutoNavigating = false; 
+    let ignoreMouse = false; 
+    let currentRegionId = 'wrapper-hero'; 
+
+    window.addEventListener('mousemove', (e) => {
+        if (isAutoNavigating) return;
+        if (ignoreMouse) ignoreMouse = false;
+        mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+    });
+
+    // --- FIX RESIZE FINESTRA ---
+    window.addEventListener('resize', () => {
+        const region = document.getElementById(currentRegionId);
+        if (!region) return;
+        
+        // Ricalcola il centro rispetto alla nuova dimensione della finestra
+        const topPx = parseFloat(getComputedStyle(region).top);
+        const leftPx = parseFloat(getComputedStyle(region).left);
+        
+        baseCanvasX = (window.innerWidth / 2) - leftPx;
+        baseCanvasY = (window.innerHeight / 2) - topPx;
+        
+        // Se non stiamo già navigando verso un'altra pagina, applica subito la correzione
+        if (!isAutoNavigating) {
+            currentX = baseCanvasX; 
+            currentY = baseCanvasY;
+            gsap.set(canvasEl, { x: currentX, y: currentY });
+        }
+    });
+
+    function renderPhysics() {
+        if (!isAutoNavigating) {
+            let activeMouseX = ignoreMouse ? 0 : mouseX;
+            let activeMouseY = ignoreMouse ? 0 : mouseY;
+            let targetX = baseCanvasX - (activeMouseX * maxLocalOffset);
+            let targetY = baseCanvasY - (activeMouseY * maxLocalOffset);
+            currentX += (targetX - currentX) * inertiaLerp;
+            currentY += (targetY - currentY) * inertiaLerp;
+            gsap.set(canvasEl, { x: currentX, y: currentY });
+        }
+        magneticGrids.forEach(grid => grid.update());
+        requestAnimationFrame(renderPhysics);
+    }
+
+    function drawEphemeralLine(startId, endId) {
+        if (startId === endId) return;
+        const startElem = document.getElementById(startId);
+        const endElem = document.getElementById(endId);
+        const x1 = parseFloat(getComputedStyle(startElem).left);
+        const y1 = parseFloat(getComputedStyle(startElem).top);
+        const x2 = parseFloat(getComputedStyle(endElem).left);
+        const y2 = parseFloat(getComputedStyle(endElem).top);
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const distance = Math.sqrt(dx*dx + dy*dy);
+        const gap = window.innerWidth * 0.15; 
+        const uX = dx / distance;
+        const uY = dy / distance;
+        const startX = x1 + (uX * gap);
+        const startY = y1 + (uY * gap);
+        const endX = x2 - (uX * gap);
+        const endY = y2 - (uY * gap);
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', startX);
+        line.setAttribute('y1', startY);
+        line.setAttribute('x2', endX);
+        line.setAttribute('y2', endY);
+        line.classList.add('ephemeral-line');
+        svgLayer.appendChild(line);
+        const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+        gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
+        gsap.to(line, { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" });
+        gsap.to(line, { opacity: 0, duration: 0.8, delay: 1.6, ease: "power1.out", onComplete: () => line.remove() });
+    }
+
+    window.goToRegion = function(targetId) {
+        if (isAutoNavigating || targetId === currentRegionId) return;
+        
+        drawEphemeralLine(currentRegionId, targetId);
+        
+        isAutoNavigating = true; 
+        ignoreMouse = true; 
+        mouseX = 0; 
+        mouseY = 0;
+        
+        const region = document.getElementById(targetId);
+        const topPx = parseFloat(getComputedStyle(region).top);
+        const leftPx = parseFloat(getComputedStyle(region).left);
+        
+        baseCanvasX = (window.innerWidth / 2) - leftPx;
+        baseCanvasY = (window.innerHeight / 2) - topPx;
+        
+        const oldRegion = currentRegionId;
+
+        gsap.to(canvasEl, {
+            x: baseCanvasX, 
+            y: baseCanvasY, 
+            duration: 2.2, 
+            ease: "power3.inOut",
+            onUpdate: function() { 
+                currentX = gsap.getProperty(canvasEl, "x"); 
+                currentY = gsap.getProperty(canvasEl, "y"); 
+            },
+            onStart: () => { 
+                setTimeout(() => { 
+                    revealRegionContent(targetId); 
+                    
+                    const activeArea = region.querySelector('.page-scroll-area');
+                    activeArea.style.display = 'none';
+                    activeArea.offsetHeight; 
+                    activeArea.style.display = 'flex';
+                }, 1200); 
+            },
+            onComplete: () => {
+                isAutoNavigating = false; 
+                currentRegionId = targetId; 
+                resetRegionContent(oldRegion); 
+            }
+        });
+    }
+
+    const initRegion = document.getElementById('wrapper-hero');
+    baseCanvasX = (window.innerWidth / 2) - parseFloat(getComputedStyle(initRegion).left);
+    baseCanvasY = (window.innerHeight / 2) - parseFloat(getComputedStyle(initRegion).top);
+    currentX = baseCanvasX; 
+    currentY = baseCanvasY;
+    gsap.set(canvasEl, { x: currentX, y: currentY });
+    
+    renderPhysics();
+    
+    setTimeout(() => { 
+        revealRegionContent('wrapper-hero'); 
+        const area = document.getElementById('wrapper-hero').querySelector('.page-scroll-area');
+        area.style.display = 'none'; area.offsetHeight; area.style.display = 'flex';
+    }, 300);
+
+</script>
+</body>
+</html>
