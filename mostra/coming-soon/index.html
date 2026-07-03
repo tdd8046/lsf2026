@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNDECLARED</title>
+        <link rel="icon" href="assets/icons/target.svg" type="image/x-icon">
+    <style>
+        /* Importazione del font */
+        @font-face {
+            font-family: 'AS Thermal';
+            src: url('assets/fonts/ASThermalTrialVF.ttf') format('truetype');
+            font-weight: 100 900; 
+            font-style: normal;
+            font-display: swap;
+        }
+
+   
+        body, html {
+            margin: 0; padding: 0; width: 100vw; height: 100vh;
+            background-color: #000; 
+            color: #fff;
+            font-family: 'AS Thermal', monospace;
+            font-weight: 400; 
+            font-style: normal;
+            font-variation-settings: 'slnt' 0, 'ital' 0;
+            overflow: hidden; 
+            box-sizing: border-box;
+        }
+
+        * {
+            box-sizing: inherit;
+            font-family: 'AS Thermal', monospace;
+            font-style: normal;
+            font-synthesis: none;
+            -webkit-font-synthesis: none;
+            font-variation-settings: 'slnt' 0, 'ital' 0;
+        }
+
+
+        .video-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+       
+        .video-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; 
+            z-index: 1; 
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        /* Forza la rimozione dei controlli nativi e del pulsante di play di Safari/iOS */
+        video::-webkit-media-controls {
+            display: none !important;
+        }
+        video::-webkit-media-controls-start-playback-button {
+            display: none !important;
+            -webkit-appearance: none;
+        }
+
+
+
+
+
+        .content-overlay {
+            position: relative;
+            z-index: 10; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            height: 100%;
+        }
+
+
+        .glowing-text {
+            margin: 0;
+            font-family: 'AS Thermal', monospace;
+            font-size: clamp(1.2em, 5vw, 1.7em);
+            letter-spacing: clamp(2px, 1vw, 4px);
+            color: #fff;
+            text-shadow: 
+                0 0 5px rgba(255, 255, 255, 0.8), 
+                0 0 15px rgba(255, 255, 255, 0.5), 
+                0 0 30px rgba(255, 255, 255, 0.3);
+            font-weight: 700; 
+            text-align: center;
+            
+    
+            display: inline-block;
+            width: clamp(260px, 85vw, 350px);
+            height: clamp(40px, 12vw, 50px);
+            line-height: clamp(40px, 12vw, 50px);
+            white-space: nowrap;
+        }
+
+        /* Stili per il calendario mobile/odometro della data */
+        .text-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .date-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'AS Thermal', monospace;
+            font-size: clamp(0.9em, 3.5vw, 1.2em);
+            letter-spacing: clamp(2px, 0.6vw, 4px);
+            color: #fff;
+            margin-top: 15px;
+            font-weight: 700;
+            text-shadow: 
+                0 0 5px rgba(255, 255, 255, 0.8), 
+                0 0 15px rgba(255, 255, 255, 0.5), 
+                0 0 30px rgba(255, 255, 255, 0.3);
+            height: 24px;
+            overflow: hidden;
+        }
+        .roll-digit {
+            width: 0.65em;
+            height: 24px;
+            line-height: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+        .roll-strip {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+        .roll-strip span {
+            display: block;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+        }
+        .roll-dot {
+            width: 0.35em;
+            text-align: center;
+            height: 24px;
+            line-height: 24px;
+        }
+        @keyframes spin-inf {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-240px); }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="content-overlay">
+        <div class="text-wrapper">
+            <div class="glowing-text" id="scramble-target">COMING SOON</div>
+            <div class="date-container" id="date-target"></div>
+        </div>
+    </div>
+
+    <div class="video-container">
+        <video id="bg-video" src="assets/videos/coming_soon_bg.mp4" autoplay muted loop playsinline webkit-playsinline disablePictureInPicture preload="auto">
+            Il tuo browser non supporta il video.
+        </video>
+    </div>
+
+<script>
+
+        const scrambleElement = document.getElementById('scramble-target');
+        const finalString = "COMING SOON";
+        const chars = '██▓▒░███▓▒░█';
+        const speed = 40; 
+
+        function continuousScramble() {
+            let iterations = 0;
+            
+            // Avvia la rotazione infinita su tutti i rulli della data
+            for (let i = 0; i < 10; i++) {
+                if (i !== 2 && i !== 5) { // salta i puntini
+                    const strip = document.getElementById(`strip-${i}`);
+                    if (strip) {
+                        strip.style.transition = 'none';
+                        strip.style.transform = 'translateY(0)';
+                        // Velocità e offset sfasati in modo casuale
+                        const duration = 0.4 + Math.random() * 0.4;
+                        const delay = -Math.random() * 0.5; // delay negativo per farli partire già disallineati
+                        strip.style.animation = `spin-inf ${duration}s linear ${delay}s infinite`;
+                    }
+                }
+            }
+            
+            const scrambleInterval = setInterval(() => {
+                scrambleElement.innerText = finalString.split('').map((char, i) => {
+                    if(char === ' ') return ' ';
+                    if(i < iterations) return char;
+                    return chars[Math.floor(Math.random() * chars.length)];
+                }).join('');
+                
+                iterations += 1/3; 
+                
+                if(iterations >= finalString.length) {
+                    clearInterval(scrambleInterval);
+                    scrambleElement.innerText = finalString;
+                    
+                    // Avvia il posizionamento finale a scorrimento staggered della data
+                    triggerStaggeredDateRoll("11.07.2026");
+                    
+                    // Ripeti lo scramble di Coming Soon dopo la stabilizzazione (circa 3s totali)
+                    setTimeout(continuousScramble, 3000);
+                }
+            }, speed);
+        }
+
+        function initDateStrips(dateStr) {
+            const container = document.getElementById('date-target');
+            container.innerHTML = '';
+            for (let i = 0; i < dateStr.length; i++) {
+                const char = dateStr[i];
+                if (char === '.') {
+                    const dot = document.createElement('div');
+                    dot.className = 'roll-dot';
+                    dot.innerText = '.';
+                    container.appendChild(dot);
+                } else {
+                    const digit = document.createElement('div');
+                    digit.className = 'roll-digit';
+                    const strip = document.createElement('div');
+                    strip.className = 'roll-strip';
+                    strip.id = `strip-${i}`;
+                    // Ripete 0-9 tre volte (30 cifre) per supportare rotazioni multiple e snap-back
+                    for (let n = 0; n < 30; n++) {
+                        const span = document.createElement('span');
+                        span.innerText = n % 10;
+                        strip.appendChild(span);
+                    }
+                    digit.appendChild(strip);
+                    container.appendChild(digit);
+                }
+            }
+            // Imposta lo stato iniziale della data posizionandola sul secondo ciclo (cifre 10-19)
+            for (let i = 0; i < dateStr.length; i++) {
+                const char = dateStr[i];
+                if (char !== '.') {
+                    const strip = document.getElementById(`strip-${i}`);
+                    if (strip) {
+                        const targetDigit = parseInt(char, 10);
+                        strip.style.transform = `translateY(-${(10 + targetDigit) * 24}px)`;
+                    }
+                }
+            }
+        }
+
+        function settleStrip(stripId, targetDigit) {
+            const strip = document.getElementById(stripId);
+            if (!strip) return;
+            
+            // Cattura la posizione Y di scorrimento corrente in modo fluido
+            let currentY = 0;
+            try {
+                const style = window.getComputedStyle(strip);
+                const matrixStr = style.transform || style.webkitTransform;
+                if (matrixStr && matrixStr !== 'none') {
+                    if (typeof DOMMatrix !== 'undefined') {
+                        currentY = new DOMMatrix(matrixStr).f;
+                    } else if (typeof WebKitCSSMatrix !== 'undefined') {
+                        currentY = new WebKitCSSMatrix(matrixStr).f;
+                    } else {
+                        const parts = matrixStr.split(',');
+                        currentY = parseFloat(parts[parts.length - 1]) || 0;
+                    }
+                }
+            } catch(e) {}
+            
+            // Ferma l'animazione e fissa il rullo sulla posizione corrente
+            strip.style.animation = 'none';
+            strip.style.transition = 'none';
+            strip.style.transform = `translateY(${currentY}px)`;
+            
+            // Forza reflow
+            strip.offsetHeight;
+            
+            // Ricalcola la destinazione in modo che il rullo continui a scorrere in avanti fino al bersaglio
+            // (La destinazione viene spostata sul ciclo successivo per preservare l'inerzia)
+            const targetY = -(240 + targetDigit * 24);
+            
+            // Applica la decelerazione morbida
+            strip.style.transition = 'transform 0.9s cubic-bezier(0.1, 0.8, 0.3, 1)';
+            strip.style.transform = `translateY(${targetY}px)`;
+        }
+
+        function triggerStaggeredDateRoll(dateStr) {
+            // Sblocca il Giorno (GG) immediatamente
+            settleStrip('strip-0', parseInt(dateStr[0], 10));
+            settleStrip('strip-1', parseInt(dateStr[1], 10));
+            
+            // Sblocca il Mese (MM) dopo 500ms
+            setTimeout(() => {
+                settleStrip('strip-3', parseInt(dateStr[3], 10));
+                settleStrip('strip-4', parseInt(dateStr[4], 10));
+            }, 500);
+            
+            // Sblocca l'Anno (AAAA) dopo 1000ms
+            setTimeout(() => {
+                settleStrip('strip-6', parseInt(dateStr[6], 10));
+                settleStrip('strip-7', parseInt(dateStr[7], 10));
+                settleStrip('strip-8', parseInt(dateStr[8], 10));
+                settleStrip('strip-9', parseInt(dateStr[9], 10));
+            }, 1000);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initDateStrips("11.07.2026");
+            continuousScramble();
+
+            const bgVideo = document.getElementById('bg-video');
+            
+            if (bgVideo) {
+                bgVideo.muted = true;
+                bgVideo.defaultMuted = true;
+                bgVideo.playsInline = true;
+
+                
+                const handleInteraction = () => {
+                    if (bgVideo.paused) {
+                        bgVideo.play().then(() => {
+                            console.log("Video sbloccato tramite interazione.");
+                            cleanup();
+                        }).catch(err => {
+                            console.error("Avvio video fallito anche con interazione:", err);
+                        });
+                    } else {
+                        cleanup();
+                    }
+                };
+
+                const cleanup = () => {
+                    document.removeEventListener('click', handleInteraction);
+                    document.removeEventListener('touchstart', handleInteraction);
+                };
+
+                document.addEventListener('click', handleInteraction);
+                document.addEventListener('touchstart', handleInteraction);
+            }
+        });
+    </script>
+</body>
+</html>

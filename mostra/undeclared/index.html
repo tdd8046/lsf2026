@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNDECLARED</title>
+    <link rel="icon" href="assets/icons/target.svg" type="image/x-icon">
+    <style>
+        :root {
+            --col-left-width: clamp(310px, 34%, 460px);
+            --hover-overlay-width: clamp(220px, 22vw, 340px);
+        }
+
+        @font-face {
+            font-family: 'AS Thermal';
+            src: url('assets/fonts/ASThermalTrialVF.ttf') format('truetype');
+            font-weight: 100 1000;
+            font-style: normal;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100vw; height: 100vh;
+            background-color: #000; color: #fff;
+            font-family: 'AS Thermal', monospace;
+            font-variation-settings: "slnt" 0, "ital" 0;
+            overflow: hidden; box-sizing: border-box;
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M1,8 L1,1 L8,1 M16,1 L23,1 L23,8 M23,16 L23,23 L16,23 M8,23 L1,23 L1,16' fill='none' stroke='%23ffffff' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='1.5' fill='%23ffffff'/%3E%3C/svg%3E") 12 12, crosshair; user-select: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        * {
+            box-sizing: inherit;
+            font-family: 'AS Thermal', monospace;
+            font-style: normal;
+            font-synthesis: none;
+            -webkit-font-synthesis: none;
+            font-variation-settings: "slnt" 0, "ital" 0;
+        }
+
+
+        .info-badge, .info-title-box, .data-value, .spec-val, #hov-id, #info-id, #hov-field, #hov-team, .left-claim, .glowing-text-strong {
+            text-shadow: 
+                0 0 8px rgba(255, 255, 255, 1), 
+                0 0 20px rgba(255, 255, 255, 0.9), 
+                0 0 40px rgba(255, 255, 255, 0.75),
+                0 0 65px rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .nav-link-content:hover,
+        .nav-link-content:hover .indicator,
+        .lang-btn:hover,
+        .maps-link:hover,
+        .meta-row:hover .maps-link,
+        .meta-row:hover .date-time-label {
+            opacity: 1 !important;
+            text-shadow: 
+                0 0 8px rgba(255, 255, 255, 1), 
+                0 0 22px rgba(255, 255, 255, 1), 
+                0 0 45px rgba(255, 255, 255, 0.95),
+                0 0 70px rgba(255, 255, 255, 0.85),
+                0 0 100px rgba(255, 255, 255, 0.65),
+                0 0 140px rgba(255, 255, 255, 0.4) !important;
+        }
+
+        /* Contenitore full-viewport */
+        .fisheye-bezel {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: #020202;
+            overflow: hidden;
+            box-shadow: inset 0 0 90px rgba(0,0,0,0.85);
+        }
+
+        /* Scanlines e riflesso curvato applicati a .layout (z-index 998 e 999) */
+        .layout::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.10) 50%);
+            background-size: 100% 4px;
+            pointer-events: none; z-index: 999;
+        }
+        .layout::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, transparent 62%, rgba(0,0,0,0.38) 100%);
+            box-shadow: inset 0 0 80px rgba(0,0,0,0.45);
+            pointer-events: none; z-index: 998;
+        }
+
+        /* =========================================
+           LAYOUT A 3 COLONNE
+           ========================================= */
+        .layout { display: flex; width: 100%; height: 100%; position: relative; z-index: 10; }
+
+        .col-left { 
+            flex: 0 0 auto;
+            width: var(--col-left-width);
+            padding: 24px 32px;
+            border-right: 1px solid #222; 
+            display: flex; flex-direction: column; z-index: 10;
+            overflow: hidden;
+        }
+        
+        /* Nuovi Stili per la Colonna SX */
+        .col-left-body {
+            padding-left: 6px;
+            padding-right: 6px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        /* LED scrolling ticker wrapper (moved line and glow here) */
+        .ticker-wrap {
+            box-sizing: border-box;
+            width: calc(100% - 12px);
+            margin: 0 6px 28px 6px;
+            overflow: hidden;
+            white-space: nowrap;
+            border-bottom: 1.5px solid rgba(255, 255, 255, 0.7); /* Line moved from university header */
+            box-shadow: 0 4px 12px -6px rgba(255, 255, 255, 0.15);
+            padding: 14px 0;
+            display: flex;
+            align-items: center;
+        }
+        .left-claim {
+            display: inline-block;
+            font-size: 0.95rem;
+            font-weight: 1000;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #fff;
+            padding-left: 100%;
+            will-change: transform;
+            animation: marquee-scroll 18s linear infinite;
+        }
+        @keyframes marquee-scroll {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+        .col-left-footer {
+            margin-top: 0; /* Flows naturally right below nav-links */
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 12px;
+        }
+        .footer-meta-block {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+        .meta-row {
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem; /* Increased size by ~0.1rem */
+            line-height: 1.45;
+        }
+        .meta-label {
+            font-weight: 1000;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 0.08em;
+            width: 78px;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+        .maps-link {
+            color: #fff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 1000;
+            letter-spacing: 0.05em;
+            opacity: 0.8;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 15px rgba(255, 255, 255, 0.45);
+            transition: opacity 0.25s ease, text-shadow 0.25s ease, color 0.2s ease;
+        }
+        .date-time-label {
+            color: #fff;
+            font-weight: 1000;
+            letter-spacing: 0.06em;
+            opacity: 0.8;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 15px rgba(255, 255, 255, 0.45);
+            transition: opacity 0.25s ease, text-shadow 0.25s ease;
+        }
+        .lang-switch-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lang-btn {
+            cursor: pointer;
+            transition: color 0.2s ease, text-shadow 0.2s ease;
+            font-weight: 1000;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 0.05em;
+        }
+        .lang-btn.active {
+            color: #fff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8) !important;
+        }
+        .lang-btn:hover {
+            color: #fff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6) !important;
+        }
+        .left-uni-header {
+            font-size: 0.82rem; /* Increased size by ~0.08rem */
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            line-height: 1.5;
+            font-weight: 1000;
+        }
+        /* Define a strong, visible glow for all texts in the left column footer */
+        .left-uni-header, .meta-label {
+            text-shadow: 
+                0 0 8px rgba(255, 255, 255, 0.95), 
+                0 0 20px rgba(255, 255, 255, 0.7),
+                0 0 35px rgba(255, 255, 255, 0.45) !important;
+        }
+        
+        .logo-png { width: 110%; max-width: 1400px; height: auto; margin-bottom: 20px; }
+
+        /* col-right: nascosta (larghezza 0) di default, si espande su .visible */
+        .col-right { 
+            flex: 0 0 0px;
+            width: 0;
+            padding: 0;
+            border-left: 1px solid #222;
+            overflow: hidden;
+            z-index: 1000; /* elevato sopra i filtri CRT globali */
+            color: #fff;
+            position: relative;
+            transition: flex-basis 520ms cubic-bezier(.2,.9,.2,1), padding 480ms cubic-bezier(.2,.9,.2,1);
+        }
+        .col-right.visible {
+            flex: 0 0 clamp(260px, 28vw, 440px);
+            width: clamp(260px, 28vw, 440px);
+            padding: clamp(16px, 2.5vw, 30px);
+            overflow-y: auto;
+        }
+
+        /* col-center: prende tutto lo spazio disponibile. Posizionato relative e abilitato come container per il radar wrapper. */
+        .col-center { 
+            flex: 1 1 0; min-width: 0;
+            display: flex; align-items: center; justify-content: center; z-index: 5;
+            transition: flex 480ms cubic-bezier(.2,.9,.2,1);
+            position: relative;
+            container-type: size;
+        }
+
+        /* detail-open: center collassa, right prende tutto il resto */
+        .layout.detail-open .col-center { flex: 0 0 0; overflow: hidden; }
+        .layout.detail-open .col-right { flex: 1 1 0 !important; width: auto !important; max-width: none; }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 clamp(32px, 6vh, 60px) 0; /* Spazio controllato per isole UI */
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .nav-links li {
+            font-size: 1.05rem;
+            font-weight: 1000;
+            letter-spacing: 0.06em;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .nav-link-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            opacity: 0.55;
+            text-shadow: none !important;
+            transition: opacity 0.25s ease, color 0.25s ease, text-shadow 0.25s ease;
+        }
+        .nav-links li.active .nav-link-content {
+            opacity: 0.85;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 15px rgba(255, 255, 255, 0.45) !important;
+        }
+        .nav-link-content:hover {
+            opacity: 1;
+        }
+        .nav-links li .indicator {
+            font-family: monospace;
+            color: rgba(255, 255, 255, 0.4);
+            opacity: 0.55;
+            text-shadow: none !important;
+            transition: color 0.25s ease, opacity 0.25s ease, text-shadow 0.25s ease;
+        }
+        .nav-links li.active .indicator {
+            opacity: 0.55;
+            color: rgba(255, 255, 255, 0.4);
+            text-shadow: none !important;
+        }
+        .nav-link-content:hover .indicator {
+            opacity: 1;
+            color: #fff;
+        }
+        .meta-icon {
+            display: inline-block;
+            vertical-align: middle;
+            stroke: currentColor;
+            opacity: 0.85;
+            flex-shrink: 0;
+            transition: opacity 0.25s ease, filter 0.25s ease;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+        }
+        .lang-switch-container:hover .meta-icon,
+        .lang-btn:hover .meta-icon,
+        .maps-link:hover .meta-icon,
+        .meta-row:hover .meta-icon {
+            opacity: 1;
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.7)) !important;
+        }
+
+        /* =========================================
+           RADAR CENTRALE
+           ========================================= */
+        .radar-wrapper {
+            --radar-size: min(82vh, calc(0.82 * (100vw - var(--col-left-width) - var(--hover-overlay-width))));
+            position: absolute;
+            left: calc((100vw - var(--col-left-width) - var(--hover-overlay-width)) / 2 - var(--radar-size) / 2);
+            top: calc(50% - var(--radar-size) / 2);
+            width: var(--radar-size);
+            height: auto;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            transition: all 600ms cubic-bezier(.2,.9,.2,1);
+            overflow: hidden;
+        }
+        .radar-wrapper.mini {
+            box-shadow: 0 8px 40px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.15);
+        }
+        .radar-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 1px solid #333; border-radius: inherit; overflow: hidden; background: #010101;
+            transition: width 600ms cubic-bezier(.2,.9,.2,1);
+        }
+        .radar-grid {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%;
+            border: 1px dashed rgba(255,255,255,0.08); pointer-events: none; z-index: 5;
+            transform-origin: center;
+            animation: radarRotateCW 160s linear infinite;
+        }
+        .radar-grid::before { content: ''; position: absolute; top: 15%; left: 15%; width: 70%; height: 70%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.05); }
+        .radar-grid::after { content: ''; position: absolute; top: 32.5%; left: 32.5%; width: 35%; height: 35%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); }
+        .radar-hud {
+            position: absolute; inset: 0; pointer-events: none; z-index: 12;
+        }
+
+        /* --- HIGH-TECH RADAR ANIMATIONS --- */
+        .radar-spin-slow-cw {
+            transform-origin: 250px 250px;
+            animation: radarRotateCW 80s linear infinite;
+        }
+        .radar-spin-medium-cw {
+            transform-origin: 250px 250px;
+            animation: radarRotateCW 40s linear infinite;
+        }
+        .radar-spin-fast-cw {
+            transform-origin: 250px 250px;
+            animation: radarRotateCW 18s linear infinite;
+        }
+        .radar-spin-slow-ccw {
+            transform-origin: 250px 250px;
+            animation: radarRotateCCW 70s linear infinite;
+        }
+        .radar-spin-medium-ccw {
+            transform-origin: 250px 250px;
+            animation: radarRotateCCW 30s linear infinite;
+        }
+        .radar-spin-fast-ccw {
+            transform-origin: 250px 250px;
+            animation: radarRotateCCW 15s linear infinite;
+        }
+        .radar-pulse-brackets {
+            transform-origin: 250px 250px;
+            animation: radarBracketsPulse 3s ease-in-out infinite alternate;
+        }
+        
+        .radar-ping {
+            stroke: rgba(255, 255, 255, 0.22);
+            transform-origin: 250px 250px;
+            pointer-events: none;
+        }
+        .ping-1 {
+            animation: radarPing 6s cubic-bezier(0.1, 0.8, 0.2, 1) infinite;
+        }
+        .ping-2 {
+            animation: radarPing 6s cubic-bezier(0.1, 0.8, 0.2, 1) infinite;
+            animation-delay: 3s;
+        }
+
+        @keyframes radarRotateCW {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes radarRotateCCW {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        @keyframes radarBracketsPulse {
+            0% {
+                transform: scale(0.97);
+                opacity: 0.4;
+            }
+            100% {
+                transform: scale(1.03);
+                opacity: 0.85;
+            }
+        }
+        @keyframes radarPing {
+            0% {
+                transform: scale(0);
+                opacity: 0.8;
+                stroke-width: 3px;
+            }
+            50% {
+                opacity: 0.45;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+                stroke-width: 0.5px;
+            }
+        }
+
+        #display-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; filter: blur(1.5px); }
+        .radar-center-dot { position: absolute; top: 50%; left: 50%; width: 5px; height: 5px; background: #fff; transform: translate(-50%, -50%); border-radius: 50%; z-index: 20; }
+        .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 100%); transform-origin: left center; pointer-events: none; z-index: 15; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+        .target-node { position: absolute; width: 60px; height: 60px; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.2s ease, filter 0.2s ease; display: flex; align-items: center; justify-content: center; border-radius: 50%; z-index: 25; pointer-events: auto; contain: layout style; }
+        .target-node img {
+            width: 86%;
+            height: 86%;
+            max-width: 86%;
+            max-height: 86%;
+            object-fit: contain;
+            display: block;
+            margin: auto;
+        }
+        .target-node.hovered { 
+            opacity: 1; 
+            filter: 
+                drop-shadow(0 0 8px rgba(255, 255, 255, 1)) 
+                drop-shadow(0 0 20px rgba(255, 255, 255, 0.95)) 
+                drop-shadow(0 0 40px rgba(255, 255, 255, 0.8));
+            z-index: 26;
+        }
+        /* Stile per il nodo bloccato in Detail View (Mirino e Glow) */
+        .target-node.selected {
+            opacity: 1;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.6));
+            z-index: 26;
+        }
+        .target-node.selected img {
+            display: block; /* Riaccendiamo il logo all'interno del mirino */
+            transform: scale(0.65); /* Lo rimpicciolisce proporzionalmente mantenendo il centro */
+        }
+        .target-node.selected::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px; height: 44px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M1,14 L1,1 L14,1 M30,1 L43,1 L43,14 M43,30 L43,43 L30,43 M14,43 L1,43 L1,30' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3C/svg%3E");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            filter: drop-shadow(0 0 6px rgba(255,255,255,1));
+        }
+        .target-node.selected::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px; height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 3px rgba(255,255,255,0.9);
+        }
+        .target-node.hovered { 
+            opacity: 1; 
+            filter: 
+                drop-shadow(0 0 8px rgba(255, 255, 255, 1)) 
+                drop-shadow(0 0 20px rgba(255, 255, 255, 0.95)) 
+                drop-shadow(0 0 40px rgba(255, 255, 255, 0.85)) 
+                drop-shadow(0 0 60px rgba(255, 255, 255, 0.6)) !important;
+        }
+
+        /* =========================================
+           COLONNA DESTRA - BRUTALIST & SCRAMBLE
+           ========================================= */
+         .info-panel { 
+             opacity: 0; transform: translateY(10px); transition: all 0.2s ease; 
+             display: flex; flex-direction: column; pointer-events: none;
+             color: #fff; background: #383838;
+             padding: 36px 32px;
+             position: relative;
+             margin: 16px 14px;
+             border: none;
+             min-height: calc(100% - 32px);
+         }
+         /* About panel full‑width style */
+         .info-panel.about-panel {
+             width: calc(100% - 28px) !important;
+             margin: 0 !important;
+             overflow: hidden !important;
+         }
+         .info-panel-body {
+             display: flex;
+             flex-direction: column;
+             gap: 16px;
+             width: 92%;
+             margin: auto;
+             flex-grow: 1;
+         }
+         .info-panel.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+         .brutalist-bg { background-color: transparent; }
+ 
+         .info-badge { border: 1px solid rgba(255,255,255,0.15); padding: 8px 12px; display: inline-flex; align-items: center; gap: 10px; font-weight: bold; font-size: 1.85rem; align-self: flex-start; background: #1e1e1e; }
+         .info-badge svg { width: 24px; height: 24px; stroke: #fff; fill: none; }
+         .dotted-id { border-bottom: 2px dotted #fff; padding-bottom: 2px; line-height: 1; }
+ 
+         .info-title-box { border: none; padding: 20px 20px 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; min-height: auto; background: transparent; gap: 10px; }
+         .info-title-svg-container { width: 100%; max-height: 50px; display: flex; justify-content: flex-start; align-items: center; }
+         .info-title-svg-container img { max-width: 70%; max-height: 28px; width: auto; height: auto; object-fit: contain; filter: brightness(0) invert(1); }
+ 
+         .info-content-box { border: none; padding: 20px 0; font-size: 1.35rem; line-height: 1.4; flex-grow: 1; overflow-y: auto; position: relative; background: transparent; }
+         
+         .info-desc-text { margin: 0; color: #fff; display: inline; font-size: 1.25rem; }
+         
+         .info-content-box::-webkit-scrollbar { width: 8px; }
+         .info-content-box::-webkit-scrollbar-track { background: transparent; border-left: none; }
+         .info-content-box::-webkit-scrollbar-thumb { background: #555; }
+
+        /* Stati di visualizzazione interna (Hover vs Click) */
+        #overview-state, #detail-state, #about-state { display: none; flex-direction: column; gap: 15px; }
+        #overview-state.active, #detail-state.active, #about-state.active { display: flex; }
+
+        .data-label { font-size: 0.95rem; opacity: 0.6; margin-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+        .data-value { font-weight: bold; text-transform: uppercase; color: #fff; font-size: 1.25rem; }
+
+        .click-prompt {
+            margin-top: auto; font-size: 0.8rem; font-weight: bold; 
+            text-align: center; border: 1px dashed rgba(255,255,255,0.3); padding: 10px;
+            animation: blink 1.5s infinite; cursor: pointer; color: rgba(255,255,255,0.7);
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Detail media & placeholders */
+        .detail-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: 100%;
+        }
+        .media-slot {
+            position: relative;
+            width: 100%;
+            height: clamp(140px, 20vh, 220px);
+            background: #2b2b2b;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .media-slot::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+         .media-slot img {
+             max-width: 60%;
+             max-height: 60%;
+             object-fit: contain;
+             transition: transform 0.3s ease;
+         }
+        .media-slot:hover img {
+            transform: scale(1.06);
+        }
+        .detail-focus {
+            font-size: 1.05rem;
+            line-height: 1.45;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 20px;
+            padding: 4px 0 16px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .detail-text-block {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 22px;
+            letter-spacing: 0.05em;
+            font-weight: 1000;
+        }
+        .detail-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 16px;
+        }
+
+        /* ENTRY OVERLAY */
+        .entry-overlay {
+            position: absolute; inset: 0; display:flex; align-items:center; justify-content:center;
+            background: #000;
+            z-index: 9999; pointer-events: none; transition: opacity 700ms ease;
+        }
+        .entry-logo-svg-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(6px, 1.2vw, 14px);
+            width: 90%;
+            max-width: 750px;
+            height: auto;
+            user-select: none;
+            opacity: 0;
+            transition: opacity 300ms ease;
+        }
+        .letter-cell {
+            width: clamp(18px, 4vw, 48px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: aspect-ratio 35ms ease;
+        }
+        .letter-cell svg {
+            width: 100%;
+            height: 100%;
+            fill: #fff;
+        }
+
+        /* CLOSE BUTTON */
+         .close-detail {
+             position: absolute; top: 16px; right: 16px;
+             background: transparent; border: 1px solid rgba(255,255,255,0.4);
+             color: #fff; font-family: inherit; font-size: 0.95rem; cursor: pointer;
+             width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+             border-radius: 0; z-index: 100; line-height: 1; padding: 0;
+             transition: border-color 0.2s ease, background 0.2s ease;
+         }
+         .close-detail:hover { border-color: #fff; background: rgba(255,255,255,0.12); }
+
+        /* HUD reveal */
+        .radar-hud { opacity: 0; transform: translateY(8px) scale(0.98); transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1); }
+        .radar-hud.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* MINI HUD: handled via JS transforms for smooth animation */
+        .radar-wrapper { transition: all 600ms cubic-bezier(.2,.9,.2,1); }
+        /* Custom scrollbar su col-right */
+        .col-right::-webkit-scrollbar { width: 4px; }
+        .col-right::-webkit-scrollbar-track { background: transparent; }
+        .col-right::-webkit-scrollbar-thumb { background: #444; }
+
+
+
+        /* MOBILE OVERHAUL BASE STYLES */
+        html.mobile-scroll-active,
+        body.mobile-scroll-active { overflow-y: auto !important; overflow-x: hidden !important; height: 300vh !important; display: block !important; }
+        body.mobile-scroll-active .fisheye-bezel,
+        body.mobile-scroll-active .layout { position: fixed; inset: 0; }
+        .hamburger-btn { display: none; background: transparent; border: none; color: #fff; cursor: pointer; padding: 8px; z-index: 1000; }
+        .mobile-hover-card { display: none; }
+
+        /* =========================================
+           RESPONSIVE — MOBILE
+           ========================================= */
+        @media (max-width: 768px) {
+            .target-node {
+                width: 35px !important;
+                height: 35px !important;
+            }
+            .target-node.hovered {
+                opacity: 1 !important;
+                filter: 
+                    drop-shadow(0 0 10px #fff) 
+                    drop-shadow(0 0 20px #fff) 
+                    drop-shadow(0 0 35px rgba(255, 255, 255, 0.85)) !important;
+            }
+            .target-node.selected {
+                opacity: 1 !important;
+                filter: 
+                    drop-shadow(0 0 12px #fff) 
+                    drop-shadow(0 0 24px #fff) 
+                    drop-shadow(0 0 40px rgba(255, 255, 255, 0.85)) !important;
+            }
+            .target-node.selected::before {
+                width: 37px !important;
+                height: 37px !important;
+            }
+            .layout { flex-direction: column !important; }
+
+            .col-left-header-bar {
+                height: 56px !important;
+                width: 100% !important;
+                position: relative !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 0 16px !important;
+                box-sizing: border-box !important;
+            }
+
+            .hamburger-btn {
+                display: block !important;
+                position: absolute !important;
+                right: 16px !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                z-index: 1000 !important;
+                background: transparent;
+                border: none;
+                color: #fff;
+                cursor: pointer;
+                padding: 8px;
+            }
+            
+            .col-left-body {
+                display: none;
+                position: fixed; top: 100px; left: 0; width: 100%; height: calc(100vh - 100px);
+                background: rgba(8, 8, 8, 0.98);
+                backdrop-filter: blur(10px);
+                z-index: 900;
+                padding: 24px;
+                flex-direction: column;
+                overflow-y: auto;
+            }
+            .col-left-body.menu-open { display: flex !important; }
+            
+             .mobile-hover-card {
+                 display: flex; flex-direction: column; justify-content: center;
+                 position: fixed; bottom: -120px; left: 16px; right: 16px;
+                 background: #383838 !important;
+                 border: none !important;
+                 border-radius: 0 !important;
+                 padding: 16px;
+                 z-index: 800;
+                 transition: bottom 0.4s cubic-bezier(.2,.9,.2,1);
+                 box-shadow: none !important;
+                 cursor: pointer;
+             }
+             .mobile-hover-card.visible { bottom: 20px; }
+            .mobile-hover-indicator { font-size: 0.65rem; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; margin-top: 8px; text-align: right; }
+
+            .col-left {
+                position: relative !important;
+                flex: 0 0 auto !important;
+                width: 100% !important;
+                height: auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                justify-content: flex-start !important;
+                padding: 0 !important;
+                border-right: none;
+                border-bottom: none !important;
+                background: #000 !important;
+                z-index: 1000 !important;
+            }
+            .col-left-spacer {
+                display: none !important;
+            }
+            .logo-reticle {
+                min-height: unset !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                border: none !important;
+                background: transparent !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            .logo-png {
+                width: 242px !important;
+                height: auto !important;
+                aspect-ratio: 605.53 / 25.78 !important;
+                margin-bottom: 0 !important;
+                display: block !important;
+                opacity: 1 !important;
+            }
+            .ticker-wrap {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 10px 0 !important;
+                border-bottom: 1.5px solid rgba(255, 255, 255, 0.7) !important;
+                border-top: 1px solid #111 !important;
+                box-sizing: border-box !important;
+            }
+            .nav-links {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 24px !important;
+                margin-top: 20px !important;
+                margin-bottom: 30px !important;
+                font-size: 1.15rem !important;
+                padding: 0 !important;
+                list-style: none !important;
+            }
+            .nav-links li { 
+                margin-bottom: 0 !important; 
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 8px !important;
+            }
+            .col-left-footer {
+                margin-top: auto !important;
+                padding-bottom: 24px !important;
+            }
+
+            .col-center {
+                flex: 1 1 0 !important;
+                width: 100% !important;
+                min-height: 0;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            .radar-wrapper {
+                --radar-size: min(94vw, 50svh) !important; /* Ingrandito per occupare maggior spazio disponibile su mobile */
+                width: var(--radar-size) !important;
+                height: var(--radar-size) !important;
+                position: fixed !important;
+                left: 50% !important;
+                top: 52svh !important; /* Centrato tenendo conto dell'header bar */
+                transform: translate3d(-50%, -50%, 0) !important; /* forza il compositing hardware accelerato per evitare wobbling su iOS */
+                will-change: transform;
+                margin: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                z-index: 10 !important;
+            }
+
+
+            /* Right panel: bottom sheet su mobile */
+             .col-right {
+                 position: fixed !important;
+                 bottom: 0 !important; left: 0 !important; right: 0 !important;
+                 width: 100% !important;
+                 flex: none !important;
+                 max-height: 0;
+                 height: auto;
+                 border-left: none !important;
+                 border-top: none !important;
+                 padding: 0 !important;
+                 transform: none !important;
+                 transition: max-height 520ms cubic-bezier(.2,.9,.2,1), padding 420ms ease !important;
+                 background: #000000 !important;
+                 overflow: hidden !important;
+                 z-index: 1100 !important;
+             }
+             .col-right.visible {
+                 max-height: 50vh;
+                 width: 100% !important;
+                 flex: none !important;
+                 padding: 12px !important;
+                 overflow-y: auto !important;
+             }
+             /* su mobile non collassare il radar in detail-open */
+             .layout.detail-open .col-center {
+                 flex: 1 1 0 !important;
+                 overflow: visible !important;
+             }
+             .layout.detail-open .col-right {
+                 max-height: 88vh;
+                 flex: none !important;
+                 width: 100% !important;
+                 border-radius: 0 !important; /* Completamente piatto */
+                 box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+             }
+             .info-panel {
+                 background: #383838 !important;
+                 margin: 8px !important;
+                 min-height: auto !important;
+                 padding: 24px 16px !important;
+             }
+             .close-detail { top: 12px; right: 12px; }
+             .info-content-box { font-size: 1rem; }
+            .info-badge { font-size: 1.1rem; }
+            .logo-reticle {
+                min-height: unset !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                background: transparent !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+            }
+            .logo-reticle::before, .logo-reticle::after {
+                display: none !important;
+            }
+        }
+
+        /* =========================================
+           HOVER OVERLAY — flottante, stile targeting reticle (ref. Image 1)
+           ========================================= */
+         .hover-overlay {
+             position: absolute;
+             top: 50%;
+             right: 16px;
+             transform: translateY(-50%) translateX(calc(100% + 20px));
+             width: var(--hover-overlay-width);
+             background: #383838;
+             color: #fff;
+             display: flex;
+             flex-direction: column;
+             z-index: 1000;
+             opacity: 0;
+             pointer-events: none;
+             transition: transform 320ms cubic-bezier(.2,.9,.2,1), opacity 250ms ease;
+             border: none;
+         }
+        .hover-overlay-body {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            margin: auto;
+        }
+        .hover-overlay.visible {
+            transform: translateY(-50%) translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Wrapper per Logo + Hamburger su desktop */
+        .col-left-header-bar {
+            display: contents;
+        }
+
+        /* Logo area in col-left — stile targeting originale (ref. Image 2) */
+        .logo-reticle {
+            position: relative;
+            background: #000;
+            padding: 16px 14px;
+            margin: 0 0 12px 0; /* Avvicinato al claim */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 56px;
+        }
+        .logo-reticle::before {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            pointer-events: none;
+            z-index: 1;
+            background:
+                linear-gradient(white, white) top left / 12px 1.5px no-repeat,
+                linear-gradient(white, white) top left / 1.5px 12px no-repeat,
+                linear-gradient(white, white) top right / 12px 1.5px no-repeat,
+                linear-gradient(white, white) top right / 1.5px 12px no-repeat,
+                linear-gradient(white, white) bottom left / 12px 1.5px no-repeat,
+                linear-gradient(white, white) bottom left / 1.5px 12px no-repeat,
+                linear-gradient(white, white) bottom right / 12px 1.5px no-repeat,
+                linear-gradient(white, white) bottom right / 1.5px 12px no-repeat;
+            opacity: 0.5;
+        }
+        .logo-reticle::after {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            pointer-events: none;
+            z-index: 1;
+            background:
+                linear-gradient(white, white) top center / 1.5px 7px no-repeat,
+                linear-gradient(white, white) bottom center / 1.5px 7px no-repeat,
+                linear-gradient(white, white) center left / 7px 1.5px no-repeat,
+                linear-gradient(white, white) center right / 7px 1.5px no-repeat;
+            opacity: 0.22;
+        }
+        .logo-reticle .logo-png {
+            width: 105%; max-width: 300px; height: auto; margin-bottom: 0;
+        }
+
+        /* STILE TARGETING COMUNE PER HOVER E DETAIL: brackets esterni e ticks top/bottom */
+         .hover-overlay::before, .info-panel::before, .mobile-hover-card::before {
+             content: '';
+             position: absolute;
+             top: -7px; left: -7px; right: -7px; bottom: -7px;
+             pointer-events: none;
+             z-index: 10;
+             background:
+                 linear-gradient(white, white) top left / 15px 2px no-repeat,
+                 linear-gradient(white, white) top left / 2px 15px no-repeat,
+                 linear-gradient(white, white) top right / 15px 2px no-repeat,
+                 linear-gradient(white, white) top right / 2px 15px no-repeat,
+                 linear-gradient(white, white) bottom left / 15px 2px no-repeat,
+                 linear-gradient(white, white) bottom left / 2px 15px no-repeat,
+                 linear-gradient(white, white) bottom right / 15px 2px no-repeat,
+                 linear-gradient(white, white) bottom right / 2px 15px no-repeat;
+             opacity: 0.95;
+         }
+         .hover-overlay::after, .info-panel::after, .mobile-hover-card::after {
+             content: '';
+             position: absolute;
+             top: -7px; left: -7px; right: -7px; bottom: -7px;
+             pointer-events: none;
+             z-index: 10;
+             background:
+                 /* Top Center T-mark */
+                 linear-gradient(white, white) top center / 15px 2px no-repeat,
+                 linear-gradient(white, white) top center / 2px 8px no-repeat,
+                 /* Bottom Center inverted T-mark */
+                 linear-gradient(white, white) bottom center / 15px 2px no-repeat,
+                 linear-gradient(white, white) bottom center / 2px 8px no-repeat;
+             opacity: 0.95;
+         }
+
+        /* Titolo SVG hover overlay (desktop e mobile) */
+        #hov-title-wrapper img, #mob-hov-title-wrapper img {
+            max-width: 80%; max-height: 28px; object-fit: contain;
+            filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255,255,255,0.8));
+        }
+        #mob-hov-title-wrapper span {
+            font-size: 1rem; font-weight: bold; letter-spacing: 0.1em; color: #fff;
+        }
+        /* Titolo SVG pannello dettaglio */
+        .info-title-svg-container img {
+            max-width: 60% !important;
+            max-height: 30px !important;
+            height: 30px !important;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+        /* Su mobile il tap va diretto sul nodo, overlay non serve */
+        @media (max-width: 768px) {
+            .hover-overlay { display: none !important; }
+        }
+
+        /* Dynamic DOM Cursor styling */
+        .custom-cursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: 24px; height: 24px;
+            margin-left: -12px; margin-top: -12px;
+            pointer-events: none;
+            z-index: 10000;
+            display: none;
+            opacity: 0; /* Default hidden to prevent flash on load */
+            transform: translate3d(-100px, -100px, 0);
+            will-change: transform;
+            transition: opacity 0.25s ease;
+        }
+        @media (min-width: 769px) {
+            body, html, a, button, [onclick], .target-node, .lang-btn, .nav-links li, .nav-link-content, #close-detail, .hamburger-btn {
+                cursor: none !important;
+            }
+            .custom-cursor {
+                display: block;
+            }
+        }
+        .custom-cursor .cursor-crosshair {
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M1,8 L1,1 L8,1 M16,1 L23,1 L23,8 M23,16 L23,23 L16,23 M8,23 L1,23 L1,16' fill='none' stroke='%23ffffff' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-size: 100% 100%;
+            transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: rotate(0deg);
+        }
+        .custom-cursor .cursor-dot {
+            position: absolute;
+            top: 11px; left: 11px;
+            width: 2px; height: 2px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .custom-cursor .cursor-ring {
+            position: absolute;
+            top: 4px; left: 4px;
+            width: 16px; height: 16px;
+            border: 1px dashed rgba(255,255,255,0.7);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .custom-cursor.cursor-hover .cursor-crosshair {
+            transform: rotate(405deg); /* Spin 360 + stop at 45 degrees */
+        }
+        .custom-cursor.cursor-hover .cursor-ring {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="fisheye-bezel">
+    <div class="entry-overlay" aria-hidden="true">
+        <div id="entry-logo-svg-wrap" class="entry-logo-svg-wrap">
+            <div class="letter-cell"><svg><use></use></svg></div>
+            <div class="letter-cell"><svg><use></use></svg></div>
+            <div class="letter-cell"><svg><use></use></svg></div>
+            <div class="letter-cell"><svg><use></use></svg></div>
+            <div class="letter-cell"><svg><use></use></svg></div>
+            <div class="letter-cell"><svg><use></use></svg></div>
+            <div class="letter-cell"><svg><use></use></svg></div>
+            <div class="letter-cell"><svg><use></use></svg></div>
+            <div class="letter-cell"><svg><use></use></svg></div>
+            <div class="letter-cell"><svg><use></use></svg></div>
+        </div>
+    </div>
+    <div class="layout">
+        <aside class="col-left">
+            <!-- Wrapper bar for centering logo and placing hamburger button -->
+            <div class="col-left-header-bar">
+                <!-- 1. LOGO -->
+                <div class="logo-reticle">
+                    <img src="archive/Risorsa_1_root.svg" alt="Logo" class="logo-png" onerror="this.src='https://via.placeholder.com/200x50/111/fff?text=LOGO'">
+                </div>
+
+                <button class="hamburger-btn" aria-label="Toggle Menu" onclick="toggleMobileMenu()">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 2. LED TICKER CLAIM (Outside col-left-body so it's always visible on mobile/desktop homepage) -->
+            <div class="ticker-wrap">
+                <div class="left-claim" id="lang-claim">
+                    HIGHLIGHTING HIDDEN CONFLICTS THROUGH COMMUNICATION AND SPECULATIVE DESIGN
+                </div>
+            </div>
+
+            <!-- Wrapper per allineamento perfetto con i crocini (inset 6px) -->
+            <div class="col-left-body" id="col-left-body">
+
+                <!-- 4. NAVIGATION / IG TOGGLES (CRT interactive style con solo segni di maggiore) -->
+                <ul class="nav-links">
+                    <li id="toggle-radar">
+                        <div class="nav-link-content" onclick="event.stopPropagation(); showAboutInfoPanel()">
+                            <span class="indicator">></span> <span class="label" id="lang-nav-radar">ABOUT</span>
+                        </div>
+                        <div class="lang-switch-container">
+                            <svg class="meta-icon globe-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6; margin-right: 4px;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                <path d="M2 12h20"></path>
+                            </svg>
+                            <span class="lang-btn active" id="lang-btn-it" onclick="event.stopPropagation(); setLanguage('it')">[ IT ]</span>
+                            <span class="lang-btn" id="lang-btn-en" onclick="event.stopPropagation(); setLanguage('en')">[ EN ]</span>
+                        </div>
+                    </li>
+                    <li id="toggle-index" onclick="handleIndexToggle()">
+                        <div class="nav-link-content">
+                            <span class="indicator">></span> <span class="label" id="lang-nav-index">INDEX_VIEW</span>
+                        </div>
+                    </li>
+                    <li id="toggle-ig" onclick="window.open('https://instagram.com/antidisciplinarylab', '_blank')">
+                        <div class="nav-link-content">
+                            <span class="indicator">></span> <span class="label" id="lang-nav-ig">@ANTIDISCIPLINARYLAB</span>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- Footer meta-info block spinto in fondo al wrapper -->
+                <div class="col-left-footer">
+                    <!-- 5. LOCATION, DAY & TIME & LANGUAGE (Grouped cohesive bottom island) -->
+                    <div class="footer-meta-block">
+                        <div class="meta-row">
+                            <a href="https://maps.google.com/?q=dotdotdot+via+tertulliano+68+Milano" target="_blank" class="maps-link">
+                                <svg class="meta-icon loc-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                <span id="lang-loc-address">DOTDOTDOT // via tertulliano 68 MI</span>
+                            </a>
+                        </div>
+                        <div class="meta-row">
+                            <div class="date-time-label" style="display: flex; align-items: center;">
+                                <svg class="meta-icon calendar-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px; opacity: 0.8;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <span id="lang-loc-date">11.07.2026</span> &nbsp;//&nbsp; <span id="lang-loc-time">11AM-7PM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. LAB / UNIVERSITY NAME (Multilinea 4 righe, spinto alla fine) -->
+                    <div class="left-uni-header" id="lang-uni">
+                        Laboratorio di Sintesi Finale C1<br>
+                        Design Della Comunicazione<br>
+                        Scuola del Design<br>
+                        Politecnico di Milano
+                    </div>
+                </div>
+            </div>
+            
+            <!-- (Spazio vuoto in fondo per accogliere il radar miniatura) -->
+            <div class="col-left-spacer" style="height: 240px; flex-shrink: 0;" aria-hidden="true"></div>
+        </aside>
+
+        <main class="col-center" id="radar-zone">
+            <div class="radar-wrapper">
+                <div class="radar-container" id="radar-container">
+                    <div class="radar-grid"></div>
+                    <div class="radar-hud">
+                        <svg viewBox="0 0 500 500" width="100%" height="100%" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
+                            <!-- Grid background ticks (faint plus signs scattered at corners) -->
+                            <path d="M 94 100 H 106 M 100 94 V 106" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
+                            <path d="M 394 100 H 406 M 400 94 V 106" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
+                            <path d="M 94 400 H 106 M 100 394 V 406" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
+                            <path d="M 394 400 H 406 M 400 394 V 406" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
+                            
+                            <!-- Sidebar ticks with arrowheads: + > and < + -->
+                            <path d="M 44 150 H 56 M 50 144 V 156 M 62 146 L 67 150 L 62 154" stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none" />
+                            <path d="M 44 350 H 56 M 50 344 V 356 M 62 346 L 67 350 L 62 354" stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none" />
+                            <path d="M 444 150 H 456 M 450 144 V 156 M 438 146 L 433 150 L 438 154" stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none" />
+                            <path d="M 444 350 H 456 M 450 344 V 356 M 438 346 L 433 350 L 438 354" stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none" />
+
+                            <!-- Active Sonar Pings -->
+                            <circle class="radar-ping ping-1" cx="250" cy="250" r="240" fill="none" />
+                            <circle class="radar-ping ping-2" cx="250" cy="250" r="240" fill="none" />
+
+                            <!-- Concentric circles -->
+                            <circle cx="250" cy="250" r="10" stroke="rgba(255,255,255,0.85)" stroke-width="1" fill="none" />
+                            <circle cx="250" cy="250" r="28" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" fill="none" />
+                            <circle cx="250" cy="250" r="50" stroke="rgba(255,255,255,0.4)" stroke-width="1" fill="none" />
+                            <circle class="radar-spin-slow-cw" cx="250" cy="250" r="54" stroke="rgba(255,255,255,0.3)" stroke-dasharray="2, 3" stroke-width="1" fill="none" />
+                            <circle cx="250" cy="250" r="85" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none" />
+                            <circle class="radar-spin-medium-ccw" cx="250" cy="250" r="115" stroke="rgba(255,255,255,0.45)" stroke-width="1" stroke-dasharray="6, 6" fill="none" />
+                            <circle cx="250" cy="250" r="145" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none" />
+                            <circle class="radar-spin-slow-ccw" cx="250" cy="250" r="185" stroke="rgba(255,255,255,0.25)" stroke-width="1" stroke-dasharray="2, 6" fill="none" />
+                            <circle cx="250" cy="250" r="215" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none" />
+
+                            <!-- Outer broken arc (Right & Bottom) -->
+                            <path class="radar-spin-slow-cw" d="M 250 25 A 225 225 0 0 1 250 475" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" fill="none" stroke-dasharray="120 15 40 15 150" />
+                            <!-- Left arc segment -->
+                            <path class="radar-spin-slow-cw" d="M 94.12 160 A 180 180 0 0 0 94.12 340" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" fill="none" />
+                            <!-- Right inner arc segment -->
+                            <path class="radar-spin-medium-cw" d="M 379.9 175 A 150 150 0 0 1 379.9 325" stroke="rgba(255,255,255,0.4)" stroke-dasharray="30 10 70 10" stroke-width="1.5" fill="none" />
+
+                            <!-- Mechanical brackets [ ] framing the center -->
+                            <path class="radar-pulse-brackets" d="M 195 210 L 185 210 L 185 290 L 195 290 M 305 210 L 315 210 L 315 290 L 305 290" stroke="rgba(255,255,255,0.55)" stroke-width="1.2" fill="none" />
+
+                            <!-- Diagonal crosshair ticks -->
+                            <line x1="140" y1="140" x2="155" y2="155" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" />
+                            <line x1="360" y1="140" x2="345" y2="155" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" />
+                            <line x1="140" y1="360" x2="155" y2="345" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" />
+                            <line x1="360" y1="360" x2="345" y2="345" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" />
+
+                            <!-- Main Crosshairs (with gap in center) -->
+                            <line x1="20" y1="250" x2="232" y2="250" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
+                            <line x1="268" y1="250" x2="480" y2="250" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
+                            <line x1="250" y1="20" x2="250" y2="232" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
+                            <line x1="250" y1="268" x2="250" y2="480" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
+
+                            <!-- Crosshair ticks - Vertical Axis -->
+                            <!-- Top vertical axis ticks -->
+                            <line x1="246" y1="60" x2="254" y2="60" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="80" x2="254" y2="80" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="100" x2="254" y2="100" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="120" x2="254" y2="120" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="242" y1="140" x2="258" y2="140" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
+                            <line x1="246" y1="160" x2="254" y2="160" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="180" x2="254" y2="180" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="200" x2="254" y2="200" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="220" x2="254" y2="220" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <!-- Bottom vertical axis ticks -->
+                            <line x1="246" y1="280" x2="254" y2="280" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="300" x2="254" y2="300" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="320" x2="254" y2="320" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="340" x2="254" y2="340" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="242" y1="360" x2="258" y2="360" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
+                            <line x1="246" y1="380" x2="254" y2="380" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="400" x2="254" y2="400" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="420" x2="254" y2="420" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="246" y1="440" x2="254" y2="440" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+
+                            <!-- Crosshair ticks - Horizontal Axis -->
+                            <!-- Left horizontal axis ticks -->
+                            <line x1="60" y1="246" x2="60" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="80" y1="246" x2="80" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="100" y1="246" x2="100" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="120" y1="246" x2="120" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="140" y1="242" x2="140" y2="258" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
+                            <line x1="160" y1="246" x2="160" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="180" y1="246" x2="180" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="200" y1="246" x2="200" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="220" y1="246" x2="220" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <!-- Right horizontal axis ticks -->
+                            <line x1="280" y1="246" x2="280" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="300" y1="246" x2="300" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="320" y1="246" x2="320" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="340" y1="246" x2="340" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="360" y1="242" x2="360" y2="258" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
+                            <line x1="380" y1="246" x2="380" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="400" y1="246" x2="400" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="420" y1="246" x2="420" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+                            <line x1="440" y1="246" x2="440" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
+
+                            <!-- Small decorative elements -->
+                            <polygon points="190,250 196,246 196,254" fill="rgba(255,255,255,0.85)" />
+                            <!-- 3-dot cluster on right axis -->
+                            <circle cx="310" cy="250" r="2.2" fill="rgba(255,255,255,0.85)" />
+                            <circle cx="316" cy="247" r="1.5" fill="rgba(255,255,255,0.85)" />
+                            <circle cx="316" cy="253" r="1.5" fill="rgba(255,255,255,0.85)" />
+                        </svg>
+                    </div>
+                    <canvas id="display-canvas"></canvas>
+                    <div class="radar-center-dot"></div>
+                    <div class="radar-sweep" id="radar-sweep"></div>
+
+                    <div class="target-node" id="t1"><img src="assets/projects/logos/Risorsa_4.svg" alt="t1"/></div>
+                    <div class="target-node" id="t2"><img src="assets/projects/logos/Risorsa_2.svg" alt="t2"/></div>
+                    <div class="target-node" id="t3"><img src="assets/projects/logos/Risorsa_8.svg" alt="t3"/></div>
+                    <div class="target-node" id="t4"><img src="assets/projects/logos/Risorsa_11.svg" alt="t4"/></div>
+                    <div class="target-node" id="t5"><img src="assets/projects/logos/Risorsa_7.svg" alt="t5"/></div>
+                    <div class="target-node" id="t6"><img src="assets/projects/logos/Risorsa_6.svg" alt="t6"/></div>
+                    <div class="target-node" id="t7"><img src="assets/projects/logos/Risorsa_5.svg" alt="t7"/></div>
+                    <div class="target-node" id="t8"><img src="assets/projects/logos/Risorsa_3.svg" alt="t8"/></div>
+                    <div class="target-node" id="t9"><img src="assets/projects/logos/Risorsa_1.svg" alt="t9"/></div>
+                    <div class="target-node" id="t10"><img src="assets/projects/logos/Risorsa_10.svg" alt="t10"/></div>
+                    <div class="target-node" id="t11"><img src="assets/projects/logos/UNEC.svg" alt="t11"/></div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="col-right">
+            <div class="info-panel" id="info-panel">
+                <button id="close-detail" class="close-detail" aria-label="Close" style="display:none;">✕</button>
+                <div class="info-panel-body">
+                    <div class="info-title-box brutalist-bg">
+                        <span id="info-id" style="display: none;">--</span>
+                        <div class="info-title-svg-container" id="info-title-svg-wrapper"></div>
+                    </div>
+                    
+                    <div class="info-content-box brutalist-bg">
+                        <div id="overview-state" class="active">
+                            <div>
+                                <div class="data-label">AMBITO:</div>
+                                <div class="data-value scramble-target" id="info-field"></div>
+                            </div>
+                            <div>
+                                <div class="data-label">PARTICIPANTS:</div>
+                                <div class="data-value scramble-target" id="info-team"></div>
+                            </div>
+                        </div>
+
+                        <div id="detail-state">
+                            <!-- Focus (What if...) in medium weight -->
+                            <div class="detail-focus scramble-target" id="detail-focus"></div>
+
+                            <div class="detail-grid">
+                                <!-- Testo 1 -->
+                                <div class="detail-text-block scramble-target" id="detail-text-1"></div>
+
+                                <!-- Slot Immagine 1 -->
+                                <div class="media-slot" id="media-slot-1">
+                                    <img src="" alt="Media 1" class="detail-img">
+                                </div>
+
+                                <!-- Testo 2 -->
+                                <div class="detail-text-block scramble-target" id="detail-text-2"></div>
+
+                                <!-- Slot Immagine 2 -->
+                                <div class="media-slot" id="media-slot-2">
+                                    <img src="" alt="Media 2" class="detail-img">
+                                </div>
+
+                                <!-- Group Area -->
+                                <div class="detail-group">
+                                    <div class="data-label" id="lang-detail-group-label">GRUPPO:</div>
+                                    <div class="data-value scramble-target" id="info-group-val" style="font-weight: 1000; font-size: 1.15rem; color: #fff; margin-top: 4px; text-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 15px rgba(255, 255, 255, 0.45);"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nuovo stato statico About per preservare la struttura del DOM ed evitare crash -->
+                        <div id="about-state">
+                            <div style="font-size: 1.25rem; font-weight: bold; letter-spacing: 0.15em; color: #fff; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">ABOUT</div>
+                            <p style="color:#ccc; font-size:0.95rem; line-height:1.6; margin: 0 0 14px 0;" id="about-text-1"></p>
+                            <p style="color:#ccc; font-size:0.95rem; line-height:1.6; margin: 0;" id="about-text-2"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- HOVER OVERLAY: flottante, non influenza il flex layout — il radar non si sposta mai -->
+    <div class="hover-overlay" id="hover-overlay" aria-live="polite">
+        <div class="hover-overlay-body">
+            <div style="padding:16px 0 12px;">
+                <div style="font-size:0.85rem;letter-spacing:0.18em;color:rgba(255,255,255,0.38);margin-bottom:10px;">
+                    NODE &nbsp;<span id="hov-id">--</span>
+                </div>
+                <div id="hov-title-wrapper" style="display:flex;align-items:center;min-height:44px;"></div>
+            </div>
+            <div style="border-top:1px solid rgba(255,255,255,0.1);padding:12px 0 16px;display:flex;flex-direction:column;gap:5px;">
+                <div style="font-size:0.9rem;letter-spacing:0.1em;color:rgba(255,255,255,0.38);">
+                    FIELD &nbsp;<span class="scramble-target" id="hov-field" style="color:rgba(255,255,255,0.82);"></span>
+                </div>
+                <div style="font-size:0.9rem;letter-spacing:0.1em;color:rgba(255,255,255,0.38);">
+                    PART. &nbsp;<span class="scramble-target" id="hov-team" style="color:rgba(255,255,255,0.82);"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE HOVER CARD (Bottom Sheet) -->
+    <div class="mobile-hover-card" id="mobile-hover-card" onclick="triggerDetailView()">
+        <div style="font-size:0.75rem;letter-spacing:0.18em;color:rgba(255,255,255,0.5);margin-bottom:6px;">
+            NODE &nbsp;<span id="mob-hov-id">--</span>
+        </div>
+        <div id="mob-hov-title-wrapper" style="display:flex;align-items:center; min-height: 32px;"></div>
+        <div class="mobile-hover-indicator">TAP TO OPEN ></div>
+    </div>
+</div>
+
+<div id="custom-cursor" class="custom-cursor" aria-hidden="true">
+    <div class="cursor-crosshair"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+</div>
+
+<script>
+    // --- DIZIONARIO LOCALIZZAZIONE & SWITCH LINGUA ---
+    const locales = {
+        it: {
+            claim: "HIGHLIGHTING HIDDEN CONFLICTS THROUGH COMMUNICATION AND SPECULATIVE DESIGN",
+            uni: "Laboratorio di Sintesi Finale C1<br>Design Della Comunicazione<br>Scuola del Design<br>Politecnico di Milano",
+            about: "ABOUT",
+            index: "-------",
+            ig: "@ANTIDISCIPLINARYLAB",
+            address: "DOTDOTDOT / VIA TERTULLIANO 6, MI",
+            date: "11.07.2026",
+            time: "11:00 - 19:00",
+            fieldLabel: "AMBITO:",
+            teamLabel: "PARTECIPANTI:",
+            groupLabel: "GRUPPO:",
+            aboutText1: "Questa esposizione interattiva mostra un sistema di navigazione basato su radar con pannelli di dettaglio dinamici, supporto multilingua e un design piatto e moderno.",
+            aboutText2: "Tutte le funzionalità sono contenute in questa singola pagina; il pannello About occupa l'intera colonna di destra, sovrapponendosi al radar quando attivo."
+        },
+        en: {
+            claim: "HIGHLIGHTING HIDDEN CONFLICTS THROUGH COMMUNICATION AND SPECULATIVE DESIGN",
+            uni: "Laboratorio di Sintesi Finale C1<br>Design Della Comunicazione<br>Scuola del Design<br>Politecnico di Milano",
+            about: "ABOUT",
+            index: "-------",
+            ig: "@ANTIDISCIPLINARYLAB",
+            address: "DOTDOTDOT / VIA TERTULLIANO 6, MI",
+            date: "11.07.2026",
+            time: "11AM-7PM",
+            fieldLabel: "FIELD:",
+            teamLabel: "PARTICIPANTS:",
+            groupLabel: "GROUP:",
+            aboutText1: "This interactive showcase demonstrates a radar‑based navigation system with dynamic detail panels, multilingual support, and sleek flat design.",
+            aboutText2: "All functionality is contained within this single page; the About panel occupies the full right‑hand column, overlaying the radar when active."
+        }
+    };
+
+    let currentLang = 'it';
+    let targets = [];
+    let allowInteractions = false;
+
+    function setLanguage(lang) {
+        if (lang === currentLang) return;
+        currentLang = lang;
+
+        // Aggiorna classi bottoni
+        document.getElementById('lang-btn-it').classList.toggle('active', lang === 'it');
+        document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
+
+        const data = locales[lang];
+
+        // Helper per scramble di testi con HTML (ad es. claim e uni)
+        function scrambleHTML(element, htmlContent) {
+            if (!element) return;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+            const plainText = tempDiv.innerText;
+            runScramble(element, plainText, 15);
+            setTimeout(() => {
+                element.innerHTML = htmlContent;
+            }, plainText.length * 15 + 100);
+        }
+
+        scrambleHTML(document.getElementById('lang-claim'), data.claim);
+        scrambleHTML(document.getElementById('lang-uni'), data.uni);
+
+        // Altri testi
+        const radarLabel = document.getElementById('lang-nav-radar');
+        if (radarLabel) runScramble(radarLabel, data.about, 20);
+
+        const indexLabel = document.getElementById('lang-nav-index');
+        if (indexLabel) runScramble(indexLabel, data.index, 20);
+
+        const igLabel = document.getElementById('lang-nav-ig');
+        if (igLabel) runScramble(igLabel, data.ig, 20);
+
+        const addressEl = document.getElementById('lang-loc-address');
+        if (addressEl) runScramble(addressEl, data.address, 20);
+
+        const dateEl = document.getElementById('lang-loc-date');
+        if (dateEl) runScramble(dateEl, data.date, 20);
+
+        const timeEl = document.getElementById('lang-loc-time');
+        if (timeEl) runScramble(timeEl, data.time, 20);
+
+        // Se la detail view è aperta, aggiorna anche le scritte e i dettagli del nodo
+        if (isDetailView && currentSelectedTarget) {
+            const dataNode = projectData[currentSelectedTarget.id];
+            if (dataNode) {
+                runScramble(document.getElementById('info-field'), lang === 'it' ? (dataNode.field_it || dataNode.field_en) : (dataNode.field_en || dataNode.field_it), 15);
+                
+                const focusEl = document.getElementById('detail-focus');
+                const desc1El = document.getElementById('detail-text-1');
+                const desc2El = document.getElementById('detail-text-2');
+                if (focusEl) runScramble(focusEl, lang === 'it' ? (dataNode.whatif_it || dataNode.whatif_en) : (dataNode.whatif_en || dataNode.whatif_it), 15);
+                if (desc1El) runScramble(desc1El, lang === 'it' ? (dataNode.desc1_it || dataNode.desc1_en) : (dataNode.desc1_en || dataNode.desc1_it), 15);
+                if (desc2El) runScramble(desc2El, lang === 'it' ? (dataNode.desc2_it || dataNode.desc2_en) : (dataNode.desc2_en || dataNode.desc2_it), 15);
+                
+                const groupEl = document.getElementById('info-group-val');
+                if (groupEl) runScramble(groupEl, dataNode.team || "N/A", 15);
+            }
+        } else if (isDetailView && !currentSelectedTarget) {
+            // Aggiorna dinamicamente i testi dell'About se l'utente cambia lingua
+            const txt1 = lang === 'it' ? locales.it.aboutText1 : locales.en.aboutText1;
+            const txt2 = lang === 'it' ? locales.it.aboutText2 : locales.en.aboutText2;
+            const aboutTxt1El = document.getElementById('about-text-1');
+            const aboutTxt2El = document.getElementById('about-text-2');
+            if (aboutTxt1El) runScramble(aboutTxt1El, txt1, 15);
+            if (aboutTxt2El) runScramble(aboutTxt2El, txt2, 15);
+        }
+
+        const fieldLabelEl = document.querySelector('#overview-state .data-label');
+        if (fieldLabelEl) runScramble(fieldLabelEl, data.fieldLabel, 20);
+
+        const teamLabelEl = document.querySelector('#overview-state div:nth-child(2) .data-label');
+        if (teamLabelEl) runScramble(teamLabelEl, data.teamLabel, 20);
+
+        const groupLabelEl = document.getElementById('lang-detail-group-label');
+        if (groupLabelEl) runScramble(groupLabelEl, data.groupLabel, 20);
+    }
+
+    function handleRadarToggle() {
+        document.getElementById('toggle-radar').classList.add('active');
+        document.getElementById('toggle-index').classList.remove('active');
+        
+        if (isDetailView) {
+            const closeBtn = document.getElementById('close-detail');
+            if (closeBtn) closeBtn.click();
+        }
+    }
+
+    function handleIndexToggle() {
+        document.getElementById('toggle-index').classList.add('active');
+        document.getElementById('toggle-radar').classList.remove('active');
+
+        // Demonstration of index trigger: open first node detail
+        const targetNode = targets[0];
+        if (targetNode) {
+            currentSelectedTarget = targetNode;
+            triggerDetailView();
+        }
+    }
+
+    // --- MOTORE DI SCRAMBLE ---
+    function runScramble(element, finalString, speed = 30) {
+        if(!element) return;
+        const chars = "██▓▒░█";
+        let iterations = 0;
+        const maxIters = finalString.length;
+        clearInterval(element.scrambleInterval);
+        
+        element.scrambleInterval = setInterval(() => {
+            element.innerText = finalString.split('').map((char, index) => {
+                if(char === ' ') return ' ';
+                if(index < iterations) return char;
+                return chars[Math.floor(Math.random() * chars.length)];
+            }).join('');
+            iterations += 1; // Aumenta per rallentare, diminuisci per velocizzare
+            if(iterations >= maxIters) {
+                clearInterval(element.scrambleInterval);
+                element.innerText = finalString;
+            }
+        }, speed);
+    }
+
+    // --- SETUP RADAR ---
+    const container = document.getElementById('radar-container');
+    const displayCanvas = document.getElementById('display-canvas');
+    const displayCtx = displayCanvas.getContext('2d');
+    const sweep = document.getElementById('radar-sweep');
+    const heatCanvas = document.createElement('canvas');
+    const heatCtx = heatCanvas.getContext('2d', { willReadFrequently: true });
+    
+    let width, height, centerX, centerY, radarRadius;
+    let lastWidth = 0;
+    const RESOLUTION_SCALE = 0.5; 
+    let colorPalette = [];
+
+function generateColormap() {
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = 256; tempCanvas.height = 1;
+        const tempCtx = tempCanvas.getContext('2d');
+        const gradient = tempCtx.createLinearGradient(0, 0, 256, 0);
+
+        // --- BASAMENTO FREDDO (Molto spazio per i blu/verdi) ---
+        gradient.addColorStop(0.00, 'rgba(0, 0, 0, 0)');          
+        gradient.addColorStop(0.20, '#0a0a14'); // Nero bluastro profondo
+        gradient.addColorStop(0.40, '#1a1c3d'); // Indaco scuro
+        gradient.addColorStop(0.55, '#284d7d'); // Blu petrolio
+        gradient.addColorStop(0.70, '#369188'); // Verde acqua (Il "cuscinetto" che evita il rosso)
+        
+        // --- TRANSIZIONE VERSO IL CALDO (Molto graduale) ---
+        gradient.addColorStop(0.80, '#4da86a'); // Verde bosco/smeraldo
+        gradient.addColorStop(0.84, '#d4af37'); // Giallo oro / senape
+        gradient.addColorStop(0.88, '#d9531e'); // Arancio carico
+        gradient.addColorStop(0.92, '#ff4d4d'); // Rosso chiaro / vivo
+        gradient.addColorStop(0.96, '#e63946'); // Rosso chiaro brillante
+        gradient.addColorStop(0.99, '#7a1010'); // Rosso scuro
+        gradient.addColorStop(1.00, '#2d0505'); // Fine
+        
+        tempCtx.fillStyle = gradient;
+        tempCtx.fillRect(0, 0, 256, 1);
+        
+        colorPalette = [];
+        const pixels = tempCtx.getImageData(0, 0, 256, 1).data;
+        for (let i = 0; i < 256; i++) {
+            colorPalette.push({ 
+                r: pixels[i * 4], g: pixels[i * 4 + 1], b: pixels[i * 4 + 2], a: pixels[i * 4 + 3] 
+            });
+        }
+    }
+    generateColormap();
+
+    function initDimensions() {
+        const rect = container.getBoundingClientRect();
+        const currentWidth = rect.width; const currentHeight = rect.height;
+        
+        // Riprova tra 50ms se le dimensioni non sono ancora calcolate (es. caricamento asincrono o rendering incompleto)
+        if ((currentWidth <= 0 || currentHeight <= 0) && window.innerWidth > 0) {
+            setTimeout(initDimensions, 50);
+            return;
+        }
+
+        const snapped = (lastWidth === 0 && currentWidth > 0);
+        width = currentWidth; height = currentHeight;
+        lastWidth = width;
+
+        displayCanvas.width = width; displayCanvas.height = height;
+        heatCanvas.width = Math.floor(width * RESOLUTION_SCALE); 
+        heatCanvas.height = Math.floor(height * RESOLUTION_SCALE);
+        centerX = width / 2; centerY = height / 2;
+        radarRadius = width / 2;
+
+         if (typeof targets !== 'undefined' && targets && targets.length > 0) {
+            targets.forEach(t => {
+                const minDist = window.innerWidth <= 768 ? 40 : 130;
+                let dist = minDist + t.distancePct * (radarRadius * 0.76 - minDist);
+                t.baseX = centerX + Math.cos(t.angle) * dist;
+                t.baseY = centerY + Math.sin(t.angle) * dist;
+                if (snapped || t.x === 0 || isNaN(t.x)) {
+                    t.x = t.baseX;
+                    t.y = t.baseY;
+                }
+            });
+        }
+    }
+    window.addEventListener('resize', initDimensions);
+    window.addEventListener('DOMContentLoaded', initDimensions);
+    window.addEventListener('load', initDimensions);
+    initDimensions();
+
+    // Radar centrato con CSS puro: position:absolute; left:calc(50%-44vh) relativo a fisheye-bezel.
+    // Nessun margine JS necessario — il valore CSS corrisponde esattamente a getBoundingClientRect().left,
+    // quindi il restore animation termina senza snap.
+
+
+    // ENTRY ANIMATION: show logo text with scramble animation using assets/icons/font_completo.svg character symbols, then fade out
+    (function(){
+        const overlay = document.querySelector('.entry-overlay');
+        const logoSvgWrap = document.getElementById('entry-logo-svg-wrap');
+        const headerLogo = document.querySelector('.logo-png');
+        const hud = document.querySelector('.radar-hud');
+        const colRight = document.querySelector('.col-right');
+
+        if (colRight) {
+            colRight.classList.remove('visible');
+        }
+
+        // Tabella delle larghezze native dei glifi di assets/icons/font_completo.svg (altezza di riferimento 8.64)
+        const charWidths = {
+            'A': 16.82, 'B': 17.82, 'C': 15.74, 'D': 16.61, 'E': 17.61, 'F': 17.67, 'G': 16.82,
+            'H': 17.83, 'I': 5.94,  'J': 17.85, 'K': 17.83, 'L': 17.88, 'M': 22.36, 'N': 17.61,
+            'O': 15.67, 'P': 17.82, 'Q': 15.67, 'R': 16.81, 'S': 17.67, 'T': 17.83, 'U': 17.88,
+            'V': 17.83, 'W': 29.7,  'X': 17.83, 'Y': 17.87, 'Z': 17.83,
+            '0': 15.67, '1': 11.89, '2': 17.83, '3': 17.83, '4': 17.83, '5': 17.83, '6': 17.83,
+            '7': 17.83, '8': 17.83, '9': 17.83
+        };
+
+        function skipEntryAnimation() {
+            if (overlay && overlay.style.display !== 'none') {
+                overlay.style.display = 'none';
+                headerLogo.style.opacity = 1;
+                allowInteractions = true;
+                if (hud) {
+                    hud.classList.add('visible');
+                    hud.style.transform = 'translateY(0) scale(1)';
+                }
+                initDimensions();
+            }
+        }
+
+        if (!overlay || !logoSvgWrap || !headerLogo) {
+            skipEntryAnimation();
+            return;
+        }
+
+        // Fallback safety net: if something gets stuck, skip after 8 seconds
+        const safetyTimeout = setTimeout(skipEntryAnimation, 8000);
+
+        // Se siamo su mobile, possiamo saltare l'animazione complessa o renderla istantanea
+        if (window.innerWidth <= 768) {
+            clearTimeout(safetyTimeout);
+            skipEntryAnimation();
+            setTimeout(() => {
+                const maxScroll = document.body.scrollHeight - window.innerHeight;
+                if (maxScroll > 0) {
+                    window.scrollTo(0, maxScroll / 2);
+                }
+            }, 100);
+            return;
+        }
+
+        // hide header logo while animating the overlay
+        headerLogo.style.opacity = 0;
+
+        // Funzione per lo scramble SVG progressivo
+        function runIntroSvgScramble(containerEl, finalString, totalDuration = 1500, callback) {
+            containerEl.style.opacity = 1;
+            const cells = containerEl.querySelectorAll('.letter-cell');
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const len = finalString.length;
+            const startTime = performance.now();
+            
+            const interval = setInterval(() => {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / totalDuration, 1);
+                const resolvedCount = Math.floor(progress * len);
+                
+                for (let i = 0; i < len; i++) {
+                    const cell = cells[i];
+                    const svg = cell.querySelector('svg');
+                    const use = cell.querySelector('use');
+                    if (!cell || !svg || !use) continue;
+                    
+                    let char;
+                    if (i < resolvedCount) {
+                        char = finalString[i];
+                    } else {
+                        char = chars[Math.floor(Math.random() * chars.length)];
+                    }
+                    
+                    const w = charWidths[char] || 17.8;
+                    cell.style.aspectRatio = `${w} / 8.64`;
+                    svg.setAttribute('viewBox', `0 0 ${w} 8.64`);
+                    use.setAttribute('href', `assets/icons/font_completo.svg#g-${char}`);
+                }
+                
+                if (progress >= 1) {
+                    clearInterval(interval);
+                    if (callback) callback();
+                }
+            }, 35);
+        }
+
+        // Avvia lo scramble del logo "UNDECLARED" per 1.5 secondi
+        runIntroSvgScramble(logoSvgWrap, "UNDECLARED", 1500, () => {
+            // Dopo che si è composto, teniamo visualizzato per 1.2 secondi
+            setTimeout(() => {
+                // Fade out del fondale nero
+                overlay.style.transition = 'opacity 800ms ease';
+                overlay.style.opacity = '0';
+
+                // Contemporaneo fade in del logo dell'header
+                headerLogo.style.transition = 'opacity 800ms ease';
+                headerLogo.style.opacity = 1;
+
+                const cleanup = (e) => {
+                    if (e.target !== overlay) return;
+                    overlay.removeEventListener('transitionend', cleanup);
+                    clearTimeout(safetyTimeout);
+                    
+                    overlay.style.display = 'none';
+                    allowInteractions = true;
+                    
+                    if (hud) {
+                        hud.classList.add('visible');
+                        hud.style.transition = 'opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1)';
+                        hud.style.transform = 'translateY(0) scale(1)';
+                    }
+                    if (colRight) colRight.classList.remove('visible');
+                };
+
+                overlay.addEventListener('transitionend', cleanup);
+            }, 1200);
+        });
+    })();
+
+    // Funzioni per miniaturizzare e ripristinare l'HUD con animazioni smooth usando trasformazioni e mostra il logo selezionato
+    function miniaturizeRadar(radarWrapper, logoSrc){
+        if(!radarWrapper) return;
+        isRadarTransitioning = true;
+        const rect = radarWrapper.getBoundingClientRect();
+        
+        // Calcola dinamicamente la larghezza della colonna sinistra per contenere perfettamente il radar
+        const colLeft = document.querySelector('.col-left');
+        const colLeftWidth = colLeft ? colLeft.getBoundingClientRect().width : 360;
+        
+        const targetW = Math.min(colLeftWidth - 48, 280); // Ingrandito come richiesto
+        const targetH = targetW; // 1:1 aspect ratio per mantenere il cerchio
+        const targetLeft = Math.round((colLeftWidth - targetW) / 2); // centramento orizzontale in col-left
+        const targetBottom = 32;
+        const targetTop = window.innerHeight - targetBottom - targetH;
+
+        radarWrapper.dataset.origLeft = `${rect.left}px`;
+        radarWrapper.dataset.origTop = `${rect.top}px`;
+        radarWrapper.dataset.origWidth = `${rect.width}px`;
+        radarWrapper.dataset.origHeight = `${rect.height}px`;
+        radarWrapper.style.position = 'fixed';
+        radarWrapper.style.left = `${rect.left}px`;
+        radarWrapper.style.top = `${rect.top}px`;
+        radarWrapper.style.width = `${rect.width}px`;
+        radarWrapper.style.height = `${rect.height}px`;
+        radarWrapper.style.transition = 'all 600ms cubic-bezier(.2,.9,.2,1)';
+        radarWrapper.style.transformOrigin = 'center center';
+        radarWrapper.style.zIndex = 2000;
+        radarWrapper.style.willChange = 'left, top, width, height, border-radius';
+        // force layout before animating
+        void radarWrapper.offsetWidth;
+        radarWrapper.style.left = `${targetLeft}px`;
+        radarWrapper.style.top = `${targetTop}px`;
+        radarWrapper.style.width = `${targetW}px`;
+        radarWrapper.style.height = `${targetH}px`;
+        radarWrapper.classList.add('mini');
+
+        // Reset transitioning state after 600ms transition completes
+        setTimeout(() => {
+            isRadarTransitioning = false;
+            radarWrapper.style.willChange = 'auto'; // rilascia il layer di compositing
+        }, 620);
+    }
+
+    function restoreRadar(radarWrapper){
+        if(!radarWrapper) return;
+        isRadarTransitioning = true;
+        const origLeft = radarWrapper.dataset.origLeft || '';
+        const origTop = radarWrapper.dataset.origTop || '';
+        const origWidth = radarWrapper.dataset.origWidth || '';
+        const origHeight = radarWrapper.dataset.origHeight || '';
+        
+        radarWrapper.style.left = origLeft;
+        radarWrapper.style.top = origTop;
+        radarWrapper.style.width = origWidth;
+        radarWrapper.style.height = origHeight;
+        radarWrapper.style.transition = 'all 600ms cubic-bezier(.2,.9,.2,1)';
+        radarWrapper.style.zIndex = 2000;
+        radarWrapper.style.willChange = 'left, top, width, height, border-radius';
+        radarWrapper.classList.remove('mini');
+        
+        let cleaned = false;
+        let safetyTimeout;
+        const cleanup = (e) => {
+            if (cleaned) return;
+            if (e && e.propertyName && ['left','top','width','height'].every(prop => e.propertyName.indexOf(prop) === -1)) return;
+            cleaned = true;
+            radarWrapper.removeEventListener('transitionend', cleanup);
+            if (safetyTimeout) clearTimeout(safetyTimeout);
+            
+            // Disattiva temporaneamente la transizione per resettare lo stato fixed senza scatti
+            radarWrapper.style.transition = 'none';
+            radarWrapper.style.position = '';
+            radarWrapper.style.left = '';
+            radarWrapper.style.top = '';
+            radarWrapper.style.width = '';
+            radarWrapper.style.height = '';
+            radarWrapper.style.zIndex = '';
+            radarWrapper.style.willChange = '';
+            
+            radarWrapper.removeAttribute('data-orig-left');
+            radarWrapper.removeAttribute('data-orig-top');
+            radarWrapper.removeAttribute('data-orig-width');
+            radarWrapper.removeAttribute('data-orig-height');
+            
+            // Forza un reflow e ripristina la transizione di default del foglio di stile
+            void radarWrapper.offsetWidth;
+            radarWrapper.style.transition = '';
+            
+            isRadarTransitioning = false;
+        };
+        
+        radarWrapper.addEventListener('transitionend', cleanup);
+        safetyTimeout = setTimeout(cleanup, 700);
+    }
+
+    // DATI PROGETTI: 11 slot ordinati in base ai file presenti in `nomi svg`
+    const projectData = {
+        't1': { 
+            idNum: "01", 
+            titleSvg: "assets/projects/titles/UJDGE.svg", 
+            field_it: "GIUSTIZIA", 
+            field_en: "JUSTICE", 
+            team: "Francesca Tartaglia", 
+            whatif_it: "E se il tribunale mediatico venisse istituzionalizzato?",
+            whatif_en: "What if trial by media were institutionalised?",
+            desc1_it: "U-JUDGE pensa a un sistema in cui le opinioni dei cittadini sui casi giudiziari hanno valore legale.",
+            desc1_en: "U-JUDGE envisions a system of participatory justice in which citizens’ opinions on court cases acquire legal value.",
+            desc2_it: "L’esperienza inizia consultando l’applicazione U-JUDGE, che contiene le informazioni sui casi mediatici, e prosegue con U-DEX, una bilancia interattiva che permette di esprimere un voto che decreterà la sentenza.",
+            desc2_en: "The experience starts by consulting the U-JUDGE app, which contains information on media trials, and ends with U-DEX, an interactive scale to express a vote that will establish the verdict."
+        },
+        't2': { 
+            idNum: "02", 
+            titleSvg: "assets/projects/titles/ALUA.svg", 
+            field_it: "BUROCRAZIA", 
+            field_en: "BUREAUCRACY", 
+            team: "ALUA", 
+            whatif_it: "E se i dati biometrici personali fossero usati come moneta di scambio burocratica?",
+            whatif_en: "What if personal biometric data were used as currency for public services?",
+            desc1_it: "Il sistema biometrico ALUA registra fluttuazioni costanti nell'identificazione degli utenti.",
+            desc1_en: "The ALUA biometric system records constant fluctuations in user identification.",
+            desc2_it: "Tracciamento dell'algoritmo predittivo basato sui comportamenti finanziari decentralizzati.",
+            desc2_en: "Tracking of the predictive algorithm based on decentralized financial behaviors."
+        },
+        't3': { 
+            idNum: "03", 
+            titleSvg: "assets/projects/titles/FRAGMA.svg", 
+            field_it: "LINGUAGGIO", 
+            field_en: "LANGUAGE", 
+            team: "FRAGMA", 
+            whatif_it: "E se il linguaggio digitale perdesse la capacità di esprimere le sfumature emotive?",
+            whatif_en: "What if digital communication lost the ability to express emotional nuances?",
+            desc1_it: "Rilevamento di fratture microstrutturali nei campioni fisici analizzati dal modulo speculativo.",
+            desc1_en: "Detection of microstructural fractures in physical samples analyzed by the speculative module.",
+            desc2_it: "Simulazione ad alta fedeltà delle tensioni molecolari sottoposte a comunicazione forzata.",
+            desc2_en: "High-fidelity simulation of molecular stress subjected to forced communication."
+        },
+        't4': { 
+            idNum: "04", 
+            titleSvg: "assets/projects/titles/ICON.svg", 
+            field_it: "SIMBOLO", 
+            field_en: "SYMBOL", 
+            team: "ICON", 
+            whatif_it: "E se i simboli grafici tradizionali cambiassero significato in tempo reale in base agli algoritmi?",
+            whatif_en: "What if traditional visual symbols dynamically changed their meaning based on algorithms?",
+            desc1_it: "L'interfaccia utente primaria mostra segnali di instabilità grafica dovuti al carico di rete.",
+            desc1_en: "The primary user interface shows signs of graphical instability due to network load.",
+            desc2_it: "Calibrazione dei parametri visivi e ottimizzazione dei tempi di risposta dei nodi periferici.",
+            desc2_en: "Calibration of visual parameters and optimization of peripheral node response times."
+        },
+        't5': { 
+            idNum: "05", 
+            titleSvg: "assets/projects/titles/TREEAL.svg", 
+            field_it: "AMBIENTALE", 
+            field_en: "ENVIRONMENTAL", 
+            team: "TREAAL", 
+            whatif_it: "E se gli alberi e gli ecosistemi potessero firmare contratti assicurativi per auto-difesa?",
+            whatif_en: "What if trees and ecosystems could execute smart contracts for self-defense?",
+            desc1_it: "Valutazione dei contratti intelligenti legati ad asset assicurativi ecologici distribuiti.",
+            desc1_en: "Evaluation of smart contracts linked to distributed ecological insurance assets.",
+            desc2_it: "Analisi di rischio algoritmico basata su modelli climatici e speculativi a lungo termine.",
+            desc2_en: "Algorithmic risk analysis based on long-term climatic and speculative models."
+        },
+        't6': { 
+            idNum: "06", 
+            titleSvg: "assets/projects/titles/EDEN.svg", 
+            field_it: "SOCIALE", 
+            field_en: "SOCIAL", 
+            team: "ECO", 
+            whatif_it: "E se ricreassimo biosistemi autosufficienti per isolarci del tutto dalla biosfera terrestre?",
+            whatif_en: "What if we created self-sufficient biosystems to isolate ourselves from the biosphere?",
+            desc1_it: "Monitoraggio dei flussi di fotosintesi artificiale all'interno del biosistema EDEN.",
+            desc1_en: "Monitoring of artificial photosynthesis flows within the EDEN biosystem.",
+            desc2_it: "Simulazione climatica della camera a atmosfera controllata per test di sopravvivenza vegetale.",
+            desc2_en: "Climate simulation of the controlled atmosphere chamber for plant survival testing."
+        },
+        't7': { 
+            idNum: "07", 
+            titleSvg: "assets/projects/titles/RHEAL.svg", 
+            field_it: "SALUTE SPECULATIVA", 
+            field_en: "SPECULATIVE HEALTH", 
+            team: "MED", 
+            whatif_it: "E se la telemedicina d'emergenza automatizzata decidesse autonomamente le priorità di cura?",
+            whatif_en: "What if automated emergency telemedicine independently decided treatment priorities?",
+            desc1_it: "Mappatura dei flussi sanitari e dei canali di comunicazione per la telemedicina d'emergenza.",
+            desc1_en: "Mapping of health flows and communication channels for emergency telemedicine.",
+            desc2_it: "Analisi della latenza di trasmissione dei dati diagnostici vitali verso i server centrali.",
+            desc2_en: "Analysis of transmission latency of vital diagnostic data to central servers."
+        },
+        't8': { 
+            idNum: "08", 
+            titleSvg: "assets/projects/titles/SOEMA.svg", 
+            field_it: "INFRASTRUTTURA", 
+            field_en: "INFRASTRUCTURE", 
+            team: "SOEMA", 
+            whatif_it: "E se le reti di sensori urbani gestissero in totale autonomia le risorse climatiche delle città?",
+            whatif_en: "What if urban sensor networks autonomously managed city climatic resource allocation?",
+            desc1_it: "La rete di sensori ambientali SOEMA rileva variazioni termiche nella zona periferica.",
+            desc1_en: "The SOEMA environmental sensor network detects thermal variations in the peripheral zone.",
+            desc2_it: "Aggregazione dei dati meteorologici per la prevenzione di catastrofi locali simulate.",
+            desc2_en: "Aggregation of meteorological data for simulated local disaster prevention."
+        },
+        't9': { 
+            idNum: "09", 
+            titleSvg: "assets/projects/titles/Risorsa_3.svg", 
+            field_it: "CULTURA", 
+            field_en: "CULTURE", 
+            team: "UNEC", 
+            whatif_it: "E se la nostra presenza fisica in pubblico fosse condizionata da un punteggio di fiducia di rete?",
+            whatif_en: "What if our physical presence in public depended on a digital network trust score?",
+            desc1_it: "Controllo giudiziario remoto e telepresenza tramite nodi di sicurezza ad alta priorità.",
+            desc1_en: "Remote judicial control and telepresence through high-priority security nodes.",
+            desc2_it: "Analisi forense digitale dei registri di sistema per identificare accessi non autorizzati.",
+            desc2_en: "Digital forensic analysis of system logs to identify unauthorized access."
+        },
+        't10': { 
+            idNum: "10", 
+            titleSvg: "assets/projects/titles/RECLAIM.svg", 
+            field_it: "SOCIALE", 
+            field_en: "SOCIAL", 
+            team: "RECLAIM", 
+            whatif_it: "E se l'ottimizzazione dell'efficienza umana fosse gestita da algoritmi diagnostici costanti?",
+            whatif_en: "What if human efficiency optimization was governed by continuous diagnostic algorithms?",
+            desc1_it: "Diagnostica profonda dei parametri core del sistema per prevenire crash imprevisti.",
+            desc1_en: "Deep diagnostics of core system parameters to prevent unexpected crashes.",
+            desc2_it: "Ottimizzazione delle risorse hardware e riallocazione dinamica della memoria cache.",
+            desc2_en: "Hardware resource optimization and dynamic reallocation of cache memory."
+        },
+        't11': { 
+            idNum: "11", 
+            titleSvg: "assets/projects/titles/UNEC.svg", 
+            field_it: "ECOSISTEMA DI RETE", 
+            field_en: "NETWORK ECOSYSTEM", 
+            team: "NET", 
+            whatif_it: "E se le relazioni sociali fossero modellate solo su protocolli crittografici di mutua convenienza?",
+            whatif_en: "What if social relationships were modeled strictly on cryptographic mutual-benefit protocols?",
+            desc1_it: "Mappatura dell'ecosistema di rete UNEC e delle relazioni di fiducia tra i nodi.",
+            desc1_en: "Mapping of the UNEC network ecosystem and trust relationships between nodes.",
+            desc2_it: "Simulazione di attacchi informatici distribuiti per testare la resilienza della struttura.",
+            desc2_en: "Simulation of distributed cyber attacks to test the resilience of the structure."
+        }
+    };
+
+    const domNodes = document.querySelectorAll('.target-node');
+    // targets is declared at the top of the script
+    const SCALE_FACTOR = 1.15;
+
+    domNodes.forEach((node, index) => {
+        let particles = [];
+        // reduce particle sizes and distances to tighten bounding boxes
+        particles.push({ distance: 0, angle: 0, orbitSpeed: 0, baseRadius: (28 + Math.random() * 10) * SCALE_FACTOR, intensityBase: 0.6 });
+        for(let p = 0; p < 3; p++) particles.push({ distance: (6 + Math.random() * 12) * SCALE_FACTOR, angle: Math.random() * Math.PI * 2, orbitSpeed: (Math.random() - 0.5) * 0.01, baseRadius: (42 + Math.random() * 20) * SCALE_FACTOR, intensityBase: 0.25 });
+        for(let p = 0; p < 4; p++) particles.push({ distance: (18 + Math.random() * 30) * SCALE_FACTOR, angle: Math.random() * Math.PI * 2, orbitSpeed: (Math.random() - 0.5) * 0.005, baseRadius: (70 + Math.random() * 40) * SCALE_FACTOR, intensityBase: 0.1 });
+
+        // Distribuzione circolare uniforme e spaziatura angolare per evitare sovrapposizioni radiali/angolari
+        // I nodi sono distribuiti equamente sulla circonferenza (360 gradi / 11 nodi = ~32.7 gradi per nodo) con un piccolo jitter
+        let angle = (index / domNodes.length) * Math.PI * 2 + (Math.random() - 0.5) * 0.12;
+        // La distanza dal centro varia tra 0.35, 0.6 e 0.85 per sparpagliarli radialmente
+        let distancePct = 0.35 + (index % 3) * 0.25;
+
+        targets.push({ 
+            id: node.id, 
+            node: node, 
+            angle: angle, 
+            distancePct: distancePct, 
+            baseX: 0, 
+            baseY: 0, 
+            x: 0, 
+            y: 0, 
+            vx: 0, 
+            vy: 0, 
+            baseRadius: 60 * SCALE_FACTOR, 
+            particles: particles, 
+            flareValue: 0 
+        });
+
+        // Click listener diretto sul target node per selezione istantanea
+        node.addEventListener('click', (ev) => {
+            if (!allowInteractions) return;
+            ev.stopPropagation(); // Evita che il click si propaghi al container
+            
+            const targetObj = targets.find(t => t.id === node.id);
+            if (targetObj) {
+                currentSelectedTarget = targetObj;
+                triggerDetailView();
+            }
+        });
+    });
+
+    initDimensions(); // Call immediately to calculate targets' baseX/baseY based on layout dimensions!
+
+    let mouseX = centerX, mouseY = centerY, mouseDistFromCenter = 0, lineAngle = 0;
+    let mouseLineAngle = lineAngle; 
+    const RADAR_FILTER_ALPHA = 0.12; 
+    // allowInteractions is declared at the top of the script
+
+    // Variabili di Stato UI
+    let currentSelectedTarget = null;
+    let lastHoveredTarget = null;
+    let isDetailView = false; // true = click, false = hover scanner
+    let isRadarTransitioning = false; // true quando il radar sta transizionando di scala
+    let touchActive = false;
+
+    // confine gli eventi del radar al solo container per separare interazioni con pannelli flottanti
+    container.addEventListener('mousemove', (e) => {
+        if (!allowInteractions) return; // ignore cursor movements durante entry
+        const rect = container.getBoundingClientRect();
+        mouseX = e.clientX - rect.left; mouseY = e.clientY - rect.top;
+        mouseLineAngle = Math.atan2(mouseY - centerY, mouseX - centerX);
+        mouseDistFromCenter = Math.hypot(mouseX - centerX, mouseY - centerY);
+    });
+    container.addEventListener('mouseleave', () => {
+        // quando il cursore esce dal radar, manteniamo l'angolo corrente (evitiamo scatti)
+        mouseLineAngle = lineAngle;
+    });
+
+    // --- HELPER MOBILE, HAMBURGER & SCROLL SCANNER ---
+    // Cache del risultato isMobile: si aggiorna solo su resize, non ogni frame
+    let _isMobileCache = window.innerWidth <= 768;
+    const isMobile = () => _isMobileCache;
+    window.addEventListener('resize', () => { _isMobileCache = window.innerWidth <= 768; }, { passive: true });
+    let autoSweepAngle = 0;
+
+    function toggleMobileMenu() {
+        const menu = document.getElementById('col-left-body');
+        if (menu) {
+            menu.classList.toggle('menu-open');
+            const isOpen = menu.classList.contains('menu-open');
+            document.body.classList.toggle('menu-open-active', isOpen);
+            if (mobileHoverCard) {
+                if (isOpen) {
+                    mobileHoverCard.classList.remove('visible');
+                } else {
+                    updateMobileScanner();
+                }
+            }
+        }
+    }
+
+    const mobileHoverCard = document.getElementById('mobile-hover-card');
+    
+    function updateMobileScanner() {
+        const menu = document.getElementById('col-left-body');
+        const isMenuOpen = menu && menu.classList.contains('menu-open');
+        
+        if (!isMobile() || !allowInteractions || isDetailView || isMenuOpen) {
+            if (mobileHoverCard) mobileHoverCard.classList.remove('visible');
+            return;
+        }
+        
+        let scrollY = window.scrollY;
+        const maxScroll = document.body.scrollHeight - window.innerHeight;
+        if (maxScroll <= 0) return;
+
+        // Finto scroll infinito: se raggiungiamo i bordi, eseguiamo il wrap
+        if (scrollY >= maxScroll - 6) {
+            window.scrollTo(0, 16);
+            return;
+        } else if (scrollY <= 6) {
+            window.scrollTo(0, maxScroll - 16);
+            return;
+        }
+        
+        let scrollPct = scrollY / maxScroll; // 0 to 1
+        scrollPct = Math.max(0, Math.min(1, scrollPct)); // Clamp between 0 and 1 to handle iOS elastic bounce scroll
+        
+        // Collega lo scroll direttamente all'angolo della retta polare del radar (2 rotazioni complete)
+        mouseLineAngle = scrollPct * Math.PI * 4;
+        
+        let hovered = null;
+        let minDiff = 0.22; // tolleranza in radianti (circa 12.6 gradi)
+        
+        for (let target of targets) {
+            const tAngle = Math.atan2(target.y - centerY, target.x - centerX);
+            const diff = Math.abs(angleDiff(lineAngle, tAngle));
+            if (diff < minDiff) {
+                minDiff = diff;
+                hovered = target;
+            }
+        }
+        
+        if (hovered) {
+            currentSelectedTarget = hovered;
+            // Map data to the mobile hover card
+            const data = projectData[hovered.id] || { desc_it: "Dati criptati.", desc_en: "Encrypted data." };
+            const mobHovId = document.getElementById('mob-hov-id');
+            if (mobHovId) mobHovId.innerText = data.idNum || "??";
+            
+            const titleWrap = document.getElementById('mob-hov-title-wrapper');
+            if (titleWrap) {
+                titleWrap.innerHTML = data.titleSvg ? `<img src="${data.titleSvg}" alt="Title SVG">` : `<span>PROJECT</span>`;
+            }
+            if (mobileHoverCard) mobileHoverCard.classList.add('visible');
+        } else {
+            if (mobileHoverCard) mobileHoverCard.classList.remove('visible');
+            currentSelectedTarget = null;
+        }
+    }
+
+    window.addEventListener('scroll', updateMobileScanner, { passive: true });
+    window.addEventListener('resize', () => {
+        if (isMobile()) {
+            document.documentElement.classList.add('mobile-scroll-active');
+            document.body.classList.add('mobile-scroll-active');
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            if (maxScroll > 0 && window.scrollY === 0) {
+                window.scrollTo(0, maxScroll / 2);
+            }
+            updateMobileScanner();
+        } else {
+            document.documentElement.classList.remove('mobile-scroll-active');
+            document.body.classList.remove('mobile-scroll-active');
+            if (mobileHoverCard) mobileHoverCard.classList.remove('visible');
+        }
+    });
+
+    // Initialize on load
+    if (isMobile()) {
+        document.documentElement.classList.add('mobile-scroll-active');
+        document.body.classList.add('mobile-scroll-active');
+        setTimeout(() => {
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            if (maxScroll > 0) {
+                window.scrollTo(0, maxScroll / 2);
+            }
+        }, 100);
+    }
+
+    // --- AZIONE: apri vista dettaglio (condivisa da click e touch) ---
+    // Function to show About content in the info panel
+    function showAboutInfoPanel() {
+        const panel = document.getElementById('info-panel');
+        const colRight = document.querySelector('.col-right');
+        const layout = document.querySelector('.layout');
+        const radarWrapper = document.querySelector('.radar-wrapper');
+        if (!panel) return;
+
+        // Nascondi hover overlay e mobile preview card
+        document.getElementById('hover-overlay')?.classList.remove('visible');
+        document.getElementById('mobile-hover-card')?.classList.remove('visible');
+
+        // Popola i testi di About in base alla lingua corrente
+        const txt1 = currentLang === 'it' ? locales.it.aboutText1 : locales.en.aboutText1;
+        const txt2 = currentLang === 'it' ? locales.it.aboutText2 : locales.en.aboutText2;
+        const aboutTxt1El = document.getElementById('about-text-1');
+        const aboutTxt2El = document.getElementById('about-text-2');
+        if (aboutTxt1El) aboutTxt1El.innerText = txt1;
+        if (aboutTxt2El) aboutTxt2El.innerText = txt2;
+
+        // Nascondi il titolo dei progetti e attiva lo stato About
+        const titleBox = panel.querySelector('.info-title-box');
+        if (titleBox) titleBox.style.display = 'none';
+
+        document.getElementById('overview-state')?.classList.remove('active');
+        document.getElementById('detail-state')?.classList.remove('active');
+        document.getElementById('about-state')?.classList.add('active');
+
+        // Miniaturizza radar su desktop (chiamato prima per misurare le coordinate pre-layout corrette)
+        if (radarWrapper && !isMobile()) miniaturizeRadar(radarWrapper, '');
+
+        // Mostra il pannello e la colonna destra
+        panel.classList.add('visible', 'about-panel');
+        if (colRight) colRight.classList.add('visible');
+        if (layout) layout.classList.add('detail-open');
+        isDetailView = true; // Allinea lo stato della vista dettaglio
+
+        // Mostra pulsante di chiusura
+        const closeBtn = document.getElementById('close-detail');
+        if (closeBtn) closeBtn.style.display = 'block';
+
+        // Aggiorna navigazione (imposta ABOUT come attivo/illuminato)
+        document.getElementById('toggle-radar').classList.add('active');
+        document.getElementById('toggle-index').classList.remove('active');
+    }
+    function triggerDetailView() {
+        // If About panel is active, ignore radar clicks
+        const panel = document.getElementById('info-panel');
+        if (panel && panel.classList.contains('about-panel')) return;
+        if (!currentSelectedTarget || isDetailView) return;
+        isDetailView = true;
+        const data = projectData[currentSelectedTarget.id] || { desc_it: "Dati criptati.", desc_en: "Encrypted data." };
+        const radarWrapper = document.querySelector('.radar-wrapper');
+        const colRight = document.querySelector('.col-right');
+        const layout = document.querySelector('.layout');
+
+        // Nascondi hover overlay e mobile preview card (non servono più, apre il pannello completo)
+        document.getElementById('hover-overlay')?.classList.remove('visible');
+        document.getElementById('mobile-hover-card')?.classList.remove('visible');
+
+        // Popola i campi informativi del pannello col-right
+        const infoIdEl = document.getElementById('info-id');
+        if (infoIdEl) infoIdEl.innerText = data.idNum || "??";
+        
+        const titleWrap = document.getElementById('info-title-svg-wrapper');
+        if (titleWrap) {
+            titleWrap.innerHTML = data.titleSvg ? `<img src="${data.titleSvg}" alt="Title SVG">` : `<span style="font-size: 1.2rem; font-weight: bold; letter-spacing: 0.15em; color: #fff;">PROJECT</span>`;
+        }
+        
+        runScramble(document.getElementById('info-field'), currentLang === 'it' ? (data.field_it || data.field_en) : (data.field_en || data.field_it), 15);
+        runScramble(document.getElementById('info-team'), data.team || "N/A", 15);
+
+        // Attiva stato dettaglio nel pannello col-right
+        document.getElementById('overview-state').classList.remove('active');
+        document.getElementById('detail-state').classList.add('active');
+        if (panel) panel.classList.add('visible');
+
+        // Populate 2 image slots and texts interspersed
+        const mediaSlot1 = document.getElementById('media-slot-1');
+        const mediaSlot2 = document.getElementById('media-slot-2');
+        
+        if (mediaSlot1) {
+            const img1 = mediaSlot1.querySelector('img');
+            if (img1) img1.src = data.titleSvg || '';
+        }
+        if (mediaSlot2) {
+            const img2 = mediaSlot2.querySelector('img');
+            const nodeImg = currentSelectedTarget.node.querySelector('img');
+            if (img2 && nodeImg) img2.src = nodeImg.src || '';
+        }
+
+        const focusEl = document.getElementById('detail-focus');
+        const desc1El = document.getElementById('detail-text-1');
+        const desc2El = document.getElementById('detail-text-2');
+        
+        if (focusEl) runScramble(focusEl, currentLang === 'it' ? (data.whatif_it || data.whatif_en) : (data.whatif_en || data.whatif_it), 15);
+        if (desc1El) runScramble(desc1El, currentLang === 'it' ? (data.desc1_it || data.desc1_en) : (data.desc1_en || data.desc1_it), 15);
+        if (desc2El) runScramble(desc2El, currentLang === 'it' ? (data.desc2_it || data.desc2_en) : (data.desc2_en || data.desc2_it), 15);
+
+        const groupEl = document.getElementById('info-group-val');
+        if (groupEl) runScramble(groupEl, data.team || "N/A", 15);
+
+        // In detail view, highlight INDEX_VIEW
+        document.getElementById('toggle-radar').classList.remove('active');
+        document.getElementById('toggle-index').classList.add('active');
+
+        // Miniaturizza solo su desktop (su mobile il radar rimane in alto)
+        const selectedLogo = currentSelectedTarget.node.querySelector('img')?.src || '';
+        if (radarWrapper && !isMobile()) miniaturizeRadar(radarWrapper, selectedLogo);
+        if (colRight) colRight.classList.add('visible');
+        if (layout) layout.classList.add('detail-open');
+
+        const closeBtn = document.getElementById('close-detail');
+        if (closeBtn) closeBtn.style.display = 'block';
+    }
+
+    // AZIONE: CLICK (solo dentro il radar-container)
+    container.addEventListener('click', () => {
+        if (!allowInteractions) return;
+        triggerDetailView();
+    });
+
+    // Evita che i clic dentro il pannello informativo risalgano al container
+    const infoPanel = document.getElementById('info-panel');
+    if (infoPanel) infoPanel.addEventListener('click', (ev) => ev.stopPropagation());
+
+    // Close button handler: ripristina layout e stato
+    const closeBtn = document.getElementById('close-detail');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            const radarWrapper = document.querySelector('.radar-wrapper');
+            const colRight = document.querySelector('.col-right');
+            const layout = document.querySelector('.layout');
+            // Ripristina radar solo su desktop (su mobile non era miniaturizzato)
+            if (radarWrapper && !isMobile()) restoreRadar(radarWrapper);
+            if (colRight) colRight.classList.remove('visible');
+            if (layout) layout.classList.remove('detail-open');
+            // Rimuovi eventuale stile About e ripristina titolo progetti
+            const panel = document.getElementById('info-panel');
+            if (panel) {
+                panel.classList.remove('about-panel');
+                panel.classList.remove('visible');
+                const titleBox = panel.querySelector('.info-title-box');
+                if (titleBox) titleBox.style.display = 'flex';
+            }
+            // Reset stato completo
+            isDetailView = false;
+            isRadarTransitioning = false; // Forza il ripristino dell'interazione in ogni caso
+            lastHoveredTarget = null;
+            currentSelectedTarget = null;
+            closeBtn.style.display = 'none';
+            // Ripristina gli stati di visualizzazione
+            document.getElementById('about-state')?.classList.remove('active');
+            document.getElementById('overview-state')?.classList.remove('active');
+            document.getElementById('detail-state')?.classList.remove('active');
+            // Riporta HUD (solo desktop)
+            const hud = document.querySelector('.radar-hud');
+            if (hud && !isMobile()) {
+                hud.classList.remove('visible');
+                setTimeout(() => hud.classList.add('visible'), 60);
+            }
+            // Ripristina active state navigation (nessun elemento attivo/illuminato per default)
+            document.getElementById('toggle-radar').classList.remove('active');
+            document.getElementById('toggle-index').classList.remove('active');
+        });
+    }
+
+    function angleDiff(a, b) { let d = a - b; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return d; }
+
+    let time = 0;
+    // Cache riferimenti DOM usati ogni frame in animate() — evita querySelector ripetuti
+    const _panel = document.getElementById('info-panel');
+    const _colRight = document.querySelector('.col-right');
+
+    function animate() {
+        if (!width || !height || width <= 0 || height <= 0) {
+            requestAnimationFrame(animate);
+            return;
+        }
+        time += 0.5;
+        lineAngle += angleDiff(mouseLineAngle, lineAngle) * RADAR_FILTER_ALPHA;
+        sweep.style.transform = `rotate(${lineAngle * (180 / Math.PI)}deg)`;
+        heatCtx.clearRect(0, 0, heatCanvas.width, heatCanvas.height);
+        heatCtx.globalCompositeOperation = 'lighter'; 
+
+        let intersectedTargets = [];
+
+        // Calcola isAboutActive una volta per frame, non dentro ogni branch
+        const isAboutActive = _panel && _panel.classList.contains('about-panel');
+        if (!isRadarTransitioning) {
+            for(let i = 0; i < targets.length; i++) {
+                for(let j = i + 1; j < targets.length; j++) {
+                    let t1 = targets[i]; let t2 = targets[j];
+                    let dx = t2.x - t1.x; let dy = t2.y - t1.y;
+                    let dist = Math.hypot(dx, dy);
+
+                    let minDist = _isMobileCache
+                        ? 56
+                        : t1.baseRadius + t2.baseRadius + 28;
+
+                    if (dist < minDist) {
+                        let force = (minDist - dist) * (_isMobileCache ? 0.015 : 0.025);
+                        force *= Math.min(2, 1 + ((minDist - dist) / (minDist * 0.5)));
+                        t1.vx -= (dx / dist) * force; t1.vy -= (dy / dist) * force; t2.vx += (dx / dist) * force; t2.vy += (dy / dist) * force;
+                    }
+                }
+            }
+        }
+
+        targets.forEach(t => {
+            if (!isRadarTransitioning) {
+                const tAngle = Math.atan2(t.y - centerY, t.x - centerX);
+                const diff = Math.abs(angleDiff(lineAngle, tAngle));
+                const distCenter = Math.hypot(t.x - centerX, t.y - centerY);
+                const threshold = Math.abs(Math.atan2(20 * SCALE_FACTOR, distCenter)); 
+
+                let isPuntato = (diff < threshold);
+                if (isPuntato) intersectedTargets.push(t);
+                if (isPuntato) t.flareValue += (0.15 - t.flareValue) * 0.2; else t.flareValue += (0 - t.flareValue) * 0.05; 
+
+                // Evita l'ammatassamento al centro (spinta verso l'esterno se troppo vicini al centro)
+                const minCenterDist = _isMobileCache ? 45 : 140;
+                if (distCenter < minCenterDist) {
+                    let pushForce = (minCenterDist - distCenter) * 0.025;
+                    let pushAngle = Math.atan2(t.y - centerY, t.x - centerX);
+                    t.vx += Math.cos(pushAngle) * pushForce;
+                    t.vy += Math.sin(pushAngle) * pushForce;
+                }
+
+                t.vx += (t.baseX - t.x) * 0.02; t.vy += (t.baseY - t.y) * 0.02;
+                t.x += t.vx; t.y += t.vy; t.vx *= 0.75; t.vy *= 0.75;
+
+                // Clamping rigido dentro il perimetro del radar per evitare nodi fuori dallo schermo
+                const currentDist = Math.hypot(t.x - centerX, t.y - centerY);
+                const maxAllowedDist = _isMobileCache
+                    ? radarRadius * 0.80
+                    : radarRadius * 0.90;
+
+                if (currentDist > maxAllowedDist) {
+                    const angleToTarget = Math.atan2(t.y - centerY, t.x - centerX);
+                    t.x = centerX + Math.cos(angleToTarget) * maxAllowedDist;
+                    t.y = centerY + Math.sin(angleToTarget) * maxAllowedDist;
+                    t.vx = 0; t.vy = 0;
+                }
+            } else {
+                t.flareValue += (0 - t.flareValue) * 0.05;
+            }
+
+            t.particles.forEach((p, idx) => {
+                let pDist = p.distance;
+                if (_isMobileCache) pDist *= 0.82; // Incrementato del 10% (era 0.75)
+
+                let orbitX = Math.cos(p.angle + time * p.orbitSpeed) * pDist; let orbitY = Math.sin(p.angle + time * p.orbitSpeed) * pDist;
+                let absX = t.x + orbitX; let absY = t.y + orbitY;
+
+                let noiseScale = _isMobileCache ? 0.7 : 1.0;
+                let noiseX = Math.sin(absX * 0.01 + time * 0.02) * 10 * SCALE_FACTOR * noiseScale;
+                let noiseY = Math.cos(absY * 0.01 + time * 0.015) * 10 * SCALE_FACTOR * noiseScale;
+
+                let sizeMod = Math.sin(time * 0.03 + idx) * (p.baseRadius * 0.15);
+                let finalRadius = Math.max(10, p.baseRadius + sizeMod);
+                if (_isMobileCache) finalRadius *= 1.00; // Isole leggermente più grandi per bilanciare i loghini
+
+                let currentIntensity = p.intensityBase + (Math.sin(time * 0.05 + idx) * 0.02) + t.flareValue;
+                if (_isMobileCache) currentIntensity *= 1.30; // Più intenso il bagliore delle isole
+
+                const subBlobs = _isMobileCache ? 1 : 2; // 1 blob su mobile = -50% GPU carico canvas
+                for (let b = 0; b < subBlobs; b++) {
+                    let phase = time * 0.008 + idx * 0.7 + b * 1.3;
+                    let ox = Math.cos(phase) * (pDist * 0.12 * (0.8 + 0.4 * b));
+                    let oy = Math.sin(phase * 1.2) * (pDist * 0.08 * (0.8 + 0.4 * b));
+                    let bx = (absX + noiseX + ox) * RESOLUTION_SCALE; let by = (absY + noiseY + oy) * RESOLUTION_SCALE; let br = finalRadius * RESOLUTION_SCALE * (0.6 + 0.4 * b);
+                    heatCtx.save(); heatCtx.translate(bx, by);
+                    let rot = phase * 0.6 + (idx % 3) * 0.4; heatCtx.rotate(rot); heatCtx.scale(1.6, 0.55 + 0.15 * b);
+                    const g = heatCtx.createRadialGradient(0, 0, 0, 0, 0, br);
+                    g.addColorStop(0, `rgba(255,255,255,${Math.min(1, currentIntensity * (0.8 + 0.15 * (1 - b)))})`); g.addColorStop(1, 'rgba(255,255,255,0)');
+                    heatCtx.beginPath(); heatCtx.arc(0, 0, br, 0, Math.PI * 2); heatCtx.fillStyle = g; heatCtx.fill(); heatCtx.restore();
+                }
+            });
+
+            // Use percentage positioning so nodes scale automatically with the container during CSS transition
+            t.node.style.left = `${(t.x / width) * 100}%`; 
+            t.node.style.top = `${(t.y / height) * 100}%`;
+        });
+
+        const imgData = heatCtx.getImageData(0, 0, heatCanvas.width, heatCanvas.height); const data = imgData.data;
+        // apply nonlinear compression to alpha channel to prevent saturation when many blobs overlap
+        for (let i = 0; i < data.length; i += 4) {
+            let alpha = data[i + 3]; // 0..255
+            // normalize and apply gamma-like compression (compress highlights)
+            let n = alpha / 255;
+            // bias ridotto e gamma più luminoso per effetto LED intenso
+            n = Math.max(0, n - 0.005);
+            n = Math.pow(n, 0.40);
+            // remap to 0..255 and clamp
+            let heatValue = Math.min(255, Math.floor(n * 255));
+            const color = colorPalette[heatValue];
+            data[i] = color.r; data[i + 1] = color.g; data[i + 2] = color.b; data[i + 3] = color.a;
+        }
+        heatCtx.putImageData(imgData, 0, 0);
+        displayCtx.clearRect(0, 0, width, height);
+        displayCtx.drawImage(heatCanvas, 0, 0, heatCanvas.width, heatCanvas.height, 0, 0, width, height);
+
+        // --- GESTIONE HOVER E SCRAMBLE ---
+        const isAboutActive_hover = isAboutActive; // già calcolato sopra
+
+        if (!allowInteractions || isAboutActive_hover) {
+            targets.forEach(t => { t.node.classList.remove('hovered'); t.node.classList.remove('selected'); });
+            currentSelectedTarget = null;
+            lastHoveredTarget = null;
+            if (_panel && !isAboutActive_hover) _panel.classList.remove('visible');
+            if (!isDetailView && _colRight && !isAboutActive_hover) _colRight.classList.remove('visible');
+        } else {
+            if (isDetailView && currentSelectedTarget) {
+                // --- LOCK MODE (Detail View) ---
+                targets.forEach(t => { 
+                    t.node.classList.remove('hovered'); 
+                    if (t !== currentSelectedTarget) t.node.classList.remove('selected'); 
+                });
+                currentSelectedTarget.node.classList.add('selected');
+                
+                // Forza il raggio polare verso il nodo bloccato
+                const tAngle = Math.atan2(currentSelectedTarget.y - centerY, currentSelectedTarget.x - centerX);
+                mouseLineAngle = tAngle;
+            } else {
+                // --- NORMAL HOVER MODE ---
+                targets.forEach(t => { t.node.classList.remove('hovered'); t.node.classList.remove('selected'); });
+                currentSelectedTarget = null;
+
+                if (intersectedTargets.length > 0) {
+                    intersectedTargets.sort((a, b) => { let distA = Math.abs(Math.hypot(a.x - centerX, a.y - centerY) - mouseDistFromCenter); let distB = Math.abs(Math.hypot(b.x - centerX, b.y - centerY) - mouseDistFromCenter); return distA - distB; });
+                    currentSelectedTarget = intersectedTargets[0]; 
+                    currentSelectedTarget.node.classList.add('hovered');
+                }
+            } // Chiude else NORMAL HOVER MODE
+
+            // Se l'elemento puntato cambia (nuovo hover)
+            if (currentSelectedTarget !== lastHoveredTarget) {
+                const hoverOverlay = document.getElementById('hover-overlay');
+                if (currentSelectedTarget && !isDetailView) {
+                    // Estrai dati progetto
+                    const proj = projectData[currentSelectedTarget.id] || { idNum: "??", titleSvg: "", field: "UNKNOWN", team: "UNKNOWN" };
+
+                    // Popola SOLO l'overlay flottante — col-right non si tocca, il radar non si sposta
+                    document.getElementById('hov-id').innerText = proj.idNum;
+                    const hovTitleWrap = document.getElementById('hov-title-wrapper');
+                    hovTitleWrap.innerHTML = proj.titleSvg ? `<img src="${proj.titleSvg}" alt="Title SVG">` : `<h2>SCANNING...</h2>`;
+                    runScramble(document.getElementById('hov-field'), proj.field || "N/A", 30);
+                    runScramble(document.getElementById('hov-team'), proj.team || "N/A", 30);
+
+                    if (hoverOverlay) hoverOverlay.classList.add('visible');
+                } else if (!isDetailView) {
+                    // Nessun target puntato e non siamo in detail view: nascondi overlay
+                    if (hoverOverlay) hoverOverlay.classList.remove('visible');
+                }
+                lastHoveredTarget = currentSelectedTarget;
+            }
+        }
+
+        requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+    // --- LOGICA CURSORE DOM PERSONALIZZATO ---
+    (function() {
+        const customCursor = document.getElementById('custom-cursor');
+        if (!customCursor) return;
+
+        let cursorX = -100;
+        let cursorY = -100;
+
+        window.addEventListener('mousemove', (e) => {
+            cursorX = e.clientX;
+            cursorY = e.clientY;
+            customCursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+            customCursor.style.opacity = '1'; // Rende visibile al primo movimento
+        });
+
+        document.addEventListener('mouseleave', () => {
+            customCursor.style.opacity = '0';
+        });
+
+        document.addEventListener('mouseenter', () => {
+            customCursor.style.opacity = '1';
+        });
+
+        // Delega eventi per rilevare l'hover sugli elementi interattivi
+        document.addEventListener('mouseover', (e) => {
+            const target = e.target;
+            if (target && target.closest && target.closest('a, button, [onclick], .pointer-class, [role="button"], .lang-btn, .nav-link-content, #close-detail, .target-node, .hamburger-btn')) {
+                customCursor.classList.add('cursor-hover');
+            } else {
+                customCursor.classList.remove('cursor-hover');
+            }
+        });
+    })();
+</script>
+</body>
+</html>

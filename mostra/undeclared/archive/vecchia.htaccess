@@ -1,0 +1,9 @@
+
+###################
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{HTTP_HOST} ^(whatif|wordsworks|humans|morte13|retuals|fattididati|anthropogenicnarratives|rawscenarios|believeitornot)\.antidisciplinarylab\.it$ [NC]
+RewriteRule ^(.*)$ https://www.antidisciplinarylab.it/%1/$1 [R=301,L]
+
+###################
