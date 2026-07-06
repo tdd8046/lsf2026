@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 520">
+  <title>Font Completo — A–Z + 0–9</title>
+
+  <defs>
+    <!-- ORIGINALI -->
+    <symbol id="g-A" viewBox="0 0 16.82 8.64"><path d="M16.82,0H1.02C.58,0,0,.38,0,.85v7.79h5.94v-3.05h5.94v3.05h5.94V.85c0-.47-.58-.85-1.02-.85ZM11.89,4.74h-5.94V.85h5.94v3.89Z"/></symbol>
+    <symbol id="g-C" viewBox="0 0 15.74 8.64"><path d="M14.73,0H1.01C.57,0,0,.38,0,.84v7.8h15.74V6.16h-5.92v1.62H5.92V.88h5.9V2.63h5.92V.88c0-.46-.57-.84-1.01-.84Z"/></symbol>
+    <symbol id="g-D" viewBox="0 0 16.61 8.64"><path d="M15.6.05H0v8.53h15.61c.43,0,1-.38,1-.84V.89c0-.46-.57-.84-1-.84ZM10.74,7.53H4.87V.89h5.87v6.64Z"/></symbol>
+    <symbol id="g-E" viewBox="0 0 17.61 8.64"><polygon points="0 .05 0 8.58 5.87 8.58 17.61 8.58 17.61 7.75 5.87 7.75 5.87 4.74 17.61 4.74 17.61 3.9 5.87 3.9 5.87 .89 17.61 .89 17.61 .05 5.87 .05 0 .05"/></symbol>
+    <symbol id="g-F" viewBox="0 0 17.67 8.64"><path d="M0,.04v8.56h5.89v-3.86h11.78v-.84H5.89V.88h11.78V.04H0Z"/></symbol>
+    <symbol id="g-G" viewBox="0 0 16.82 8.64"><path d="M15.8,0H1.01C.57,0,0,.38,0,.84v6.95c0,.46.57.84,1.01.84h15.8c.39,0,.9-.31,1-.72v-3.14v-.84H9.52v.84h6.28v2.82H5.89V.88h5.94v1.74h5.89V.88c0-.46-.57-.84-1.01-.84h-.11ZM0,.84V4.74h5.89V.88H0Z"/></symbol>
+    <symbol id="g-H" viewBox="0 0 17.83 8.64"><rect x="0" y="0" width="5.95" height="8.64"/><polygon points="11.89 3.89 5.95 3.89 5.95 4.74 11.89 4.74 11.89 8.64 17.83 8.64 17.83 0 11.89 0 11.89 3.89"/></symbol>
+    <symbol id="g-I" viewBox="0 0 5.94 8.64"><rect x="0" y="0" width="5.94" height="8.64"/></symbol>
+    <symbol id="g-J" viewBox="0 0 17.85 8.64"><path d="M17.84,0h-5.94v7.79H5.94V0H0v7.79c0,.47.58.85,1.01.85h15.82c.44,0,1.01-.38,1.01-.85V0ZM5.94,7.79h-.01V6.15h5.94v1.64H5.94Z"/></symbol>
+    <symbol id="g-L" viewBox="0 0 17.88 8.64"><path d="M0,0v8.64h16.86c.4,0,.91-.32,1-.73h.02v-1.76h-5.94V7.79H5.94V0H0Z"/></symbol>
+    <symbol id="g-M" viewBox="0 0 22.36 8.64"><path d="M16.63,0c-1.45,1.81-2.89,3.61-4.34,5.42-1.45-1.81-2.89-3.61-4.34-5.42H1.66v8.64H7.73V1.42c1.29,1.61,2.58,3.21,3.87,4.82h1.37c1.29-1.61,2.58-3.21,3.87-4.82v7.22h6.07V0h-6.28Z"/><rect x="0" y="0" width="1.66" height="8.64"/></symbol>
+    <symbol id="g-N" viewBox="0 0 17.61 8.64"><path d="M11.54,0v7.29C9.65,4.86,7.77,2.43,5.88,0H0v8.64h5.87V1.43c1.88,2.4,3.77,4.81,5.65,7.21h6.08V0h-5.87Z"/></symbol>
+    <symbol id="g-O" viewBox="0 0 15.67 8.64"><path d="M14.66.04H0c0,.46.57.84,1.01.84v6.88c0,.46.57.84,1.01.84h13.65c.43,0,1.01-.38,1.01-.84V.88c0-.46-.57-.84-1.01-.84ZM9.78,7.76H3.89V.88h5.89v6.88Z"/></symbol>
+    <symbol id="g-R" viewBox="0 0 16.81 8.64"><path d="M16.81.04H0v8.64h5.94v-3.83h5.94v3.83h5.94v-2.98c-.82-.31-1.63-.62-2.45-.93.82-.26,1.63-.51,2.45-.77V.89c0-.47-.58-.85-1.02-.85ZM11.89,3.99h-5.94V.89h5.94v3.11Z"/></symbol>
+    <symbol id="g-S" viewBox="0 0 17.67 8.64"><path d="M17.67.76c0-.4-.32-.72-.72-.72H1.01C.57.04,0,.42,0,.88h0v3.86h11.78v3.02H5.89v-.9H0v.9c0,.46.57.84,1.01.84h15.94c.4,0,.72-.32.72-.72v-3.14c0-.46-.57-.84-1.01-.84H5.89V.88h5.89v1.74h5.89V.76Z"/></symbol>
+    <symbol id="g-T" viewBox="0 0 17.83 8.64"><polygon points="0 .85 5.94 .85 5.94 8.64 11.89 8.64 11.89 .85 17.83 .85 17.83 0 0 0 0 .85"/></symbol>
+    <symbol id="g-U" viewBox="0 0 17.88 8.64"><path d="M11.94,7.79H5.94V0H0v7.79c0,.47.58.85,1.02.85h15.8c.44,0,1.02-.38,1.02-.85V0h-5.94v7.79Z"/></symbol>
+    <symbol id="g-Y" viewBox="0 0 17.87 8.64"><path d="M15.87,3.94H9.93V.05H3.99v3.88c0,.47.58.85,1.02.85h4.93v3.91h5.94V4.79h4.93c.44,0,1.02-.38,1.02-.85V.05h-5.94v3.88Z"/></symbol>
+
+    <!-- COSTRUITE -->
+    <symbol id="g-B" viewBox="0 0 17.82 8.64"><path d="M0,0v8.64h14.85c.44,0,1.02-.38,1.02-.85v-2.3c0-.44-.35-.8-.78-.85.43-.05.78-.41.78-.85V.85C15.87.38,15.29,0,14.85,0H0ZM11.88,7.79H5.94v-2.2h5.94v2.2ZM11.88,4.74H5.94V.85h5.94v3.89Z"/></symbol>
+    <symbol id="g-K" viewBox="0 0 17.83 8.64"><path d="M0,0v8.64h5.94V5.42L11.89,8.64h5.94L11.89,4.32,17.83,0H11.89L5.94,3.22V0H0Z"/></symbol>
+    <symbol id="g-P" viewBox="0 0 17.82 8.64"><path d="M0,0v8.64h5.94v-3.05h9.86c.44,0,1.02-.38,1.02-.85V.85C16.82.38,16.24,0,15.8,0H0ZM11.88,4.74H5.94V.85h5.94v3.89Z"/></symbol>
+    <symbol id="g-Q" viewBox="0 0 15.67 8.64"><path d="M14.66.04H0c0,.46.57.84,1.01.84v6.88c0,.46.57.84,1.01.84h7.43l2.35,1.3h3.62l-2.55-1.3h2.81c.43,0,1.01-.38,1.01-.84V.88c0-.46-.57-.84-1.01-.84ZM9.78,7.76H3.89V.88h5.89v6.88Z"/></symbol>
+    <symbol id="g-V" viewBox="0 0 17.83 8.64"><path d="M0,0v5.2l5.94,3.44h5.95l5.94-3.44V0h-5.94v4.06L8.92,5.8,5.94,4.06V0H0Z"/></symbol>
+    <symbol id="g-W" viewBox="0 0 29.7 8.64"><path d="M0,0v8.64h5.94V2.2l4.44,3.17h.98l4.44-3.17v6.44h5.94V0h-5.94l-5.44,3.89L4.96,0H0Z"/><rect x="23.76" y="0" width="5.94" height="8.64"/></symbol>
+    <symbol id="g-X" viewBox="0 0 17.83 8.64"><path d="M0,0l5.94,4.32L0,8.64h6.5l2.42-1.76,2.41,1.76h6.5L11.89,4.32,17.83,0H11.33L8.92,1.76,6.5,0H0Z"/></symbol>
+    <symbol id="g-Z" viewBox="0 0 17.83 8.64"><path d="M0,0v.85h11.89L0,7.79v.85h17.83V7.79H5.94L17.83.85V0H0Z"/></symbol>
+
+    <!-- NUMERI -->
+    <symbol id="g-0" viewBox="0 0 15.67 8.64"><path d="M14.66.04H0c0,.46.57.84,1.01.84v6.88c0,.46.57.84,1.01.84h13.65c.43,0,1.01-.38,1.01-.84V.88c0-.46-.57-.84-1.01-.84ZM9.78,7.76H3.89V.88h5.89v6.88Z"/></symbol>
+    <symbol id="g-1" viewBox="0 0 11.89 8.64"><rect x="5.95" y="0" width="5.94" height="8.64"/><polygon points="0 0 0 .85 5.95 .85 5.95 0 0 0"/></symbol>
+    <symbol id="g-2" viewBox="0 0 17.83 8.64"><path d="M16.82,0H1.01C.57,0,0,.38,0,.84v3.9h11.89v2.2H0v.85c0,.46.57.84,1.01.84h15.82c.44,0,1-.38,1-.84V4.74c0-.46-.57-.84-1-.84H5.94V.88h11.88V0Z"/></symbol>
+    <symbol id="g-3" viewBox="0 0 17.83 8.64"><path d="M17.83,0H0v.85h11.89v2.2H5.94v.84h5.95v2.2H0v.85c0,.46.57.84,1.01.84h15.82c.44,0,1-.38,1-.84V.85c0-.47-.58-.85-1-.85Z"/></symbol>
+    <symbol id="g-4" viewBox="0 0 17.83 8.64"><path d="M11.89,0H5.94v3.89H0v.85h5.94v3.9h5.95v-3.9h5.94v-.85h-5.94V0Z"/></symbol>
+    <symbol id="g-5" viewBox="0 0 17.83 8.64"><path d="M0,0v.85h11.89v2.2H1.01C.57,3.05,0,3.43,0,3.89v3.91c0,.46.57.84,1.01.84h15.82c.44,0,1-.38,1-.84V6.96H5.94V4.74h9.88c.44,0,1.01-.38,1.01-.84V0H0Z"/></symbol>
+    <symbol id="g-6" viewBox="0 0 17.83 8.64"><path d="M16.82,0H1.01C.57,0,0,.38,0,.84v7.8h17.83V6.16H5.94V4.74h11.89c.44,0,1-.38,1-.84V.84c0-.46-.57-.84-1-.84ZM11.89,7.79H5.94V5.59h5.95V7.79Z"/></symbol>
+    <symbol id="g-7" viewBox="0 0 17.83 8.64"><path d="M0,0v.85h11.89L0,8.64h6.94L17.83.85V0H0Z"/></symbol>
+    <symbol id="g-8" viewBox="0 0 17.83 8.64"><path d="M16.82,0H1.01C.57,0,0,.38,0,.84v2.3c0,.44.35.8.78.85C.35,4.04,0,4.4,0,4.84v3.0c0,.46.57.84,1.01.84h15.82c.44,0,1-.38,1-.84V4.84c0-.44-.35-.8-.78-.85.43-.05.78-.41.78-.85V.84C17.83.38,17.26,0,16.82,0ZM11.89,7.79H5.94V5.59h5.95v2.2ZM11.89,3.73H5.94V.88h5.95v2.85Z"/></symbol>
+    <symbol id="g-9" viewBox="0 0 17.83 8.64"><path d="M16.82,0H1.01C.57,0,0,.38,0,.84v3.9c0,.46.57.84,1.01.84h9.88v2.2H0v.85c0,.46.57.84,1.01.84h15.82c.44,0,1-.38,1-.84V.84C17.83.38,17.26,0,16.82,0ZM11.89,3.89H5.94V.88h5.95v3.01Z"/></symbol>
+  </defs>
+
+  <!-- ========= SPECIMEN SHEET ========= -->
+  <rect width="620" height="520" fill="#ffffff"/>
+
+  <!-- Titolo -->
+  <text x="20" y="22" font-family="monospace" font-size="9" fill="#999" letter-spacing="1">FONT SPECIMEN — A–Z + 0–9  |  h=8.64  module=5.94</text>
+  <line x1="20" y1="28" x2="600" y2="28" stroke="#e0e0e0" stroke-width=".5"/>
+
+  <!-- riga 1: A B C D E F G -->
+  <use href="#g-A" x="20"  y="40" width="22" height="11.3"/>
+  <use href="#g-B" x="46"  y="40" width="22" height="11.3"/>
+  <use href="#g-C" x="72"  y="40" width="22" height="11.3"/>
+  <use href="#g-D" x="98"  y="40" width="22" height="11.3"/>
+  <use href="#g-E" x="124" y="40" width="22" height="11.3"/>
+  <use href="#g-F" x="150" y="40" width="22" height="11.3"/>
+  <use href="#g-G" x="176" y="40" width="22" height="11.3"/>
+  <text x="20"  y="58" font-family="monospace" font-size="6.5" fill="#aaa">A</text>
+  <text x="46"  y="58" font-family="monospace" font-size="6.5" fill="#aaa">B</text>
+  <text x="72"  y="58" font-family="monospace" font-size="6.5" fill="#aaa">C</text>
+  <text x="98"  y="58" font-family="monospace" font-size="6.5" fill="#aaa">D</text>
+  <text x="124" y="58" font-family="monospace" font-size="6.5" fill="#aaa">E</text>
+  <text x="150" y="58" font-family="monospace" font-size="6.5" fill="#aaa">F</text>
+  <text x="176" y="58" font-family="monospace" font-size="6.5" fill="#aaa">G</text>
+
+  <!-- riga 2: H I J K L M N -->
+  <use href="#g-H" x="20"  y="68" width="22" height="11.3"/>
+  <use href="#g-I" x="46"  y="68" width="8"  height="11.3"/>
+  <use href="#g-J" x="72"  y="68" width="22" height="11.3"/>
+  <use href="#g-K" x="98"  y="68" width="22" height="11.3"/>
+  <use href="#g-L" x="124" y="68" width="22" height="11.3"/>
+  <use href="#g-M" x="150" y="68" width="22" height="11.3"/>
+  <use href="#g-N" x="176" y="68" width="22" height="11.3"/>
+  <text x="20"  y="86" font-family="monospace" font-size="6.5" fill="#aaa">H</text>
+  <text x="46"  y="86" font-family="monospace" font-size="6.5" fill="#aaa">I</text>
+  <text x="72"  y="86" font-family="monospace" font-size="6.5" fill="#aaa">J</text>
+  <text x="98"  y="86" font-family="monospace" font-size="6.5" fill="#aaa">K</text>
+  <text x="124" y="86" font-family="monospace" font-size="6.5" fill="#aaa">L</text>
+  <text x="150" y="86" font-family="monospace" font-size="6.5" fill="#aaa">M</text>
+  <text x="176" y="86" font-family="monospace" font-size="6.5" fill="#aaa">N</text>
+
+  <!-- riga 3: O P Q R S T U -->
+  <use href="#g-O" x="20"  y="96" width="22" height="11.3"/>
+  <use href="#g-P" x="46"  y="96" width="22" height="11.3"/>
+  <use href="#g-Q" x="72"  y="96" width="22" height="11.3"/>
+  <use href="#g-R" x="98"  y="96" width="22" height="11.3"/>
+  <use href="#g-S" x="124" y="96" width="22" height="11.3"/>
+  <use href="#g-T" x="150" y="96" width="22" height="11.3"/>
+  <use href="#g-U" x="176" y="96" width="22" height="11.3"/>
+  <text x="20"  y="114" font-family="monospace" font-size="6.5" fill="#aaa">O</text>
+  <text x="46"  y="114" font-family="monospace" font-size="6.5" fill="#aaa">P</text>
+  <text x="72"  y="114" font-family="monospace" font-size="6.5" fill="#aaa">Q</text>
+  <text x="98"  y="114" font-family="monospace" font-size="6.5" fill="#aaa">R</text>
+  <text x="124" y="114" font-family="monospace" font-size="6.5" fill="#aaa">S</text>
+  <text x="150" y="114" font-family="monospace" font-size="6.5" fill="#aaa">T</text>
+  <text x="176" y="114" font-family="monospace" font-size="6.5" fill="#aaa">U</text>
+
+  <!-- riga 4: V W X Y Z -->
+  <use href="#g-V" x="20"  y="124" width="22" height="11.3"/>
+  <use href="#g-W" x="46"  y="124" width="34" height="11.3"/>
+  <use href="#g-X" x="84"  y="124" width="22" height="11.3"/>
+  <use href="#g-Y" x="110" y="124" width="22" height="11.3"/>
+  <use href="#g-Z" x="136" y="124" width="22" height="11.3"/>
+  <text x="20"  y="142" font-family="monospace" font-size="6.5" fill="#aaa">V</text>
+  <text x="46"  y="142" font-family="monospace" font-size="6.5" fill="#aaa">W</text>
+  <text x="84"  y="142" font-family="monospace" font-size="6.5" fill="#aaa">X</text>
+  <text x="110" y="142" font-family="monospace" font-size="6.5" fill="#aaa">Y</text>
+  <text x="136" y="142" font-family="monospace" font-size="6.5" fill="#aaa">Z</text>
+
+  <!-- riga 5: 0-9 -->
+  <use href="#g-0" x="20"  y="154" width="22" height="11.3"/>
+  <use href="#g-1" x="46"  y="154" width="18" height="11.3"/>
+  <use href="#g-2" x="68"  y="154" width="22" height="11.3"/>
+  <use href="#g-3" x="94"  y="154" width="22" height="11.3"/>
+  <use href="#g-4" x="120" y="154" width="22" height="11.3"/>
+  <use href="#g-5" x="146" y="154" width="22" height="11.3"/>
+  <use href="#g-6" x="172" y="154" width="22" height="11.3"/>
+  <use href="#g-7" x="198" y="154" width="22" height="11.3"/>
+  <use href="#g-8" x="224" y="154" width="22" height="11.3"/>
+  <use href="#g-9" x="250" y="154" width="22" height="11.3"/>
+  <text x="20"  y="172" font-family="monospace" font-size="6.5" fill="#aaa">0</text>
+  <text x="46"  y="172" font-family="monospace" font-size="6.5" fill="#aaa">1</text>
+  <text x="68"  y="172" font-family="monospace" font-size="6.5" fill="#aaa">2</text>
+  <text x="94"  y="172" font-family="monospace" font-size="6.5" fill="#aaa">3</text>
+  <text x="120" y="172" font-family="monospace" font-size="6.5" fill="#aaa">4</text>
+  <text x="146" y="172" font-family="monospace" font-size="6.5" fill="#aaa">5</text>
+  <text x="172" y="172" font-family="monospace" font-size="6.5" fill="#aaa">6</text>
+  <text x="198" y="172" font-family="monospace" font-size="6.5" fill="#aaa">7</text>
+  <text x="224" y="172" font-family="monospace" font-size="6.5" fill="#aaa">8</text>
+  <text x="250" y="172" font-family="monospace" font-size="6.5" fill="#aaa">9</text>
+
+  <line x1="20" y1="180" x2="600" y2="180" stroke="#e0e0e0" stroke-width=".5"/>
+
+  <!-- Display size: ABCDEFGHIJKLMNOPQRSTUVWXYZ -->
+  <text x="20" y="195" font-family="monospace" font-size="7" fill="#bbb">24pt</text>
+  <!-- riga ABCDEFGHIJKLM -->
+  <use href="#g-A" x="50"  y="184" width="40" height="20.7"/>
+  <use href="#g-B" x="92"  y="184" width="40" height="20.7"/>
+  <use href="#g-C" x="134" y="184" width="37" height="20.7"/>
+  <use href="#g-D" x="173" y="184" width="38" height="20.7"/>
+  <use href="#g-E" x="213" y="184" width="40" height="20.7"/>
+  <use href="#g-F" x="255" y="184" width="40" height="20.7"/>
+  <use href="#g-G" x="297" y="184" width="38" height="20.7"/>
+  <use href="#g-H" x="337" y="184" width="40" height="20.7"/>
+  <use href="#g-I" x="379" y="184" width="14" height="20.7"/>
+  <use href="#g-J" x="395" y="184" width="40" height="20.7"/>
+  <use href="#g-K" x="437" y="184" width="40" height="20.7"/>
+  <use href="#g-L" x="479" y="184" width="40" height="20.7"/>
+  <use href="#g-M" x="521" y="184" width="40" height="20.7"/>
+
+  <!-- riga NOPQRSTUVWXYZ -->
+  <use href="#g-N" x="50"  y="208" width="40" height="20.7"/>
+  <use href="#g-O" x="92"  y="208" width="36" height="20.7"/>
+  <use href="#g-P" x="130" y="208" width="40" height="20.7"/>
+  <use href="#g-Q" x="172" y="208" width="36" height="20.7"/>
+  <use href="#g-R" x="210" y="208" width="38" height="20.7"/>
+  <use href="#g-S" x="250" y="208" width="40" height="20.7"/>
+  <use href="#g-T" x="292" y="208" width="40" height="20.7"/>
+  <use href="#g-U" x="334" y="208" width="40" height="20.7"/>
+  <use href="#g-V" x="376" y="208" width="40" height="20.7"/>
+  <use href="#g-W" x="418" y="208" width="58" height="20.7"/>
+  <use href="#g-X" x="478" y="208" width="40" height="20.7"/>
+  <use href="#g-Y" x="520" y="208" width="40" height="20.7"/>
+  <use href="#g-Z" x="562" y="208" width="40" height="20.7"/>
+
+  <!-- riga numeri display -->
+  <use href="#g-0" x="50"  y="234" width="36" height="20.7"/>
+  <use href="#g-1" x="88"  y="234" width="28" height="20.7"/>
+  <use href="#g-2" x="118" y="234" width="40" height="20.7"/>
+  <use href="#g-3" x="160" y="234" width="40" height="20.7"/>
+  <use href="#g-4" x="202" y="234" width="40" height="20.7"/>
+  <use href="#g-5" x="244" y="234" width="40" height="20.7"/>
+  <use href="#g-6" x="286" y="234" width="40" height="20.7"/>
+  <use href="#g-7" x="328" y="234" width="40" height="20.7"/>
+  <use href="#g-8" x="370" y="234" width="40" height="20.7"/>
+  <use href="#g-9" x="412" y="234" width="40" height="20.7"/>
+
+  <line x1="20" y1="262" x2="600" y2="262" stroke="#e0e0e0" stroke-width=".5"/>
+
+  <!-- frasi specimen -->
+  <text x="20" y="275" font-family="monospace" font-size="7" fill="#bbb">specimen</text>
+
+  <!-- THE QUICK BROWN FOX -->
+  <use href="#g-T" x="20"  y="280" width="52" height="27"/>
+  <use href="#g-H" x="74"  y="280" width="52" height="27"/>
+  <use href="#g-E" x="128" y="280" width="52" height="27"/>
+  <use href="#g-Q" x="192" y="280" width="46" height="27"/>
+  <use href="#g-U" x="240" y="280" width="52" height="27"/>
+  <use href="#g-I" x="294" y="280" width="18" height="27"/>
+  <use href="#g-C" x="314" y="280" width="46" height="27"/>
+  <use href="#g-K" x="362" y="280" width="52" height="27"/>
+  <use href="#g-B" x="426" y="280" width="52" height="27"/>
+  <use href="#g-R" x="480" y="280" width="50" height="27"/>
+  <use href="#g-O" x="532" y="280" width="46" height="27"/>
+
+  <!-- WNFXJDG -->
+  <use href="#g-W" x="20"  y="314" width="76" height="27"/>
+  <use href="#g-N" x="100" y="314" width="52" height="27"/>
+  <use href="#g-F" x="154" y="314" width="52" height="27"/>
+  <use href="#g-X" x="208" y="314" width="52" height="27"/>
+  <use href="#g-J" x="262" y="314" width="52" height="27"/>
+  <use href="#g-D" x="316" y="314" width="48" height="27"/>
+  <use href="#g-G" x="366" y="314" width="46" height="27"/>
+
+  <!-- 1234567890 -->
+  <use href="#g-1" x="20"  y="348" width="34" height="27"/>
+  <use href="#g-2" x="56"  y="348" width="52" height="27"/>
+  <use href="#g-3" x="110" y="348" width="52" height="27"/>
+  <use href="#g-4" x="164" y="348" width="52" height="27"/>
+  <use href="#g-5" x="218" y="348" width="52" height="27"/>
+  <use href="#g-6" x="272" y="348" width="52" height="27"/>
+  <use href="#g-7" x="326" y="348" width="52" height="27"/>
+  <use href="#g-8" x="380" y="348" width="52" height="27"/>
+  <use href="#g-9" x="434" y="348" width="52" height="27"/>
+  <use href="#g-0" x="488" y="348" width="46" height="27"/>
+
+  <line x1="20" y1="384" x2="600" y2="384" stroke="#e0e0e0" stroke-width=".5"/>
+  <text x="20" y="396" font-family="monospace" font-size="7" fill="#ccc">originali: A C D E F G H I J L M N O R S T U Y  |  costruite: B K P Q V W X Z 0–9</text>
+</svg>

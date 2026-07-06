@@ -1,0 +1,25 @@
+Come caricare i file multimediali (immagini e video)
+Per popolare le pagine di dettaglio di ciascun progetto, i file multimediali devono essere posizionati seguendo questa precisa struttura di cartelle e nomi file all'interno del tuo progetto:
+
+1. Struttura del File System
+Il percorso in cui inserire i file è all'interno della cartella: undeclared/assets/projects/
+
+Qui troverai 11 cartelle preconfigurate, da t1 a t11, che corrispondono ai rispettivi progetti:
+
+t1 ➔ U-JUDGE
+t2 ➔ ALUA
+t3 ➔ FRAGMA
+...
+t11 ➔ UNEC
+2. Nomenclatura dei File da inserire
+Dentro a ciascuna cartella (es. assets/projects/t1/ per U-JUDGE), devi caricare ed esportare i file nominati esattamente così:
+
+Immagini (8 in totale): Devono essere in formato .jpg (o salvate come tali) nominate da 1.jpg a 8.jpg: 1.jpg, 2.jpg, 3.jpg, 4.jpg, 5.jpg, 6.jpg, 7.jpg, 8.jpg
+Video (2 in totale): Devono essere in formato .mp4 (H.264 consigliato per compatibilità web) nominati 1.mp4 e 2.mp4: 1.mp4, 2.mp4
+Vettoriali del Progetto:
+logo.svg ➔ Il logo/monogramma del progetto che appare sul nodo del radar.
+title.svg ➔ Il titolo grafico del progetto che compare in alto nel pannello laterale quando aperto.
+3. Caricamento Graduale (Safe Fallback)
+Non preoccuparti di dover caricare tutti i file contemporaneamente per far funzionare il sito: ho sviluppato un sistema di fallback automatico. Se una foto o un video non è presente nella cartella, il sito non si blocca ma mostra un avviso testuale stile terminale: [ DATA_MISSING / IMG_1 ] o [ DATA_MISSING / VID_1 ]
+
+Non appena incollerai i file corrispondenti nelle cartelle, questi sostituiranno i segnaposto grigi automaticamente al prossimo avvio/ricaricamento!

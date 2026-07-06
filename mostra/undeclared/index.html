@@ -8,29 +8,39 @@
     <style>
         :root {
             --col-left-width: clamp(310px, 34%, 460px);
+            --col-right-width: 260px;
             --hover-overlay-width: clamp(220px, 22vw, 340px);
+            --subtle-glow: 0 0 2px rgba(255, 255, 255, 0.25);
+            --strong-glow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 15px rgba(255, 255, 255, 0.45);
         }
 
         @font-face {
-            font-family: 'AS Thermal';
-            src: url('assets/fonts/ASThermalTrialVF.ttf') format('truetype');
-            font-weight: 100 1000;
+            font-family: 'Mostra Regular';
+            src: url('assets/fonts/Mostra-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Mostra2';
+            src: url('assets/fonts/mostra2.ttf') format('truetype');
+            font-weight: normal;
             font-style: normal;
         }
 
         body, html {
             margin: 0; padding: 0; width: 100vw; height: 100vh;
             background-color: #000; color: #fff;
-            font-family: 'AS Thermal', monospace;
+            font-family: 'Mostra Regular', monospace;
             font-variation-settings: "slnt" 0, "ital" 0;
             overflow: hidden; box-sizing: border-box;
-            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M1,8 L1,1 L8,1 M16,1 L23,1 L23,8 M23,16 L23,23 L16,23 M8,23 L1,23 L1,16' fill='none' stroke='%23ffffff' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='1.5' fill='%23ffffff'/%3E%3C/svg%3E") 12 12, crosshair; user-select: none;
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M1,8 L1,1 L8,1 M16,1 L23,1 L23,8 M23,16 L23,23 L16,23 M8,23 L1,23 L1,16' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3Ccircle cx='12' cy='12' r='1.5' fill='%23ffffff'/%3E%3C/svg%3E") 12 12, crosshair; user-select: none;
             display: flex; align-items: center; justify-content: center;
         }
 
         * {
             box-sizing: inherit;
-            font-family: 'AS Thermal', monospace;
+            font-family: 'Mostra Regular', monospace;
             font-style: normal;
             font-synthesis: none;
             -webkit-font-synthesis: none;
@@ -38,28 +48,50 @@
         }
 
 
-        .info-badge, .info-title-box, .data-value, .spec-val, #hov-id, #info-id, #hov-field, #hov-team, .left-claim, .glowing-text-strong {
-            text-shadow: 
-                0 0 8px rgba(255, 255, 255, 1), 
-                0 0 20px rgba(255, 255, 255, 0.9), 
-                0 0 40px rgba(255, 255, 255, 0.75),
-                0 0 65px rgba(255, 255, 255, 0.5) !important;
+        /* Transition utility for all interactive or text elements */
+        .left-claim, .date-time-label, .meta-label, .thermal-nav-item, .thermal-meta-item, .lang-btn, .close-detail, .detail-focus, .glowing-text-strong, .data-label, .data-value, .left-uni-header {
+            transition: text-shadow 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+        }
+
+        /* Subtle glow applied ONLY to Thermal/Mostra Regular font elements */
+        .left-claim, 
+        .left-uni-header, 
+        .date-time-label, 
+        .meta-label, 
+        .thermal-nav-item, 
+        .thermal-meta-item, 
+        .lang-btn, 
+        .close-detail, 
+        .data-label, 
+        .data-value,
+        .info-badge,
+        .spec-val,
+        #hov-id,
+        #info-id {
+            text-shadow: var(--subtle-glow) !important;
         }
 
         .nav-link-content:hover,
         .nav-link-content:hover .indicator,
         .lang-btn:hover,
+        .lang-btn.active,
         .maps-link:hover,
         .meta-row:hover .maps-link,
-        .meta-row:hover .date-time-label {
+        .meta-row:hover .date-time-label,
+        .close-detail:hover,
+        .glowing-text-strong,
+        .detail-focus,
+        #info-group-val {
+            text-shadow: var(--strong-glow) !important;
             opacity: 1 !important;
-            text-shadow: 
-                0 0 8px rgba(255, 255, 255, 1), 
-                0 0 22px rgba(255, 255, 255, 1), 
-                0 0 45px rgba(255, 255, 255, 0.95),
-                0 0 70px rgba(255, 255, 255, 0.85),
-                0 0 100px rgba(255, 255, 255, 0.65),
-                0 0 140px rgba(255, 255, 255, 0.4) !important;
+        }
+
+        /* Hover on the Dash Menu gets a very prominent, strong glow */
+        .thermal-nav-item:hover,
+        .thermal-meta-item:hover,
+        .thermal-link:hover {
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 15px rgba(255, 255, 255, 0.45) !important;
+            opacity: 1 !important;
         }
 
         /* Contenitore full-viewport */
@@ -96,7 +128,7 @@
             width: var(--col-left-width);
             padding: 24px 32px;
             border-right: 1px solid #222; 
-            display: flex; flex-direction: column; z-index: 10;
+            display: flex; flex-direction: column; z-index: auto;
             overflow: hidden;
         }
         
@@ -116,7 +148,7 @@
             margin: 0 6px 28px 6px;
             overflow: hidden;
             white-space: nowrap;
-            border-bottom: 1.5px solid rgba(255, 255, 255, 0.7); /* Line moved from university header */
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.7); /* Line moved from university header */
             box-shadow: 0 4px 12px -6px rgba(255, 255, 255, 0.15);
             padding: 14px 0;
             display: flex;
@@ -179,7 +211,6 @@
             font-weight: 1000;
             letter-spacing: 0.06em;
             opacity: 0.8;
-            text-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 15px rgba(255, 255, 255, 0.45);
             transition: opacity 0.25s ease, text-shadow 0.25s ease;
         }
         .lang-switch-container {
@@ -196,11 +227,9 @@
         }
         .lang-btn.active {
             color: #fff;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8) !important;
         }
         .lang-btn:hover {
             color: #fff;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6) !important;
         }
         .left-uni-header {
             font-size: 0.82rem; /* Increased size by ~0.08rem */
@@ -210,31 +239,29 @@
             line-height: 1.5;
             font-weight: 1000;
         }
-        /* Define a strong, visible glow for all texts in the left column footer */
-        .left-uni-header, .meta-label {
-            text-shadow: 
-                0 0 8px rgba(255, 255, 255, 0.95), 
-                0 0 20px rgba(255, 255, 255, 0.7),
-                0 0 35px rgba(255, 255, 255, 0.45) !important;
-        }
+        /* uni-header rules inherited globally */
         
         .logo-png { width: 110%; max-width: 1400px; height: auto; margin-bottom: 20px; }
 
-        /* col-right: nascosta (larghezza 0) di default, si espande su .visible */
+        /* col-right: pannello flottante che scivola da destra */
         .col-right { 
-            flex: 0 0 0px;
-            width: 0;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: clamp(280px, 28vw, 440px);
             padding: 0;
-            border-left: 1px solid #222;
+            border-left: 0.5px solid #222;
             overflow: hidden;
-            z-index: 1000; /* elevato sopra i filtri CRT globali */
+            z-index: 1000;
             color: #fff;
-            position: relative;
-            transition: flex-basis 520ms cubic-bezier(.2,.9,.2,1), padding 480ms cubic-bezier(.2,.9,.2,1);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 500ms cubic-bezier(.25,.8,.25,1), opacity 400ms ease, width 500ms cubic-bezier(.25,.8,.25,1);
         }
         .col-right.visible {
-            flex: 0 0 clamp(260px, 28vw, 440px);
-            width: clamp(260px, 28vw, 440px);
+            transform: translateX(0);
+            opacity: 1;
             padding: clamp(16px, 2.5vw, 30px);
             overflow-y: auto;
         }
@@ -246,11 +273,72 @@
             transition: flex 480ms cubic-bezier(.2,.9,.2,1);
             position: relative;
             container-type: size;
+            overflow: hidden;
         }
 
-        /* detail-open: center collassa, right prende tutto il resto */
-        .layout.detail-open .col-center { flex: 0 0 0; overflow: hidden; }
-        .layout.detail-open .col-right { flex: 1 1 0 !important; width: auto !important; max-width: none; }
+        #bg-grid-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1; 
+            pointer-events: none;
+            opacity: 0.3;
+            filter: drop-shadow(0 0 4px rgba(92, 255, 255, 0.9)) drop-shadow(0 0 12px rgba(92, 255, 255, 0.6));
+        }
+
+        /* Top right static text */
+        .top-right-info {
+            position: absolute;
+            top: clamp(24px, 4vh, 40px);
+            right: clamp(24px, 4vw, 40px);
+            text-align: right;
+            font-size: 0.95rem;
+            font-weight: 1000;
+            letter-spacing: 0.08em;
+            color: #fff;
+            z-index: 50;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        /* Bottom right static text */
+        .bottom-right-info {
+            position: absolute;
+            bottom: clamp(24px, 4vh, 40px);
+            right: clamp(24px, 4vw, 40px);
+            text-align: right;
+            font-size: 0.95rem;
+            font-weight: 1000;
+            letter-spacing: 0.08em;
+            color: #fff;
+            z-index: 50;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        /* detail-open: nascondi le scritte ambientali, radar diventa non-interattivo */
+        .layout.detail-open .top-right-info,
+        .layout.detail-open .bottom-right-info { opacity: 0; }
+        .layout.detail-open .col-right {
+            width: calc(100% - var(--col-left-width)) !important;
+        }
+        
+        /* Blocca le interazioni del radar quando miniaturizzato su desktop */
+        .layout.detail-open .radar-wrapper,
+        .layout.detail-open .target-node {
+            pointer-events: none !important;
+        }
 
         .nav-links {
             list-style: none;
@@ -339,45 +427,45 @@
         }
         .radar-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: 1px solid #333; border-radius: inherit; overflow: hidden; background: #010101;
+            border-radius: inherit; overflow: hidden; background: transparent;
             transition: width 600ms cubic-bezier(.2,.9,.2,1);
         }
         .radar-grid {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%;
-            border: 1px dashed rgba(255,255,255,0.08); pointer-events: none; z-index: 5;
+            border: 0.5px dashed rgba(255,255,255,0.08); pointer-events: none; z-index: 5;
             transform-origin: center;
             animation: radarRotateCW 160s linear infinite;
         }
-        .radar-grid::before { content: ''; position: absolute; top: 15%; left: 15%; width: 70%; height: 70%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.05); }
-        .radar-grid::after { content: ''; position: absolute; top: 32.5%; left: 32.5%; width: 35%; height: 35%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); }
+        .radar-grid::before { content: ''; position: absolute; top: 15%; left: 15%; width: 70%; height: 70%; border-radius: 50%; border: 0.5px solid rgba(255,255,255,0.05); }
+        .radar-grid::after { content: ''; position: absolute; top: 32.5%; left: 32.5%; width: 35%; height: 35%; border-radius: 50%; border: 0.5px solid rgba(255,255,255,0.1); }
         .radar-hud {
             position: absolute; inset: 0; pointer-events: none; z-index: 12;
         }
 
         /* --- HIGH-TECH RADAR ANIMATIONS --- */
         .radar-spin-slow-cw {
-            transform-origin: 250px 250px;
+            transform-origin: 783.56px 760.66px;
             animation: radarRotateCW 80s linear infinite;
         }
         .radar-spin-medium-cw {
-            transform-origin: 250px 250px;
-            animation: radarRotateCW 40s linear infinite;
+            transform-origin: 783.56px 760.66px;
+            animation: radarRotateCW 120s linear infinite;
         }
         .radar-spin-fast-cw {
-            transform-origin: 250px 250px;
-            animation: radarRotateCW 18s linear infinite;
+            transform-origin: 783.56px 760.66px;
+            animation: radarRotateCW 20s linear infinite;
         }
         .radar-spin-slow-ccw {
-            transform-origin: 250px 250px;
-            animation: radarRotateCCW 70s linear infinite;
+            transform-origin: 783.56px 760.66px;
+            animation: radarRotateCCW 80s linear infinite;
         }
         .radar-spin-medium-ccw {
-            transform-origin: 250px 250px;
-            animation: radarRotateCCW 30s linear infinite;
+            transform-origin: 783.56px 760.66px;
+            animation: radarRotateCCW 40s linear infinite;
         }
         .radar-spin-fast-ccw {
-            transform-origin: 250px 250px;
-            animation: radarRotateCCW 15s linear infinite;
+            transform-origin: 783.56px 760.66px;
+            animation: radarRotateCCW 20s linear infinite;
         }
         .radar-pulse-brackets {
             transform-origin: 250px 250px;
@@ -404,6 +492,23 @@
         @keyframes radarRotateCCW {
             from { transform: rotate(0deg); }
             to { transform: rotate(-360deg); }
+        }
+        .radar-sonar-wave {
+            transform-origin: 783.56px 760.66px;
+            animation: radarSonarWave 8s cubic-bezier(0.1, 0.8, 0.2, 1) infinite both;
+        }
+        @keyframes radarSonarWave {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            30% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
         }
         @keyframes radarBracketsPulse {
             0% {
@@ -469,7 +574,7 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 44px; height: 44px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M1,14 L1,1 L14,1 M30,1 L43,1 L43,14 M43,30 L43,43 L30,43 M14,43 L1,43 L1,30' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M1,14 L1,1 L14,1 M30,1 L43,1 L43,14 M43,30 L43,43 L30,43 M14,43 L1,43 L1,30' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E");
             background-size: 100% 100%;
             background-repeat: no-repeat;
             filter: drop-shadow(0 0 6px rgba(255,255,255,1));
@@ -497,9 +602,9 @@
            COLONNA DESTRA - BRUTALIST & SCRAMBLE
            ========================================= */
          .info-panel { 
-             opacity: 0; transform: translateY(10px); transition: all 0.2s ease; 
+             opacity: 0; transform: translateY(10px); transition: all 0.4s cubic-bezier(.25,.8,.25,1); 
              display: flex; flex-direction: column; pointer-events: none;
-             color: #fff; background: #383838;
+             color: #fff; background: #000 !important;
              padding: 36px 32px;
              position: relative;
              margin: 16px 14px;
@@ -508,9 +613,15 @@
          }
          /* About panel full‑width style */
          .info-panel.about-panel {
-             width: calc(100% - 28px) !important;
-             margin: 0 !important;
-             overflow: hidden !important;
+             width: 100% !important;
+             max-width: 1300px !important;
+             margin: 0 auto !important;
+             background: #000 !important;
+             height: auto !important;
+             min-height: 100% !important;
+         }
+         .about-panel .info-content-box {
+             overflow-y: visible !important;
          }
          .info-panel-body {
              display: flex;
@@ -529,7 +640,7 @@
  
          .info-title-box { border: none; padding: 20px 20px 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; min-height: auto; background: transparent; gap: 10px; }
          .info-title-svg-container { width: 100%; max-height: 50px; display: flex; justify-content: flex-start; align-items: center; }
-         .info-title-svg-container img { max-width: 70%; max-height: 28px; width: auto; height: auto; object-fit: contain; filter: brightness(0) invert(1); }
+         .info-title-svg-container img { width: auto; height: 16px; filter: brightness(0) invert(1); }
  
          .info-content-box { border: none; padding: 20px 0; font-size: 1.35rem; line-height: 1.4; flex-grow: 1; overflow-y: auto; position: relative; background: transparent; }
          
@@ -540,8 +651,37 @@
          .info-content-box::-webkit-scrollbar-thumb { background: #555; }
 
         /* Stati di visualizzazione interna (Hover vs Click) */
-        #overview-state, #detail-state, #about-state { display: none; flex-direction: column; gap: 15px; }
-        #overview-state.active, #detail-state.active, #about-state.active { display: flex; }
+        #overview-state, #detail-state { display: none; flex-direction: column; gap: 15px; }
+        #overview-state.active, #detail-state.active { display: flex; }
+        
+        #about-state {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 60px 40px;
+            box-sizing: border-box;
+        }
+        #about-state.active {
+            display: flex;
+        }
+
+        .hover-glow-btn:hover { background: #fff; color: #000 !important; text-shadow: none !important; }
+        .hover-opacity-link { opacity: 0.6; }
+        .hover-opacity-link:hover { opacity: 1; }
+
+        .col-right.about-mode {
+            width: calc(100% - var(--col-left-width)) !important;
+            max-width: none !important;
+            padding: clamp(24px, 4vw, 60px) !important;
+        }
+        .info-panel.about-panel {
+            padding: 0; /* Rimuove il padding di default per dare spazio full-width */
+        }
+        .info-panel.about-panel .info-panel-body {
+            width: 100%; /* Espande il body al 100% */
+        }
 
         .data-label { font-size: 0.95rem; opacity: 0.6; margin-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.15); }
         .data-value { font-weight: bold; text-transform: uppercase; color: #fff; font-size: 1.25rem; }
@@ -560,17 +700,31 @@
             gap: 16px;
             height: 100%;
         }
+        .media-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
         .media-slot {
             position: relative;
             width: 100%;
-            height: clamp(140px, 20vh, 220px);
-            background: #2b2b2b;
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            height: auto;
+            min-height: 180px;
+            background: #000;
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            margin-bottom: 8px;
+        }
+        .media-slot.full-width {
+            grid-column: span 1;
+            height: auto;
+        }
+        .media-slot:has(img.loaded),
+        .media-slot:has(video.loaded) {
+            min-height: 0 !important;
         }
         .media-slot::before {
             content: '';
@@ -579,15 +733,37 @@
             background: linear-gradient(rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0.1) 50%);
             background-size: 100% 4px;
             pointer-events: none;
+            z-index: 2;
         }
-         .media-slot img {
-             max-width: 60%;
-             max-height: 60%;
-             object-fit: contain;
-             transition: transform 0.3s ease;
-         }
-        .media-slot:hover img {
-            transform: scale(1.06);
+        .media-slot img.detail-img {
+            position: relative;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            display: block;
+            z-index: 1;
+        }
+        .media-slot:hover img.detail-img {
+            transform: scale(1.02);
+        }
+        .media-slot video.detail-video {
+            position: relative;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            max-height: 300px !important;
+            object-fit: contain;
+            display: block;
+            z-index: 1;
+        }
+        .media-slot .placeholder-text {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            z-index: 1;
         }
         .detail-focus {
             font-size: 1.05rem;
@@ -599,6 +775,7 @@
             border-bottom: 1px dashed rgba(255, 255, 255, 0.25);
             letter-spacing: 0.06em;
             text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255,255,255,0.7), 0 0 20px rgba(255,255,255,0.4);
         }
         .detail-text-block {
             font-size: 0.88rem;
@@ -607,6 +784,7 @@
             margin-bottom: 22px;
             letter-spacing: 0.05em;
             font-weight: 1000;
+            font-family: 'Mostra2', monospace;
         }
         .detail-group {
             display: flex;
@@ -648,16 +826,26 @@
             fill: #fff;
         }
 
-        /* CLOSE BUTTON */
          .close-detail {
-             position: absolute; top: 16px; right: 16px;
-             background: transparent; border: 1px solid rgba(255,255,255,0.4);
-             color: #fff; font-family: inherit; font-size: 0.95rem; cursor: pointer;
-             width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-             border-radius: 0; z-index: 100; line-height: 1; padding: 0;
-             transition: border-color 0.2s ease, background 0.2s ease;
+              position: absolute; 
+              top: 24px; 
+              right: 32px;
+              background: transparent; 
+              border: none;
+              color: rgba(255, 255, 255, 0.5); 
+              font-family: inherit; 
+              font-size: 1.4rem; 
+              cursor: pointer;
+              z-index: 100; 
+              line-height: 1; 
+              padding: 10px;
+              transition: color 0.2s ease;
+              letter-spacing: 0.1em;
          }
-         .close-detail:hover { border-color: #fff; background: rgba(255,255,255,0.12); }
+         .close-detail:hover { 
+              color: #fff; 
+              background: transparent;
+         }
 
         /* HUD reveal */
         .radar-hud { opacity: 0; transform: translateY(8px) scale(0.98); transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1); }
@@ -685,8 +873,8 @@
            ========================================= */
         @media (max-width: 768px) {
             .target-node {
-                width: 35px !important;
-                height: 35px !important;
+                width: 44px !important;
+                height: 44px !important;
             }
             .target-node.hovered {
                 opacity: 1 !important;
@@ -747,11 +935,11 @@
             
              .mobile-hover-card {
                  display: flex; flex-direction: column; justify-content: center;
-                 position: fixed; bottom: -120px; left: 16px; right: 16px;
-                 background: #383838 !important;
+                 position: fixed; bottom: -220px; left: 16px; right: 16px;
+                 background: #000000 !important;
                  border: none !important;
                  border-radius: 0 !important;
-                 padding: 16px;
+                 padding: 16px 20px !important;
                  z-index: 800;
                  transition: bottom 0.4s cubic-bezier(.2,.9,.2,1);
                  box-shadow: none !important;
@@ -796,6 +984,11 @@
                 display: block !important;
                 opacity: 1 !important;
             }
+            /* Hide ambient desktop elements */
+            .top-right-info, .bottom-right-info {
+                display: none !important;
+            }
+
             .ticker-wrap {
                 width: 100% !important;
                 margin: 0 !important;
@@ -840,16 +1033,20 @@
                 --radar-size: min(94vw, 50svh) !important; /* Ingrandito per occupare maggior spazio disponibile su mobile */
                 width: var(--radar-size) !important;
                 height: var(--radar-size) !important;
-                position: fixed !important;
+                position: absolute !important;
                 left: 50% !important;
-                top: 52svh !important; /* Centrato tenendo conto dell'header bar */
-                transform: translate3d(-50%, -50%, 0) !important; /* forza il compositing hardware accelerato per evitare wobbling su iOS */
+                top: 50% !important; /* Ancorato esattamente alla griglia del contenitore */
+                transform: translate3d(-50%, -50%, 0) !important; /* Nessun offset manuale, matematicamente centrato */
                 will-change: transform;
                 margin: 0 !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
                 z-index: 10 !important;
+            }
+            .layout.detail-open .radar-wrapper,
+            .layout.detail-open .target-node {
+                pointer-events: auto !important; /* Riabilita le interazioni su mobile */
             }
 
 
@@ -866,7 +1063,9 @@
                  padding: 0 !important;
                  transform: none !important;
                  transition: max-height 520ms cubic-bezier(.2,.9,.2,1), padding 420ms ease !important;
-                 background: #000000 !important;
+                 background: rgba(0, 0, 0, 0.4) !important;
+                 backdrop-filter: blur(8px) !important;
+                 -webkit-backdrop-filter: blur(8px) !important;
                  overflow: hidden !important;
                  z-index: 1100 !important;
              }
@@ -874,8 +1073,11 @@
                  max-height: 50vh;
                  width: 100% !important;
                  flex: none !important;
-                 padding: 12px !important;
+                 padding: 0 !important;
                  overflow-y: auto !important;
+                 background: rgba(0, 0, 0, 0.4) !important;
+                 backdrop-filter: blur(8px) !important;
+                 -webkit-backdrop-filter: blur(8px) !important;
              }
              /* su mobile non collassare il radar in detail-open */
              .layout.detail-open .col-center {
@@ -888,16 +1090,125 @@
                  width: 100% !important;
                  border-radius: 0 !important; /* Completamente piatto */
                  box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+                 display: flex !important;
+                 z-index: 2000 !important;
+                 padding: 0 !important;
+                 overflow-y: auto !important;
+                 flex-direction: column !important;
+                 background: rgba(0, 0, 0, 0.4) !important;
+                 backdrop-filter: blur(8px) !important;
+                 -webkit-backdrop-filter: blur(8px) !important;
              }
              .info-panel {
-                 background: #383838 !important;
-                 margin: 8px !important;
-                 min-height: auto !important;
-                 padding: 24px 16px !important;
-             }
-             .close-detail { top: 12px; right: 12px; }
-             .info-content-box { font-size: 1rem; }
-            .info-badge { font-size: 1.1rem; }
+                  background: #000000 !important;
+                  margin: 20px 16px !important;
+                  min-height: auto !important;
+                  padding: 24px 20px !important;
+              }
+              .info-panel-body {
+                  width: 100% !important;
+                  margin: 0 !important;
+                  gap: 12px !important;
+              }
+              .info-title-box {
+                  padding: 0 40px 12px 0 !important;
+              }
+              .info-content-box {
+                  font-size: 1rem !important;
+                  overflow-y: visible !important;
+                  height: auto !important;
+                  padding: 10px 0 !important;
+              }
+              .info-panel.about-panel {
+                  margin: 20px 16px !important;
+                  padding: 24px 20px !important;
+                  width: auto !important;
+                  max-width: none !important;
+                  height: auto !important;
+                  min-height: auto !important;
+              }
+              .col-right.about-mode {
+                  width: 100% !important;
+                  max-width: none !important;
+                  padding: 0 !important;
+              }
+              #about-state {
+                  padding: 16px 0 !important;
+              }
+              #about-text-1, #about-text-2 {
+                  font-size: 0.85rem !important;
+                  line-height: 1.55 !important;
+                  margin-bottom: 20px !important;
+              }
+              .about-subtitle {
+                  font-size: 0.85rem !important;
+                  letter-spacing: 0.1em !important;
+              }
+              .about-divider {
+                  margin-bottom: 16px !important;
+              }
+              .about-micro-row {
+                  justify-content: center !important;
+                  align-items: center !important;
+                  gap: 20px 15px !important;
+                  margin-bottom: 24px !important;
+              }
+              .about-poster-wrapper {
+                  margin-bottom: 24px !important;
+              }
+              .about-poster-wrapper a {
+                  font-size: 0.9rem !important;
+                  padding: 10px 20px !important;
+              }
+              .about-prev-projects {
+                  padding-bottom: 24px !important;
+              }
+              .about-prev-projects a {
+                  font-size: 0.9rem !important;
+              }
+              .about-prev-projects div {
+                  font-size: 0.85rem !important;
+                  margin-bottom: 12px !important;
+              }
+              .close-detail { top: 12px; right: 12px; font-size: 1.1rem; }
+              .info-badge { font-size: 1.1rem; }
+
+              /* Detail specific optimizations inside info-panel */
+              .detail-focus {
+                  font-size: 0.95rem !important;
+                  line-height: 1.4 !important;
+                  margin-bottom: 16px !important;
+                  padding: 0 0 12px 0 !important;
+              }
+              .detail-text-block {
+                  font-size: 0.82rem !important;
+                  line-height: 1.45 !important;
+                  margin-bottom: 16px !important;
+              }
+              .media-group {
+                  gap: 12px !important;
+                  margin-bottom: 16px !important;
+              }
+              .media-slot {
+                  min-height: 140px !important;
+              }
+              .media-slot:has(img.loaded),
+              .media-slot:has(video.loaded) {
+                  min-height: 0 !important;
+              }
+              .media-slot video.detail-video {
+                  max-height: 220px !important;
+              }
+              .detail-group {
+                  margin-top: 8px !important;
+                  padding-top: 12px !important;
+              }
+              .detail-group .data-label {
+                  font-size: 0.8rem !important;
+              }
+              .detail-group .data-value {
+                  font-size: 1rem !important;
+              }
             .logo-reticle {
                 min-height: unset !important;
                 margin: 0 !important;
@@ -911,6 +1222,14 @@
             .logo-reticle::before, .logo-reticle::after {
                 display: none !important;
             }
+            #bg-grid-img {
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                transform: none !important;
+                object-fit: cover !important;
+            }
         }
 
         /* =========================================
@@ -922,7 +1241,7 @@
              right: 16px;
              transform: translateY(-50%) translateX(calc(100% + 20px));
              width: var(--hover-overlay-width);
-             background: #383838;
+             background: transparent;
              color: #fff;
              display: flex;
              flex-direction: column;
@@ -935,8 +1254,13 @@
         .hover-overlay-body {
             display: flex;
             flex-direction: column;
-            width: 90%;
-            margin: auto;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            padding: 36px 24px;
+            background: transparent;
         }
         .hover-overlay.visible {
             transform: translateY(-50%) translateX(0);
@@ -959,36 +1283,27 @@
             align-items: center;
             justify-content: center;
             min-height: 56px;
+            z-index: 1000;
         }
         .logo-reticle::before {
             content: '';
             position: absolute;
-            inset: 6px;
+            inset: 0 4px; /* un po' di margine ai lati */
             pointer-events: none;
             z-index: 1;
             background:
-                linear-gradient(white, white) top left / 12px 1.5px no-repeat,
-                linear-gradient(white, white) top left / 1.5px 12px no-repeat,
-                linear-gradient(white, white) top right / 12px 1.5px no-repeat,
-                linear-gradient(white, white) top right / 1.5px 12px no-repeat,
-                linear-gradient(white, white) bottom left / 12px 1.5px no-repeat,
-                linear-gradient(white, white) bottom left / 1.5px 12px no-repeat,
-                linear-gradient(white, white) bottom right / 12px 1.5px no-repeat,
-                linear-gradient(white, white) bottom right / 1.5px 12px no-repeat;
-            opacity: 0.5;
+                /* LEFT BRACKET */
+                linear-gradient(white, white) left center / 0.5px 44px no-repeat,
+                linear-gradient(white, white) left center / 16px 0.5px no-repeat,
+                linear-gradient(white, white) 5px center / 0.5px 22px no-repeat,
+                /* RIGHT BRACKET */
+                linear-gradient(white, white) right center / 0.5px 44px no-repeat,
+                linear-gradient(white, white) right center / 16px 0.5px no-repeat,
+                linear-gradient(white, white) calc(100% - 5px) center / 0.5px 22px no-repeat;
+            opacity: 0.8;
         }
         .logo-reticle::after {
-            content: '';
-            position: absolute;
-            inset: 6px;
-            pointer-events: none;
-            z-index: 1;
-            background:
-                linear-gradient(white, white) top center / 1.5px 7px no-repeat,
-                linear-gradient(white, white) bottom center / 1.5px 7px no-repeat,
-                linear-gradient(white, white) center left / 7px 1.5px no-repeat,
-                linear-gradient(white, white) center right / 7px 1.5px no-repeat;
-            opacity: 0.22;
+            display: none;
         }
         .logo-reticle .logo-png {
             width: 105%; max-width: 300px; height: auto; margin-bottom: 0;
@@ -1002,14 +1317,14 @@
              pointer-events: none;
              z-index: 10;
              background:
-                 linear-gradient(white, white) top left / 15px 2px no-repeat,
-                 linear-gradient(white, white) top left / 2px 15px no-repeat,
-                 linear-gradient(white, white) top right / 15px 2px no-repeat,
-                 linear-gradient(white, white) top right / 2px 15px no-repeat,
-                 linear-gradient(white, white) bottom left / 15px 2px no-repeat,
-                 linear-gradient(white, white) bottom left / 2px 15px no-repeat,
-                 linear-gradient(white, white) bottom right / 15px 2px no-repeat,
-                 linear-gradient(white, white) bottom right / 2px 15px no-repeat;
+                 linear-gradient(white, white) top left / 15px 0.5px no-repeat,
+                 linear-gradient(white, white) top left / 0.5px 15px no-repeat,
+                 linear-gradient(white, white) top right / 15px 0.5px no-repeat,
+                 linear-gradient(white, white) top right / 0.5px 15px no-repeat,
+                 linear-gradient(white, white) bottom left / 15px 0.5px no-repeat,
+                 linear-gradient(white, white) bottom left / 0.5px 15px no-repeat,
+                 linear-gradient(white, white) bottom right / 15px 0.5px no-repeat,
+                 linear-gradient(white, white) bottom right / 0.5px 15px no-repeat;
              opacity: 0.95;
          }
          .hover-overlay::after, .info-panel::after, .mobile-hover-card::after {
@@ -1020,28 +1335,51 @@
              z-index: 10;
              background:
                  /* Top Center T-mark */
-                 linear-gradient(white, white) top center / 15px 2px no-repeat,
-                 linear-gradient(white, white) top center / 2px 8px no-repeat,
+                 linear-gradient(white, white) top center / 15px 0.5px no-repeat,
+                 linear-gradient(white, white) top center / 0.5px 8px no-repeat,
                  /* Bottom Center inverted T-mark */
-                 linear-gradient(white, white) bottom center / 15px 2px no-repeat,
-                 linear-gradient(white, white) bottom center / 2px 8px no-repeat;
+                 linear-gradient(white, white) bottom center / 15px 0.5px no-repeat,
+                 linear-gradient(white, white) bottom center / 0.5px 8px no-repeat;
              opacity: 0.95;
          }
 
-        /* Titolo SVG hover overlay (desktop e mobile) */
-        #hov-title-wrapper img, #mob-hov-title-wrapper img {
-            max-width: 80%; max-height: 28px; object-fit: contain;
-            filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255,255,255,0.8));
+        /* Pulsating glow animation keyframe for hover SVGs */
+        @keyframes svgGlowPulse {
+            0%, 100% {
+                filter: brightness(0) invert(1) drop-shadow(0 0 3px rgba(255,255,255,0.4)) drop-shadow(0 0 8px rgba(255,255,255,0.25));
+            }
+            50% {
+                filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255,255,255,0.85)) drop-shadow(0 0 20px rgba(255,255,255,0.55));
+            }
+        }
+
+        /* Titolo SVG hover overlay (desktop e mobile) e logo micro */
+        /* Titolo SVG hover overlay (desktop e mobile) e logo micro */
+        #hov-title-wrapper img, #mob-hov-title-wrapper img, #hov-micro-img, #mob-hov-micro-img {
+            width: auto; 
+            height: 16px;
+            object-fit: contain;
+        }
+        #hov-micro-img {
+            height: 48px;
+        }
+        #mob-hov-micro-img {
+            height: 36px;
+        }
+
+        /* Synchronized animations: start exactly when parent becomes visible */
+        .hover-overlay.visible #hov-title-wrapper img,
+        .hover-overlay.visible #hov-micro-img,
+        .mobile-hover-card.visible #mob-hov-title-wrapper img,
+        .mobile-hover-card.visible #mob-hov-micro-img {
+            animation: svgGlowPulse 2.5s infinite ease-in-out;
         }
         #mob-hov-title-wrapper span {
             font-size: 1rem; font-weight: bold; letter-spacing: 0.1em; color: #fff;
         }
-        /* Titolo SVG pannello dettaglio */
         .info-title-svg-container img {
-            max-width: 60% !important;
-            max-height: 30px !important;
-            height: 30px !important;
-            object-fit: contain;
+            width: auto !important;
+            height: 16px !important;
             filter: brightness(0) invert(1);
         }
         /* Su mobile il tap va diretto sul nodo, overlay non serve */
@@ -1073,7 +1411,7 @@
         }
         .custom-cursor .cursor-crosshair {
             width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M1,8 L1,1 L8,1 M16,1 L23,1 L23,8 M23,16 L23,23 L16,23 M8,23 L1,23 L1,16' fill='none' stroke='%23ffffff' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M1,8 L1,1 L8,1 M16,1 L23,1 L23,8 M23,16 L23,23 L16,23 M8,23 L1,23 L1,16' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E");
             background-size: 100% 100%;
             transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
             transform: rotate(0deg);
@@ -1103,6 +1441,100 @@
             transform: scale(1);
         }
 
+        /* Nuova Gerarchia Thermal (Footer/Nav) */
+        .thermal-nav-block, .thermal-meta-block {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-family: 'Mostra Regular', monospace;
+            font-size: 1.05rem;
+            color: #fff;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .thermal-nav-item, .thermal-meta-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            transition: color 0.2s ease, text-shadow 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+            opacity: 0.65;
+        }
+        .thermal-meta-item {
+            cursor: default;
+            opacity: 0.75;
+        }
+        .thermal-meta-item.sub-item a {
+            cursor: pointer;
+        }
+        
+        .thermal-nav-item:hover, .thermal-link:hover {
+            color: #fff;
+            opacity: 1 !important;
+        }
+        
+        .thermal-nav-item:active, .thermal-link:active {
+            transform: scale(0.97);
+            opacity: 0.55 !important;
+        }
+        
+        .close-detail:active {
+             transform: scale(0.95);
+             opacity: 0.65 !important;
+        }
+        
+        .thermal-meta-item.sub-item {
+            margin-left: 20px; /* Rientrato rispetto a quello sopra */
+        }
+        
+        .indicator {
+            color: #fff;
+        }
+
+        .thermal-lang-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-top: 12px;
+            margin-left: 22px; /* Allineato al testo */
+            font-family: 'Mostra Regular', monospace;
+            font-size: 1.05rem;
+        }
+        
+        .lang-btn {
+            cursor: pointer;
+            color: rgba(255,255,255,0.4);
+            transition: color 0.2s;
+            font-weight: normal;
+        }
+        .lang-btn.active {
+            color: #fff;
+        }
+        .lang-btn.active::before {
+            content: '> ';
+            margin-right: 6px;
+        }
+        .lang-btn.active::after {
+            content: ' <';
+            margin-left: 6px;
+        }
+        
+        .thermal-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 8px 0 24px 0;
+            width: 100%;
+        }
+
+        .thermal-link {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
     </style>
 </head>
 <body>
@@ -1123,6 +1555,18 @@
         </div>
     </div>
     <div class="layout">
+        <!-- TOP RIGHT INFO -->
+        <div class="top-right-info">
+            <div id="lang-tr-1">&gt; POLITECNICO DI MILANO &lt;</div>
+            <div id="lang-tr-2">&gt; SCHOOL OF DESIGN &lt;</div>
+        </div>
+
+        <!-- BOTTOM RIGHT INFO -->
+        <div class="bottom-right-info">
+            <div id="lang-bl-1">&gt; COMMUNICATION DESIGN &lt;</div>
+            <div id="lang-bl-2">&gt; FINAL SYNTHESIS STUDIO C1 &lt;</div>
+        </div>
+
         <aside class="col-left">
             <!-- Wrapper bar for centering logo and placing hamburger button -->
             <div class="col-left-header-bar">
@@ -1149,204 +1593,149 @@
 
             <!-- Wrapper per allineamento perfetto con i crocini (inset 6px) -->
             <div class="col-left-body" id="col-left-body">
-
-                <!-- 4. NAVIGATION / IG TOGGLES (CRT interactive style con solo segni di maggiore) -->
-                <ul class="nav-links">
-                    <li id="toggle-radar">
-                        <div class="nav-link-content" onclick="event.stopPropagation(); showAboutInfoPanel()">
-                            <span class="indicator">></span> <span class="label" id="lang-nav-radar">ABOUT</span>
-                        </div>
-                        <div class="lang-switch-container">
-                            <svg class="meta-icon globe-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6; margin-right: 4px;">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                                <path d="M2 12h20"></path>
-                            </svg>
-                            <span class="lang-btn active" id="lang-btn-it" onclick="event.stopPropagation(); setLanguage('it')">[ IT ]</span>
-                            <span class="lang-btn" id="lang-btn-en" onclick="event.stopPropagation(); setLanguage('en')">[ EN ]</span>
-                        </div>
-                    </li>
-                    <li id="toggle-index" onclick="handleIndexToggle()">
-                        <div class="nav-link-content">
-                            <span class="indicator">></span> <span class="label" id="lang-nav-index">INDEX_VIEW</span>
-                        </div>
-                    </li>
-                    <li id="toggle-ig" onclick="window.open('https://instagram.com/antidisciplinarylab', '_blank')">
-                        <div class="nav-link-content">
-                            <span class="indicator">></span> <span class="label" id="lang-nav-ig">@ANTIDISCIPLINARYLAB</span>
-                        </div>
-                    </li>
-                </ul>
-
-                <!-- Footer meta-info block spinto in fondo al wrapper -->
-                <div class="col-left-footer">
-                    <!-- 5. LOCATION, DAY & TIME & LANGUAGE (Grouped cohesive bottom island) -->
-                    <div class="footer-meta-block">
-                        <div class="meta-row">
-                            <a href="https://maps.google.com/?q=dotdotdot+via+tertulliano+68+Milano" target="_blank" class="maps-link">
-                                <svg class="meta-icon loc-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                                <span id="lang-loc-address">DOTDOTDOT // via tertulliano 68 MI</span>
-                            </a>
-                        </div>
-                        <div class="meta-row">
-                            <div class="date-time-label" style="display: flex; align-items: center;">
-                                <svg class="meta-icon calendar-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px; opacity: 0.8;">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                                <span id="lang-loc-date">11.07.2026</span> &nbsp;//&nbsp; <span id="lang-loc-time">11AM-7PM</span>
-                            </div>
-                        </div>
+                <!-- NAVIGATION -->
+                <div class="thermal-nav-block">
+                    <div class="thermal-nav-item" id="toggle-radar" onclick="event.stopPropagation(); showAboutInfoPanel()">
+                        <span class="indicator">></span> <span class="label" id="lang-nav-radar">ABOUT</span>
+                    </div>
+                    <div class="thermal-nav-item" id="toggle-ig" onclick="window.open('https://instagram.com/antidisciplinarylab', '_blank')">
+                        <span class="indicator">></span> <span class="label" id="lang-nav-ig">@ ANTIDISCIPLINARYLAB</span>
                     </div>
 
-                    <!-- 3. LAB / UNIVERSITY NAME (Multilinea 4 righe, spinto alla fine) -->
-                    <div class="left-uni-header" id="lang-uni">
-                        Laboratorio di Sintesi Finale C1<br>
-                        Design Della Comunicazione<br>
-                        Scuola del Design<br>
-                        Politecnico di Milano
+                    <div class="thermal-lang-row">
+                        <span class="lang-btn active" id="lang-btn-it" onclick="event.stopPropagation(); setLanguage('it')">[IT]</span>
+                        <span class="lang-btn" id="lang-btn-en" onclick="event.stopPropagation(); setLanguage('en')">[EN]</span>
                     </div>
                 </div>
-            </div>
-            
+
+                <div class="thermal-divider"></div>
+
+                <!-- META INFO -->
+                <div class="thermal-meta-block">
+                    <div class="thermal-meta-item">
+                        <a href="https://maps.google.com/?q=dotdotdot+via+tertulliano+68+Milano" target="_blank" class="thermal-link">
+                            <span class="indicator">></span> <span class="label" id="lang-loc-address">DOTDOTDOT 
+                                 VIA TERTULLIANO 68, MI</span>
+                        </a>
+                    </div>
+                    <div class="thermal-meta-item">
+                        <span class="indicator">></span> <span class="label" id="lang-loc-datetime">11.07.2026 — 11:00 - 19:00</span>
+                    </div>
+                </div>
+
+            </div> <!-- End col-left-body -->
+            <!-- (University Name removed) -->
             <!-- (Spazio vuoto in fondo per accogliere il radar miniatura) -->
             <div class="col-left-spacer" style="height: 240px; flex-shrink: 0;" aria-hidden="true"></div>
         </aside>
 
         <main class="col-center" id="radar-zone">
-            <div class="radar-wrapper">
+            <img src="../sfondo.svg?v=2" id="bg-grid-img" alt="Grid Background" />
+            
+            <div class="radar-wrapper" id="radar-wrapper">
                 <div class="radar-container" id="radar-container">
-                    <div class="radar-grid"></div>
+                    <canvas id="display-canvas" style="position: absolute; top:0; left:0; width:100%; height:100%; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, black 90%, transparent 93%); mask-image: radial-gradient(closest-side, black 90%, transparent 93%);"></canvas>
                     <div class="radar-hud">
-                        <svg viewBox="0 0 500 500" width="100%" height="100%" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
-                            <!-- Grid background ticks (faint plus signs scattered at corners) -->
-                            <path d="M 94 100 H 106 M 100 94 V 106" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
-                            <path d="M 394 100 H 406 M 400 94 V 106" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
-                            <path d="M 94 400 H 106 M 100 394 V 406" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
-                            <path d="M 394 400 H 406 M 400 394 V 406" stroke="rgba(255,255,255,0.18)" stroke-width="1" />
-                            
-                            <!-- Sidebar ticks with arrowheads: + > and < + -->
-                            <path d="M 44 150 H 56 M 50 144 V 156 M 62 146 L 67 150 L 62 154" stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none" />
-                            <path d="M 44 350 H 56 M 50 344 V 356 M 62 346 L 67 350 L 62 354" stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none" />
-                            <path d="M 444 150 H 456 M 450 144 V 156 M 438 146 L 433 150 L 438 154" stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none" />
-                            <path d="M 444 350 H 456 M 450 344 V 356 M 438 346 L 433 350 L 438 354" stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none" />
-
-                            <!-- Active Sonar Pings -->
-                            <circle class="radar-ping ping-1" cx="250" cy="250" r="240" fill="none" />
-                            <circle class="radar-ping ping-2" cx="250" cy="250" r="240" fill="none" />
-
-                            <!-- Concentric circles -->
-                            <circle cx="250" cy="250" r="10" stroke="rgba(255,255,255,0.85)" stroke-width="1" fill="none" />
-                            <circle cx="250" cy="250" r="28" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" fill="none" />
-                            <circle cx="250" cy="250" r="50" stroke="rgba(255,255,255,0.4)" stroke-width="1" fill="none" />
-                            <circle class="radar-spin-slow-cw" cx="250" cy="250" r="54" stroke="rgba(255,255,255,0.3)" stroke-dasharray="2, 3" stroke-width="1" fill="none" />
-                            <circle cx="250" cy="250" r="85" stroke="rgba(255,255,255,0.25)" stroke-width="1" fill="none" />
-                            <circle class="radar-spin-medium-ccw" cx="250" cy="250" r="115" stroke="rgba(255,255,255,0.45)" stroke-width="1" stroke-dasharray="6, 6" fill="none" />
-                            <circle cx="250" cy="250" r="145" stroke="rgba(255,255,255,0.2)" stroke-width="1" fill="none" />
-                            <circle class="radar-spin-slow-ccw" cx="250" cy="250" r="185" stroke="rgba(255,255,255,0.25)" stroke-width="1" stroke-dasharray="2, 6" fill="none" />
-                            <circle cx="250" cy="250" r="215" stroke="rgba(255,255,255,0.15)" stroke-width="1" fill="none" />
-
-                            <!-- Outer broken arc (Right & Bottom) -->
-                            <path class="radar-spin-slow-cw" d="M 250 25 A 225 225 0 0 1 250 475" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" fill="none" stroke-dasharray="120 15 40 15 150" />
-                            <!-- Left arc segment -->
-                            <path class="radar-spin-slow-cw" d="M 94.12 160 A 180 180 0 0 0 94.12 340" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" fill="none" />
-                            <!-- Right inner arc segment -->
-                            <path class="radar-spin-medium-cw" d="M 379.9 175 A 150 150 0 0 1 379.9 325" stroke="rgba(255,255,255,0.4)" stroke-dasharray="30 10 70 10" stroke-width="1.5" fill="none" />
-
-                            <!-- Mechanical brackets [ ] framing the center -->
-                            <path class="radar-pulse-brackets" d="M 195 210 L 185 210 L 185 290 L 195 290 M 305 210 L 315 210 L 315 290 L 305 290" stroke="rgba(255,255,255,0.55)" stroke-width="1.2" fill="none" />
-
-                            <!-- Diagonal crosshair ticks -->
-                            <line x1="140" y1="140" x2="155" y2="155" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" />
-                            <line x1="360" y1="140" x2="345" y2="155" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" />
-                            <line x1="140" y1="360" x2="155" y2="345" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" />
-                            <line x1="360" y1="360" x2="345" y2="345" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" />
-
-                            <!-- Main Crosshairs (with gap in center) -->
-                            <line x1="20" y1="250" x2="232" y2="250" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
-                            <line x1="268" y1="250" x2="480" y2="250" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
-                            <line x1="250" y1="20" x2="250" y2="232" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
-                            <line x1="250" y1="268" x2="250" y2="480" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
-
-                            <!-- Crosshair ticks - Vertical Axis -->
-                            <!-- Top vertical axis ticks -->
-                            <line x1="246" y1="60" x2="254" y2="60" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="80" x2="254" y2="80" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="100" x2="254" y2="100" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="120" x2="254" y2="120" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="242" y1="140" x2="258" y2="140" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
-                            <line x1="246" y1="160" x2="254" y2="160" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="180" x2="254" y2="180" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="200" x2="254" y2="200" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="220" x2="254" y2="220" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <!-- Bottom vertical axis ticks -->
-                            <line x1="246" y1="280" x2="254" y2="280" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="300" x2="254" y2="300" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="320" x2="254" y2="320" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="340" x2="254" y2="340" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="242" y1="360" x2="258" y2="360" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
-                            <line x1="246" y1="380" x2="254" y2="380" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="400" x2="254" y2="400" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="420" x2="254" y2="420" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="246" y1="440" x2="254" y2="440" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-
-                            <!-- Crosshair ticks - Horizontal Axis -->
-                            <!-- Left horizontal axis ticks -->
-                            <line x1="60" y1="246" x2="60" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="80" y1="246" x2="80" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="100" y1="246" x2="100" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="120" y1="246" x2="120" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="140" y1="242" x2="140" y2="258" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
-                            <line x1="160" y1="246" x2="160" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="180" y1="246" x2="180" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="200" y1="246" x2="200" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="220" y1="246" x2="220" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <!-- Right horizontal axis ticks -->
-                            <line x1="280" y1="246" x2="280" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="300" y1="246" x2="300" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="320" y1="246" x2="320" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="340" y1="246" x2="340" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="360" y1="242" x2="360" y2="258" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" />
-                            <line x1="380" y1="246" x2="380" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="400" y1="246" x2="400" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="420" y1="246" x2="420" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-                            <line x1="440" y1="246" x2="440" y2="254" stroke="rgba(255,255,255,0.5)" stroke-width="1" />
-
-                            <!-- Small decorative elements -->
-                            <polygon points="190,250 196,246 196,254" fill="rgba(255,255,255,0.85)" />
-                            <!-- 3-dot cluster on right axis -->
-                            <circle cx="310" cy="250" r="2.2" fill="rgba(255,255,255,0.85)" />
-                            <circle cx="316" cy="247" r="1.5" fill="rgba(255,255,255,0.85)" />
-                            <circle cx="316" cy="253" r="1.5" fill="rgba(255,255,255,0.85)" />
+                        <svg id="Livello_2" data-name="Livello 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1567.11 1521.33" width="100%" height="100%" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
+                          <defs>
+                            <style>
+                              .cls-1, .cls-2 {
+                                fill: none;
+                                stroke: rgba(255,255,255,0.4);
+                                stroke-miterlimit: 10;
+                                stroke-width: 1px;
+                              }
+                        
+                              .cls-2 {
+                                stroke-dasharray: 9.52;
+                              }
+                              .cls-outer {
+                                stroke-width: 1.5px;
+                                stroke: rgba(255,255,255,0.6);
+                              }
+                            </style>
+                          </defs>
+                          <g id="Livello_1-2" data-name="Livello 1">
+                            <g>
+                              <!-- Cerchio più esterno fisso con punto maggiorato -->
+                              <circle class="cls-1 cls-outer" cx="783.56" cy="760.66" r="729.41" />
+                              <circle class="cls-1" cx="783.56" cy="760.66" r="698.24" />
+                              <circle class="cls-1" cx="783.56" cy="760.66" r="388.27" />
+                              <circle class="cls-2 radar-spin-medium-cw" cx="783.56" cy="760.66" r="584.69"/>
+                              <circle class="cls-1" cx="783.56" cy="760.66" r="215.77" />
+                              <g>
+                                <line class="cls-1" x1="783.56" y1="733.16" x2="783.56" y2="788.16"/>
+                                <line class="cls-1" x1="783.56" y1="344.9" x2="783.56" y2="399.9"/>
+                                <line class="cls-1" x1="783.56" y1="1121.43" x2="783.56" y2="1176.43"/>
+                                <line class="cls-1" x1="811.06" y1="760.66" x2="756.06" y2="760.66"/>
+                                <line class="cls-1" x1="422.79" y1="760.66" x2="367.79" y2="760.66"/>
+                                <line class="cls-1" x1="1199.32" y1="760.66" x2="1144.32" y2="760.66"/>
+                              </g>
+                              <g>
+                                <line class="cls-1" x1="877.37" y1="1519.35" x2="875.12" y2="1501.14"/>
+                                <line class="cls-1" x1="706.19" y1="1521.2" x2="708.05" y2="1502.94"/>
+                                <line class="cls-1" x1="538.9" y1="1484.92" x2="544.77" y2="1467.53"/>
+                                <line class="cls-1" x1="383.87" y1="1412.32" x2="393.46" y2="1396.68"/>
+                                <line class="cls-1" x1="248.89" y1="1307.04" x2="261.72" y2="1293.93"/>
+                                <line class="cls-1" x1="140.71" y1="1174.37" x2="156.14" y2="1164.44"/>
+                                <line class="cls-1" x1="64.77" y1="1020.95" x2="82.02" y2="1014.7"/>
+                                <line class="cls-1" x1="24.87" y1="854.48" x2="43.08" y2="852.22"/>
+                                <line class="cls-1" x1="23.02" y1="683.3" x2="41.28" y2="685.16"/>
+                                <line class="cls-1" x1="59.3" y1="516.01" x2="76.69" y2="521.88"/>
+                                <line class="cls-1" x1="131.9" y1="360.98" x2="147.54" y2="370.57"/>
+                                <line class="cls-1" x1="237.18" y1="225.99" x2="250.3" y2="238.83"/>
+                                <line class="cls-1" x1="369.85" y1="117.82" x2="379.78" y2="133.25"/>
+                                <line class="cls-1" x1="523.27" y1="41.88" x2="529.52" y2="59.13"/>
+                                <line class="cls-1" x1="689.74" y1="1.98" x2="692" y2="20.19"/>
+                                <line class="cls-1" x1="860.92" y1=".13" x2="859.06" y2="18.38"/>
+                                <line class="cls-1" x1="1028.22" y1="36.41" x2="1022.34" y2="53.79"/>
+                                <line class="cls-1" x1="1183.24" y1="109.01" x2="1173.65" y2="124.65"/>
+                                <line class="cls-1" x1="1318.23" y1="214.29" x2="1305.39" y2="227.4"/>
+                                <line class="cls-1" x1="1426.4" y1="346.96" x2="1410.97" y2="356.89"/>
+                                <line class="cls-1" x1="1502.34" y1="500.38" x2="1485.09" y2="506.63"/>
+                                <line class="cls-1" x1="1542.24" y1="666.85" x2="1524.03" y2="669.1"/>
+                                <line class="cls-1" x1="1544.09" y1="838.03" x2="1525.84" y2="836.17"/>
+                                <line class="cls-1" x1="1507.81" y1="1005.32" x2="1490.43" y2="999.45"/>
+                                <line class="cls-1" x1="1435.21" y1="1160.35" x2="1419.57" y2="1150.76"/>
+                                <line class="cls-1" x1="1329.93" y1="1295.34" x2="1316.82" y2="1282.5"/>
+                                <line class="cls-1" x1="1197.26" y1="1403.51" x2="1187.33" y2="1388.08"/>
+                                <line class="cls-1" x1="1043.84" y1="1479.45" x2="1037.59" y2="1462.2"/>
+                              </g>
+                              <g>
+                                <line class="cls-1" x1="1.25" y1="716.56" x2="1.25" y2="805.59"/>
+                                <line class="cls-1" x1="12.89" y1="733.03" x2="12.89" y2="789.12"/>
+                                <line class="cls-1" x1="22.93" y1="761.08" x2="1.25" y2="761.08"/>
+                              </g>
+                              <g>
+                                <line class="cls-1" x1="1565.86" y1="805.59" x2="1565.86" y2="716.56"/>
+                                <line class="cls-1" x1="1554.22" y1="789.12" x2="1554.22" y2="733.03"/>
+                                <line class="cls-1" x1="1544.19" y1="761.08" x2="1565.86" y2="761.08"/>
+                              </g>
+                            </g>
+                          </g>
                         </svg>
                     </div>
-                    <canvas id="display-canvas"></canvas>
                     <div class="radar-center-dot"></div>
                     <div class="radar-sweep" id="radar-sweep"></div>
 
-                    <div class="target-node" id="t1"><img src="assets/projects/logos/Risorsa_4.svg" alt="t1"/></div>
-                    <div class="target-node" id="t2"><img src="assets/projects/logos/Risorsa_2.svg" alt="t2"/></div>
-                    <div class="target-node" id="t3"><img src="assets/projects/logos/Risorsa_8.svg" alt="t3"/></div>
-                    <div class="target-node" id="t4"><img src="assets/projects/logos/Risorsa_11.svg" alt="t4"/></div>
-                    <div class="target-node" id="t5"><img src="assets/projects/logos/Risorsa_7.svg" alt="t5"/></div>
-                    <div class="target-node" id="t6"><img src="assets/projects/logos/Risorsa_6.svg" alt="t6"/></div>
-                    <div class="target-node" id="t7"><img src="assets/projects/logos/Risorsa_5.svg" alt="t7"/></div>
-                    <div class="target-node" id="t8"><img src="assets/projects/logos/Risorsa_3.svg" alt="t8"/></div>
-                    <div class="target-node" id="t9"><img src="assets/projects/logos/Risorsa_1.svg" alt="t9"/></div>
-                    <div class="target-node" id="t10"><img src="assets/projects/logos/Risorsa_10.svg" alt="t10"/></div>
-                    <div class="target-node" id="t11"><img src="assets/projects/logos/UNEC.svg" alt="t11"/></div>
+                    <div class="target-node" id="t1"><img src="assets/projects/t1/logo.svg" alt="t1"/></div>
+                    <div class="target-node" id="t2"><img src="assets/projects/t2/logo.svg" alt="t2"/></div>
+                    <div class="target-node" id="t3"><img src="assets/projects/t3/logo.svg" alt="t3"/></div>
+                    <div class="target-node" id="t4"><img src="assets/projects/t4/logo.svg" alt="t4"/></div>
+                    <div class="target-node" id="t5"><img src="assets/projects/t5/logo.svg" alt="t5"/></div>
+                    <div class="target-node" id="t6"><img src="assets/projects/t6/logo.svg" alt="t6"/></div>
+                    <div class="target-node" id="t7"><img src="assets/projects/t7/logo.svg" alt="t7"/></div>
+                    <div class="target-node" id="t8"><img src="assets/projects/t8/logo.svg" alt="t8"/></div>
+                    <div class="target-node" id="t9"><img src="assets/projects/t9/logo.svg" alt="t9"/></div>
+                    <div class="target-node" id="t10"><img src="assets/projects/t10/logo.svg" alt="t10"/></div>
+                    <div class="target-node" id="t11"><img src="assets/projects/t11/logo.svg" alt="t11"/></div>
                 </div>
             </div>
         </main>
 
         <aside class="col-right">
             <div class="info-panel" id="info-panel">
-                <button id="close-detail" class="close-detail" aria-label="Close" style="display:none;">✕</button>
+                <button id="close-detail" class="close-detail" aria-label="Close" style="display:none;">[X]</button>
                 <div class="info-panel-body">
                     <div class="info-title-box brutalist-bg">
                         <span id="info-id" style="display: none;">--</span>
@@ -1373,17 +1762,25 @@
                                 <!-- Testo 1 -->
                                 <div class="detail-text-block scramble-target" id="detail-text-1"></div>
 
-                                <!-- Slot Immagine 1 -->
-                                <div class="media-slot" id="media-slot-1">
-                                    <img src="" alt="Media 1" class="detail-img">
+                                <!-- Group 1: Images 1-4 and Video 1 -->
+                                <div class="media-group">
+                                    <div class="media-slot"><img src="" alt="Media 1" class="detail-img" id="detail-img-1"></div>
+                                    <div class="media-slot"><img src="" alt="Media 2" class="detail-img" id="detail-img-2"></div>
+                                    <div class="media-slot full-width"><video src="" loop muted playsinline autoplay class="detail-video" id="detail-vid-1"></video></div>
+                                    <div class="media-slot"><img src="" alt="Media 3" class="detail-img" id="detail-img-3"></div>
+                                    <div class="media-slot"><img src="" alt="Media 4" class="detail-img" id="detail-img-4"></div>
                                 </div>
 
                                 <!-- Testo 2 -->
                                 <div class="detail-text-block scramble-target" id="detail-text-2"></div>
 
-                                <!-- Slot Immagine 2 -->
-                                <div class="media-slot" id="media-slot-2">
-                                    <img src="" alt="Media 2" class="detail-img">
+                                <!-- Group 2: Images 5-8 and Video 2 -->
+                                <div class="media-group">
+                                    <div class="media-slot"><img src="" alt="Media 5" class="detail-img" id="detail-img-5"></div>
+                                    <div class="media-slot"><img src="" alt="Media 6" class="detail-img" id="detail-img-6"></div>
+                                    <div class="media-slot full-width"><video src="" loop muted playsinline autoplay class="detail-video" id="detail-vid-2"></video></div>
+                                    <div class="media-slot"><img src="" alt="Media 7" class="detail-img" id="detail-img-7"></div>
+                                    <div class="media-slot"><img src="" alt="Media 8" class="detail-img" id="detail-img-8"></div>
                                 </div>
 
                                 <!-- Group Area -->
@@ -1396,9 +1793,82 @@
 
                         <!-- Nuovo stato statico About per preservare la struttura del DOM ed evitare crash -->
                         <div id="about-state">
-                            <div style="font-size: 1.25rem; font-weight: bold; letter-spacing: 0.15em; color: #fff; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">ABOUT</div>
-                            <p style="color:#ccc; font-size:0.95rem; line-height:1.6; margin: 0 0 14px 0;" id="about-text-1"></p>
-                            <p style="color:#ccc; font-size:0.95rem; line-height:1.6; margin: 0;" id="about-text-2"></p>
+                            
+                            <!-- Header / Logo -->
+                            <div style="position: relative; width: 100%; max-width: 900px; text-align: center; margin-bottom: 40px; margin-top: 20px;">
+                                <img src="archive/Risorsa_1_root.svg" alt="UNDECLARED" style="width: 100%; max-width: 750px; filter: brightness(0) invert(1); margin-bottom: 20px;">
+                                <div style="font-size: 1.15rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.7); line-height: 1.5; text-transform: uppercase;" class="glowing-text-strong about-subtitle">
+                                    HIGHLIGHTING HIDDEN CONFLICTS<br>THROUGH COMMUNICATION AND SPECULATIVE DESIGN
+                                </div>
+                            </div>
+
+                            <!-- Divider -->
+                            <div class="about-divider" style="width: 100%; max-width: 900px; height: 1px; background: rgba(255,255,255,0.25); margin-bottom: 35px;"></div>
+
+                            <!-- Text 1 -->
+                            <div class="scramble-target" id="about-text-1" style="text-align: center; max-width: 860px; margin: 0 auto 35px auto; font-size: 0.95rem; line-height: 1.7; color: rgba(255,255,255,0.85); font-family: 'Mostra2', monospace;">
+                            </div>
+
+                            <!-- Divider -->
+                            <div class="about-divider" style="width: 100%; max-width: 900px; height: 1px; background: rgba(255,255,255,0.25); margin-bottom: 40px;"></div>
+
+                            <!-- Micrografiche Row -->
+                            <div class="about-micro-row" style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; max-width: 900px; margin-bottom: 40px; flex-wrap: wrap; gap: 15px;">
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/soema.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">SOEMA</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/risorsa_3.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">SYNCHRO</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/treeal.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">TREEAL</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/unec.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">UNEC</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/icon.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">ICON</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/eden.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">E-DEN</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/fragma.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">FRAGMA</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/reclaim.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">RECLAIM</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/alua.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">ALUA</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/ujdge.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">U-JUDGE</span>
+                                </div>
+                                <div class="about-micro-item" style="display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 60px;">
+                                    <img src="micrografiche/rheal.svg" style="height: 38px; filter: brightness(0) invert(1);"><span style="font-size: 0.75rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.8);">RHEAL</span>
+                                </div>
+                            </div>
+
+                            <!-- Text 2 -->
+                            <div class="scramble-target" id="about-text-2" style="text-align: center; max-width: 860px; margin: 0 auto 50px auto; font-size: 0.95rem; line-height: 1.7; color: rgba(255,255,255,0.85); font-family: 'Mostra2', monospace;">
+                            </div>
+
+                            <!-- Download Poster -->
+                            <div class="about-poster-wrapper" style="text-align: center; margin-bottom: 60px;">
+                                <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; border: 1px solid rgba(255,255,255,0.3); padding: 14px 28px; display: inline-block; transition: all 0.2s;" class="hover-glow-btn">
+                                    [ DOWNLOAD THE POSTER ]
+                                </a>
+                            </div>
+
+                            <!-- Progetti Precedenti -->
+                            <div class="about-prev-projects" style="text-align: center; padding-bottom: 60px; position: relative; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center;">
+                                <div style="font-size: 1.05rem; color: rgba(255,255,255,0.5); margin-bottom: 24px; letter-spacing: 0.1em;">PROGETTI PRECEDENTI</div>
+                                <div style="display: flex; flex-direction: column; gap: 14px;">
+                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">> BELIEVE IT OR NOT <</a>
+                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">> RAW SCENARIOS <</a>
+                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">> ANTHROPOGENIC NARRATIVES <</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1409,30 +1879,38 @@
     <!-- HOVER OVERLAY: flottante, non influenza il flex layout — il radar non si sposta mai -->
     <div class="hover-overlay" id="hover-overlay" aria-live="polite">
         <div class="hover-overlay-body">
-            <div style="padding:16px 0 12px;">
-                <div style="font-size:0.85rem;letter-spacing:0.18em;color:rgba(255,255,255,0.38);margin-bottom:10px;">
-                    NODE &nbsp;<span id="hov-id">--</span>
-                </div>
-                <div id="hov-title-wrapper" style="display:flex;align-items:center;min-height:44px;"></div>
+            
+            <div class="hover-logo-micro" style="margin-bottom: 24px; min-height: 48px; width: 100%; display: flex; justify-content: center;">
+                <img id="hov-micro-img" src="" alt="Micro Logo" style="max-width: 100%; display:none;">
             </div>
-            <div style="border-top:1px solid rgba(255,255,255,0.1);padding:12px 0 16px;display:flex;flex-direction:column;gap:5px;">
-                <div style="font-size:0.9rem;letter-spacing:0.1em;color:rgba(255,255,255,0.38);">
-                    FIELD &nbsp;<span class="scramble-target" id="hov-field" style="color:rgba(255,255,255,0.82);"></span>
-                </div>
-                <div style="font-size:0.9rem;letter-spacing:0.1em;color:rgba(255,255,255,0.38);">
-                    PART. &nbsp;<span class="scramble-target" id="hov-team" style="color:rgba(255,255,255,0.82);"></span>
-                </div>
+
+            <!-- TITLE SVG -->
+            <div class="hover-title-main" style="display:flex; align-items:center; justify-content: center; gap: 14px; margin-bottom: 24px; width: 100%;">
+                <div id="hov-title-wrapper" style="height: 28px; display:flex; align-items:center; justify-content:center; flex-grow: 1; min-width: 0;"></div>
+            </div>
+
+            <!-- WHATIF TEXT -->
+            <div class="hover-whatif-text scramble-target glowing-text-strong" id="hov-whatif" style="font-size: 0.85rem; font-weight: 1000; letter-spacing: 0.1em; line-height: 1.6; color: rgba(255,255,255,0.85); width: 260px; height: 100px; display: flex; align-items: center; justify-content: center; text-transform: uppercase;">
             </div>
         </div>
     </div>
 
     <!-- MOBILE HOVER CARD (Bottom Sheet) -->
     <div class="mobile-hover-card" id="mobile-hover-card" onclick="triggerDetailView()">
-        <div style="font-size:0.75rem;letter-spacing:0.18em;color:rgba(255,255,255,0.5);margin-bottom:6px;">
-            NODE &nbsp;<span id="mob-hov-id">--</span>
+        <div class="hover-overlay-body" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div class="hover-logo-micro" style="margin-bottom: 12px; min-height: 36px; width: 100%; display: flex; justify-content: center; align-items: center;">
+                <img id="mob-hov-micro-img" src="" alt="Micro Logo" style="height: 36px; max-width: 100%; display:none; object-fit: contain;">
+            </div>
+
+            <!-- TITLE SVG -->
+            <div class="hover-title-main" style="display:flex; align-items:center; justify-content: center; margin-bottom: 24px; width: 100%;">
+                <div id="mob-hov-title-wrapper" style="height: 20px; display:flex; align-items:center; justify-content:center; flex-grow: 1; min-width: 0;"></div>
+            </div>
+
+            <!-- WHATIF TEXT -->
+            <div class="hover-whatif-text scramble-target glowing-text-strong" id="mob-hov-whatif" style="font-size: 0.75rem; font-weight: 1000; letter-spacing: 0.08em; line-height: 1.5; color: rgba(255,255,255,0.85); width: 100%; text-align: center; text-transform: uppercase;">
+            </div>
         </div>
-        <div id="mob-hov-title-wrapper" style="display:flex;align-items:center; min-height: 32px;"></div>
-        <div class="mobile-hover-indicator">TAP TO OPEN ></div>
     </div>
 </div>
 
@@ -1451,14 +1929,17 @@
             about: "ABOUT",
             index: "-------",
             ig: "@ANTIDISCIPLINARYLAB",
-            address: "DOTDOTDOT / VIA TERTULLIANO 6, MI",
-            date: "11.07.2026",
-            time: "11:00 - 19:00",
+            address: "DOTDOTDOT / VIA TERTULLIANO 68, MI",
+            datetime: "11.07.2026 — 11:00 - 19:00",
             fieldLabel: "AMBITO:",
             teamLabel: "PARTECIPANTI:",
             groupLabel: "GRUPPO:",
-            aboutText1: "Questa esposizione interattiva mostra un sistema di navigazione basato su radar con pannelli di dettaglio dinamici, supporto multilingua e un design piatto e moderno.",
-            aboutText2: "Tutte le funzionalità sono contenute in questa singola pagina; il pannello About occupa l'intera colonna di destra, sovrapponendosi al radar quando attivo."
+            aboutText1: "Quest'anno l'evento/mostra di presentazione dei progetti realizzati nel Laboratorio di Sintesi Finale C1 del Corso di Laurea in Design della Comunicazione, Scuola del Design, Politecnico di Milano (a.a. 2024-2025, prof. Francesco E. Guida, Pietro Buffa di Castelalto, Alessandro Masserdotti e Giacomo Scandolara), si tiene il 14 giugno 2025 presso Dotdotdot (via Tertulliano 68, Milano, dalle 11 alle 19).",
+            aboutText2: "Believe It or Not presenta 11 progetti di design della comunicazione, 11 macchine comunicative, 11 scenari speculativi. 11 progetti che raccontano realtà possibili basate su teorie del complotto, usate come punto di partenza per riflettere su immaginari, media e strutture del potere. 11 sistemi comunicativi che interrogano il nostro presente per discutere dei confini tra realtà, finzione e manipolazione e tentano di ridefinire il ruolo del designer della comunicazione.",
+            tr1: "> POLITECNICO DI MILANO <",
+            tr2: "> SCUOLA DEL DESIGN <",
+            bl1: "> DESIGN DELLA COMUNICAZIONE <",
+            bl2: "> LABORATORIO DI SINTESI FINALE C1 <"
         },
         en: {
             claim: "HIGHLIGHTING HIDDEN CONFLICTS THROUGH COMMUNICATION AND SPECULATIVE DESIGN",
@@ -1466,14 +1947,17 @@
             about: "ABOUT",
             index: "-------",
             ig: "@ANTIDISCIPLINARYLAB",
-            address: "DOTDOTDOT / VIA TERTULLIANO 6, MI",
-            date: "11.07.2026",
-            time: "11AM-7PM",
+            address: "DOTDOTDOT / VIA TERTULLIANO 68, MI",
+            datetime: "11.07.2026 — 11AM - 7PM",
             fieldLabel: "FIELD:",
             teamLabel: "PARTICIPANTS:",
             groupLabel: "GROUP:",
-            aboutText1: "This interactive showcase demonstrates a radar‑based navigation system with dynamic detail panels, multilingual support, and sleek flat design.",
-            aboutText2: "All functionality is contained within this single page; the About panel occupies the full right‑hand column, overlaying the radar when active."
+            aboutText1: "This year, the exhibition of projects created in the Final Synthesis Studio C1 of the Communication Design Bachelor's Degree, School of Design, Politecnico di Milano (a.y. 2024-2025, prof. Francesco E. Guida, Pietro Buffa di Castelalto, Alessandro Masserdotti and Giacomo Scandolara), takes place on June 14, 2025 at Dotdotdot (via Tertulliano 68, Milan, from 11 AM to 7 PM).",
+            aboutText2: "Believe It or Not presents 11 communication design projects, 11 communication machines, 11 speculative scenarios. 11 projects narrating possible realities based on conspiracy theories, used as a starting point to reflect on imaginaries, media, and power structures. 11 communicative systems that question our present to discuss the boundaries between reality, fiction, and manipulation, attempting to redefine the role of the communication designer.",
+            tr1: "> POLITECNICO DI MILANO <",
+            tr2: "> SCHOOL OF DESIGN <",
+            bl1: "> COMMUNICATION DESIGN <",
+            bl2: "> FINAL SYNTHESIS STUDIO C1 <"
         }
     };
 
@@ -1506,6 +1990,18 @@
         scrambleHTML(document.getElementById('lang-claim'), data.claim);
         scrambleHTML(document.getElementById('lang-uni'), data.uni);
 
+        const tr1Label = document.getElementById('lang-tr-1');
+        if (tr1Label) runScramble(tr1Label, data.tr1, 20);
+
+        const tr2Label = document.getElementById('lang-tr-2');
+        if (tr2Label) runScramble(tr2Label, data.tr2, 20);
+
+        const bl1Label = document.getElementById('lang-bl-1');
+        if (bl1Label) runScramble(bl1Label, data.bl1, 20);
+
+        const bl2Label = document.getElementById('lang-bl-2');
+        if (bl2Label) runScramble(bl2Label, data.bl2, 20);
+
         // Altri testi
         const radarLabel = document.getElementById('lang-nav-radar');
         if (radarLabel) runScramble(radarLabel, data.about, 20);
@@ -1519,11 +2015,8 @@
         const addressEl = document.getElementById('lang-loc-address');
         if (addressEl) runScramble(addressEl, data.address, 20);
 
-        const dateEl = document.getElementById('lang-loc-date');
-        if (dateEl) runScramble(dateEl, data.date, 20);
-
-        const timeEl = document.getElementById('lang-loc-time');
-        if (timeEl) runScramble(timeEl, data.time, 20);
+        const datetimeEl = document.getElementById('lang-loc-datetime');
+        if (datetimeEl) runScramble(datetimeEl, data.datetime, 20);
 
         // Se la detail view è aperta, aggiorna anche le scritte e i dettagli del nodo
         if (isDetailView && currentSelectedTarget) {
@@ -1534,12 +2027,12 @@
                 const focusEl = document.getElementById('detail-focus');
                 const desc1El = document.getElementById('detail-text-1');
                 const desc2El = document.getElementById('detail-text-2');
-                if (focusEl) runScramble(focusEl, lang === 'it' ? (dataNode.whatif_it || dataNode.whatif_en) : (dataNode.whatif_en || dataNode.whatif_it), 15);
-                if (desc1El) runScramble(desc1El, lang === 'it' ? (dataNode.desc1_it || dataNode.desc1_en) : (dataNode.desc1_en || dataNode.desc1_it), 15);
-                if (desc2El) runScramble(desc2El, lang === 'it' ? (dataNode.desc2_it || dataNode.desc2_en) : (dataNode.desc2_en || dataNode.desc2_it), 15);
+                if (focusEl) focusEl.textContent = lang === 'it' ? (dataNode.whatif_it || dataNode.whatif_en) : (dataNode.whatif_en || dataNode.whatif_it);
+                if (desc1El) desc1El.textContent = lang === 'it' ? (dataNode.desc1_it || dataNode.desc1_en) : (dataNode.desc1_en || dataNode.desc1_it);
+                if (desc2El) desc2El.textContent = lang === 'it' ? (dataNode.desc2_it || dataNode.desc2_en) : (dataNode.desc2_en || dataNode.desc2_it);
                 
                 const groupEl = document.getElementById('info-group-val');
-                if (groupEl) runScramble(groupEl, dataNode.team || "N/A", 15);
+                if (groupEl) groupEl.textContent = dataNode.team || "N/A";
             }
         } else if (isDetailView && !currentSelectedTarget) {
             // Aggiorna dinamicamente i testi dell'About se l'utente cambia lingua
@@ -1547,8 +2040,8 @@
             const txt2 = lang === 'it' ? locales.it.aboutText2 : locales.en.aboutText2;
             const aboutTxt1El = document.getElementById('about-text-1');
             const aboutTxt2El = document.getElementById('about-text-2');
-            if (aboutTxt1El) runScramble(aboutTxt1El, txt1, 15);
-            if (aboutTxt2El) runScramble(aboutTxt2El, txt2, 15);
+            if (aboutTxt1El) aboutTxt1El.textContent = txt1;
+            if (aboutTxt2El) aboutTxt2El.textContent = txt2;
         }
 
         const fieldLabelEl = document.querySelector('#overview-state .data-label');
@@ -1562,8 +2055,8 @@
     }
 
     function handleRadarToggle() {
-        document.getElementById('toggle-radar').classList.add('active');
-        document.getElementById('toggle-index').classList.remove('active');
+        document.getElementById('toggle-radar')?.classList.add('active');
+        document.getElementById('toggle-index')?.classList.remove('active');
         
         if (isDetailView) {
             const closeBtn = document.getElementById('close-detail');
@@ -1572,8 +2065,8 @@
     }
 
     function handleIndexToggle() {
-        document.getElementById('toggle-index').classList.add('active');
-        document.getElementById('toggle-radar').classList.remove('active');
+        document.getElementById('toggle-index')?.classList.add('active');
+        document.getElementById('toggle-radar')?.classList.remove('active');
 
         // Demonstration of index trigger: open first node detail
         const targetNode = targets[0];
@@ -1584,20 +2077,26 @@
     }
 
     // --- MOTORE DI SCRAMBLE ---
-    function runScramble(element, finalString, speed = 30) {
+    function runScramble(element, finalString, speed = 30, progressive = true) {
         if(!element) return;
-        const chars = "██▓▒░█";
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         let iterations = 0;
         const maxIters = finalString.length;
         clearInterval(element.scrambleInterval);
         
+        const step = progressive ? 3 : Math.max(1, Math.floor(maxIters / 30));
+        
         element.scrambleInterval = setInterval(() => {
             element.innerText = finalString.split('').map((char, index) => {
-                if(char === ' ') return ' ';
-                if(index < iterations) return char;
+                if(char === ' ' || char === '\n') return char;
+                if(progressive) {
+                    if(index < iterations) return char;
+                } else {
+                    if(Math.random() < (iterations / maxIters)) return char;
+                }
                 return chars[Math.floor(Math.random() * chars.length)];
             }).join('');
-            iterations += 1; // Aumenta per rallentare, diminuisci per velocizzare
+            iterations += step;
             if(iterations >= maxIters) {
                 clearInterval(element.scrambleInterval);
                 element.innerText = finalString;
@@ -1625,19 +2124,19 @@ function generateColormap() {
         const gradient = tempCtx.createLinearGradient(0, 0, 256, 0);
 
         // --- BASAMENTO FREDDO (Molto spazio per i blu/verdi) ---
-        gradient.addColorStop(0.00, 'rgba(0, 0, 0, 0)');          
+        gradient.addColorStop(0.00, 'rgba(0, 0, 0, 0)');  
         gradient.addColorStop(0.20, '#0a0a14'); // Nero bluastro profondo
         gradient.addColorStop(0.40, '#1a1c3d'); // Indaco scuro
         gradient.addColorStop(0.55, '#284d7d'); // Blu petrolio
-        gradient.addColorStop(0.70, '#369188'); // Verde acqua (Il "cuscinetto" che evita il rosso)
+        gradient.addColorStop(0.70, '#17b8d5'); // Verde acqua (Il "cuscinetto" che evita il rosso)
+        gradient.addColorStop(0.75, '#5cffff'); // Glow luminescente alla fine dell'azzurro
         
         // --- TRANSIZIONE VERSO IL CALDO (Molto graduale) ---
-        gradient.addColorStop(0.80, '#4da86a'); // Verde bosco/smeraldo
-        gradient.addColorStop(0.84, '#d4af37'); // Giallo oro / senape
-        gradient.addColorStop(0.88, '#d9531e'); // Arancio carico
+        gradient.addColorStop(0.82, '#008a48'); // Verde bosco/smeraldo
+        gradient.addColorStop(0.84, '#ffea00'); // Giallo oro / senape
         gradient.addColorStop(0.92, '#ff4d4d'); // Rosso chiaro / vivo
-        gradient.addColorStop(0.96, '#e63946'); // Rosso chiaro brillante
-        gradient.addColorStop(0.99, '#7a1010'); // Rosso scuro
+        gradient.addColorStop(0.96, '#BB2418'); // Rosso chiaro brillante
+        gradient.addColorStop(0.99, '#BB2418'); // Rosso scuro
         gradient.addColorStop(1.00, '#2d0505'); // Fine
         
         tempCtx.fillStyle = gradient;
@@ -1647,7 +2146,7 @@ function generateColormap() {
         const pixels = tempCtx.getImageData(0, 0, 256, 1).data;
         for (let i = 0; i < 256; i++) {
             colorPalette.push({ 
-                r: pixels[i * 4], g: pixels[i * 4 + 1], b: pixels[i * 4 + 2], a: pixels[i * 4 + 3] 
+                r: pixels[i * 4], g: pixels[i * 4 + 1], b: pixels[i * 4 + 2], a: pixels[i * 4 + 3] * 0.8 
             });
         }
     }
@@ -1673,16 +2172,16 @@ function generateColormap() {
         centerX = width / 2; centerY = height / 2;
         radarRadius = width / 2;
 
-         if (typeof targets !== 'undefined' && targets && targets.length > 0) {
+        if (typeof targets !== 'undefined' && targets && targets.length > 0) {
             targets.forEach(t => {
-                const minDist = window.innerWidth <= 768 ? 40 : 130;
-                let dist = minDist + t.distancePct * (radarRadius * 0.76 - minDist);
+                const minDist = window.innerWidth <= 768 ? 65 : 130;
+                let dist = minDist + t.distancePct * (radarRadius * (window.innerWidth <= 768 ? 0.90 : 0.62) - minDist);
                 t.baseX = centerX + Math.cos(t.angle) * dist;
                 t.baseY = centerY + Math.sin(t.angle) * dist;
-                if (snapped || t.x === 0 || isNaN(t.x)) {
-                    t.x = t.baseX;
-                    t.y = t.baseY;
-                }
+                t.x = t.baseX;
+                t.y = t.baseY;
+                t.vx = 0;
+                t.vy = 0;
             });
         }
     }
@@ -1795,7 +2294,7 @@ function generateColormap() {
         }
 
         // Avvia lo scramble del logo "UNDECLARED" per 1.5 secondi
-        runIntroSvgScramble(logoSvgWrap, "UNDECLARED", 1500, () => {
+        runIntroSvgScramble(logoSvgWrap, "UNDECLARED", 0, () => {
             // Dopo che si è composto, teniamo visualizzato per 1.2 secondi
             setTimeout(() => {
                 // Fade out del fondale nero
@@ -1927,147 +2426,158 @@ function generateColormap() {
     const projectData = {
         't1': { 
             idNum: "01", 
-            titleSvg: "assets/projects/titles/UJDGE.svg", 
+            titleSvg: "assets/projects/t1/title.svg", 
+            microName: "ujdge",
             field_it: "GIUSTIZIA", 
             field_en: "JUSTICE", 
             team: "Francesca Tartaglia", 
             whatif_it: "E se il tribunale mediatico venisse istituzionalizzato?",
             whatif_en: "What if trial by media were institutionalised?",
-            desc1_it: "U-JUDGE pensa a un sistema in cui le opinioni dei cittadini sui casi giudiziari hanno valore legale.",
-            desc1_en: "U-JUDGE envisions a system of participatory justice in which citizens’ opinions on court cases acquire legal value.",
-            desc2_it: "L’esperienza inizia consultando l’applicazione U-JUDGE, che contiene le informazioni sui casi mediatici, e prosegue con U-DEX, una bilancia interattiva che permette di esprimere un voto che decreterà la sentenza.",
-            desc2_en: "The experience starts by consulting the U-JUDGE app, which contains information on media trials, and ends with U-DEX, an interactive scale to express a vote that will establish the verdict."
+            desc1_it: "U-JUDGE esplora il conflitto mediatico contemporaneo e il ruolo crescente dell’opinione pubblica nella costruzione del giudizio collettivo. Partendo dall’osservazione del processo mediatico come spazio parallelo alla giustizia istituzionale, il progetto si sviluppa attorno a una domanda: e se il tribunale mediatico venisse istituzionalizzato? Ambientato in un’Italia del 2030 segnata dal collasso della fiducia nelle istituzioni, immagina un sistema di giustizia partecipata fondato sul principio della Wisdom of the Crowd, in cui opinioni, commenti e votazioni dei cittadini acquisiscono valore legale. In questo scenario, U-JUDGE si configura come una piattaforma capace di trasformare il consenso sociale in verità istituzionale, interrogando il rapporto tra partecipazione democratica, responsabilità e costruzione della verità.",
+            desc1_en: "U-JUDGE explores contemporary media conflict and the growing role of public opinion in shaping collective judgement. Starting from the observation that media discourse increasingly operates as a parallel system of justice, the project asks: what if the media tribunal became institutionalised? Set in Italy in 2030, after the collapse of public trust in state institutions, it envisions a system of participatory justice based on the principle of the Wisdom of the Crowd, in which citizens’ opinions, comments and votes acquire legal authority. Within this scenario, U-JUDGE functions as a platform that transforms social consensus into institutional truth, questioning the relationship between democratic participation, accountability and the construction of truth.",
+            desc2_it: "L’esperienza si articola attraverso due dispositivi complementari. L’applicazione U-JUDGE permette agli utenti di consultare prove, seguire i casi e partecipare al dibattito pubblico, mentre U-DEX, una bilancia digitale installata negli ex tribunali, restituisce fisicità e ritualità all’atto del giudicare. Inclinando il dispositivo verso il verdetto ritenuto corretto, ogni partecipante contribuisce alla costruzione di una sentenza collettiva e definitiva. Attraverso un linguaggio visivo ispirato all’estetica dei media e del true crime, il progetto invita a riflettere criticamente sui rischi di una giustizia guidata dall’emotività, dalla spettacolarizzazione e dal consenso della maggioranza.",
+            desc2_en: "The experience unfolds through two complementary devices. The U-JUDGE app allows users to examine evidence, follow ongoing cases and participate in public debate, while U-DEX, a digital scale installed in former courthouses, restores physicality and ritual to the act of judging. By tilting the device towards the chosen verdict, each participant contributes to the creation of a final collective sentence. Through a visual language inspired by media aesthetics and true crime, the project encourages critical reflection on the risks of a justice system driven by emotion, sensationalism and majority consensus."
         },
         't2': { 
             idNum: "02", 
-            titleSvg: "assets/projects/titles/ALUA.svg", 
+            titleSvg: "assets/projects/t2/title.svg", 
+            microName: "alua",
             field_it: "BUROCRAZIA", 
             field_en: "BUREAUCRACY", 
             team: "ALUA", 
-            whatif_it: "E se i dati biometrici personali fossero usati come moneta di scambio burocratica?",
-            whatif_en: "What if personal biometric data were used as currency for public services?",
-            desc1_it: "Il sistema biometrico ALUA registra fluttuazioni costanti nell'identificazione degli utenti.",
-            desc1_en: "The ALUA biometric system records constant fluctuations in user identification.",
-            desc2_it: "Tracciamento dell'algoritmo predittivo basato sui comportamenti finanziari decentralizzati.",
-            desc2_en: "Tracking of the predictive algorithm based on decentralized financial behaviors."
+            whatif_it: "E se fosse possibile stipulare una polizza assicurativa sui propri rapporti interpersonali?",
+            whatif_en: "What if it were possible to insure interpersonal relationships?",
+            desc1_it: "ALUA esplora il conflitto burocratico applicato alle relazioni umane. Partendo dal paradosso per cui i beni materiali vengono assicurati mentre i legami affettivi restano esposti all’incertezza, il progetto si sviluppa attorno a una domanda: “e se fosse possibile stipulare una polizza assicurativa sui propri rapporti interpersonali?”. In questo scenario nasce ALUA (Agenzia Legami Umani Assicurati), il primo ente assicurativo dedicato alla valutazione, classificazione e tutela dei legami umani. Attraverso metodologie ispirate al risk assessment e all’underwriting, le relazioni vengono trasformate in asset da monitorare e regolamentare, sostituendo l’incertezza emotiva con garanzie contrattuali e protocolli verificabili.",
+            desc1_en: "ALUA explores bureaucratic conflict as applied to human relationships. Starting from the paradox that material possessions are routinely insured while emotional bonds remain exposed to uncertainty, the project asks: “what if it were possible to insure interpersonal relationships?”. Within this scenario, ALUA (Agenzia Legami Umani Assicurati) emerges as the first insurance organisation dedicated to the assessment, classification and protection of human bonds. Drawing on methodologies inspired by risk assessment and underwriting, relationships become assets to be monitored and regulated, replacing emotional uncertainty with contractual guarantees and verifiable protocols.",
+            desc2_it: "Il progetto prende forma attraverso EyeDeal, una postazione interattiva dedicata alla stipula delle polizze. Il sistema combina dati dichiarativi e parametri biometrici per valutare la solidità della relazione: gli utenti definiscono natura e intensità del proprio legame, mentre sensori dedicati registrano le loro risposte fisiologiche durante una serie di interazioni guidate. Al termine dell’esperienza viene generata una polizza personalizzata che assegna una fascia di rischio e stabilisce clausole proporzionate alla presunta stabilità del rapporto. Stampato su carta termica destinata a deteriorarsi nel tempo, il contratto diventa metafora della fragilità della memoria emotiva e del tentativo di trasformare i sentimenti in procedure amministrative.",
+            desc2_en: "The project takes shape through EyeDeal, an interactive station designed for issuing relationship insurance policies. The system combines self-declared information with biometric data to assess the strength of a relationship: users define the nature and intensity of their bond, while dedicated sensors record involuntary physiological responses during a series of guided interactions. At the end of the process, a personalised policy assigns the relationship to a specific risk category and establishes clauses proportional to its presumed stability. Printed on thermal paper designed to fade over time, the contract becomes a metaphor for the fragility of emotional memory and the attempt to translate feelings into administrative procedures."
         },
         't3': { 
             idNum: "03", 
-            titleSvg: "assets/projects/titles/FRAGMA.svg", 
+            titleSvg: "assets/projects/t3/title.svg", 
+            microName: "fragma",
             field_it: "LINGUAGGIO", 
             field_en: "LANGUAGE", 
             team: "FRAGMA", 
-            whatif_it: "E se il linguaggio digitale perdesse la capacità di esprimere le sfumature emotive?",
-            whatif_en: "What if digital communication lost the ability to express emotional nuances?",
-            desc1_it: "Rilevamento di fratture microstrutturali nei campioni fisici analizzati dal modulo speculativo.",
-            desc1_en: "Detection of microstructural fractures in physical samples analyzed by the speculative module.",
-            desc2_it: "Simulazione ad alta fedeltà delle tensioni molecolari sottoposte a comunicazione forzata.",
-            desc2_en: "High-fidelity simulation of molecular stress subjected to forced communication."
+            whatif_it: "E se le parole fossero armi ingegnerizzate?",
+            whatif_en: "What if words were engineered weapons?",
+            desc1_it: "FRAGMA esplora il rapporto tra linguaggio, percezione e potere, partendo dall’idea che le parole non si limitino a descrivere la realtà, ma contribuiscano a costruirla. Da questa premessa nasce una domanda: e se le parole fossero armi ingegnerizzate? Collocato all’intersezione tra guerra cognitiva e tecnologie neurolinguistiche, il progetto immagina un futuro in cui il linguaggio diventa uno strumento strategico capace di influenzare il giudizio individuale e modellare la percezione collettiva. In questo scenario, FRAGMA è un’azienda che sviluppa sistemi linguistici per governi e istituzioni, utilizzando intelligenza artificiale, dataset psicometrici e analisi computazionale per costruire nuove realtà narrative.",
+            desc1_en: "FRAGMA explores the relationship between language, perception and power, starting from the premise that words do not simply describe reality but actively shape it. This raises a speculative question: what if words were engineered weapons? Positioned at the intersection of cognitive warfare and neurolinguistic technologies, the project envisions a future in which language becomes a strategic tool capable of influencing individual judgement and shaping collective perception. Within this scenario, FRAGMA is a company that develops linguistic systems for governments and institutions, combining artificial intelligence, psychometric datasets and computational analysis to construct new narrative realities.",
+            desc2_it: "L’installazione interattiva Syntax F-1 traduce questa visione in un’esperienza partecipativa. Attraverso una console analogico-digitale, l’utente modifica sei parametri di manipolazione del linguaggio (polarizzazione, carico emotivo, moralizzazione, opacità, assertività e deumanizzazione) generando in tempo reale testi elaborati da un modello linguistico. Una simulazione finale mostra il potenziale impatto sociale del messaggio prodotto, invitando a riflettere sulle implicazioni etiche e politiche dell’uso strategico del linguaggio.",
+            desc2_en: "The interactive installation Syntax F-1 materialises this vision through a participatory experience. Using an analogue-digital console, visitors manipulate six parameters of language engineering (polarisation, emotional charge, moralisation, opacity, assertiveness and dehumanisation) producing real-time outputs generated by a language model. The experience concludes with a simulation of the message's potential social impact, encouraging reflection on the ethical and political implications of the strategic use of language."
         },
         't4': { 
             idNum: "04", 
-            titleSvg: "assets/projects/titles/ICON.svg", 
+            titleSvg: "assets/projects/t4/title.svg", 
+            microName: "icon",
             field_it: "SIMBOLO", 
             field_en: "SYMBOL", 
             team: "ICON", 
-            whatif_it: "E se i simboli grafici tradizionali cambiassero significato in tempo reale in base agli algoritmi?",
-            whatif_en: "What if traditional visual symbols dynamically changed their meaning based on algorithms?",
-            desc1_it: "L'interfaccia utente primaria mostra segnali di instabilità grafica dovuti al carico di rete.",
-            desc1_en: "The primary user interface shows signs of graphical instability due to network load.",
-            desc2_it: "Calibrazione dei parametri visivi e ottimizzazione dei tempi di risposta dei nodi periferici.",
-            desc2_en: "Calibration of visual parameters and optimization of peripheral node response times."
+            whatif_it: "E se i marchi commerciali sostituissero le parole?",
+            whatif_en: "What if commercial brands replaced words?",
+            desc1_it: "ICON esplora il ruolo crescente dei brand nella costruzione dell’immaginario collettivo e la loro capacità di influenzare non solo i consumi, ma anche il linguaggio. Partendo dal fenomeno della volgarizzazione dei marchi, il progetto si sviluppa attorno a una domanda: e se i simboli commerciali sostituissero le parole? Lo scenario immagina un futuro prossimo in cui l’Institute of Common Nomenclature (ICON) regolamenta e commercializza il linguaggio, trasformando i vocaboli in risorse economiche acquistabili dalle aziende. Nasce così il Lexicon, un sistema linguistico fondato sui simboli commerciali che sostituisce progressivamente il linguaggio tradizionale con una comunicazione standardizzata e immediatamente riconoscibile.",
+            desc1_en: "ICON explores the growing role of brands in shaping the collective imagination and their ability to influence not only consumer behaviour, but language itself. Starting from the phenomenon of trademark genericisation, the project asks: what if commercial symbols replaced words? It envisions a near future in which the Institute of Common Nomenclature (ICON) regulates and commercialises language, transforming words into economic assets that can be purchased by companies. This gives rise to the Lexicon, a linguistic system based on commercial symbols that gradually replaces traditional language with a standardised and instantly recognisable form of communication.",
+            desc2_it: "Il progetto prende forma attraverso l’ICON Starter Kit, un sistema didattico progettato per apprendere il nuovo linguaggio. Al centro dell’esperienza si trova un dispositivo modulare composto da quattro slot corrispondenti alle principali funzioni sintattiche della frase. Inserendo tessere recanti loghi commerciali, l’utente costruisce enunciati elaborati e visualizzati in tempo reale. Completato da un dizionario ufficiale e da strumenti educativi dedicati, il progetto invita a riflettere sulle conseguenze culturali, sociali e politiche della privatizzazione del linguaggio e di una comunicazione governata da interessi economici e identità di marca.",
+            desc2_en: "The project takes shape through the ICON Starter Kit, an educational system designed to teach the rules of this new language. At the centre of the experience is a modular device composed of four slots corresponding to the main syntactic functions of a sentence. By inserting tiles bearing commercial logos, users construct statements that are processed and displayed in real time. Complemented by an official dictionary and a set of educational tools, the project encourages critical reflection on the cultural, social and political consequences of language privatisation and communication governed by economic interests and brand identities."
         },
         't5': { 
             idNum: "05", 
-            titleSvg: "assets/projects/titles/TREEAL.svg", 
+            titleSvg: "assets/projects/t5/title.svg", 
+            microName: "treeal",
             field_it: "AMBIENTALE", 
             field_en: "ENVIRONMENTAL", 
             team: "TREAAL", 
-            whatif_it: "E se gli alberi e gli ecosistemi potessero firmare contratti assicurativi per auto-difesa?",
-            whatif_en: "What if trees and ecosystems could execute smart contracts for self-defense?",
-            desc1_it: "Valutazione dei contratti intelligenti legati ad asset assicurativi ecologici distribuiti.",
-            desc1_en: "Evaluation of smart contracts linked to distributed ecological insurance assets.",
-            desc2_it: "Analisi di rischio algoritmico basata su modelli climatici e speculativi a lungo termine.",
-            desc2_en: "Algorithmic risk analysis based on long-term climatic and speculative models."
+            whatif_it: "E se gli alberi artificiali diventassero più sostenibili di quelli naturali?",
+            whatif_en: "What if artificial trees became more sustainable than natural ones?",
+            desc1_it: "TREEAL esplora il conflitto ecologico attraverso il rapporto tra natura e tecnologia, interrogandosi sulle conseguenze di una crescente tendenza a valutare gli ecosistemi secondo criteri di efficienza e performance. A partire dalla domanda: “e se gli alberi artificiali diventassero più sostenibili di quelli naturali?”, il progetto immagina uno scenario in cui la complessità biologica delle foreste viene progressivamente sostituita da sistemi ingegnerizzati. In questo contesto nasce TREEAL, un’azienda specializzata nella conversione delle foreste naturali in infrastrutture artificiali composte da Treeal Units, dispositivi in grado di assorbire CO₂, purificare l’aria, produrre energia e contribuire alla regolazione climatica. Il progetto mette in discussione una visione della sostenibilità fondata esclusivamente sulla misurazione delle prestazioni, nella quale la biodiversità viene sostituita da indicatori quantitativi di efficienza.",
+            desc1_en: "TREEAL explores ecological conflict through the relationship between nature and technology, questioning the consequences of evaluating ecosystems according to criteria of efficiency and performance. Starting from the question: “what if artificial trees became more sustainable than natural ones?”, the project envisions a future in which the biological complexity of forests is gradually replaced by engineered systems. Within this scenario, TREEAL emerges as a company specialising in the conversion of natural forests into artificial infrastructures composed of Treeal Units devices capable of absorbing CO₂, purifying the air, generating energy and contributing to climate regulation. The project questions a vision of sustainability based solely on measurable performance, where biodiversity is replaced by quantitative indicators of efficiency.",
+            desc2_it: "Il progetto prende forma attraverso il Data Tree Model, un dispositivo interattivo che rende visibili le prestazioni delle Treeal Units. Installato all’interno del Treeal Expansion Summit, invita il pubblico a confrontare diverse specie arboree con i sistemi artificiali che le hanno sostituite. Inserendo blocchi di legno ricavati da alberi reali, l’utente attiva visualizzazioni che mostrano i dati ambientali e produttivi delle corrispondenti unità artificiali. L’esperienza mette in dialogo la materialità della natura e la precisione della tecnologia, invitando a riflettere su ciò che viene preservato e ciò che viene sacrificato quando la sostenibilità viene ridotta a una questione di performance.",
+            desc2_en: "The project takes shape through the Data Tree Model, an interactive installation that visualises the performance of Treeal Units. Presented at the Treeal Expansion Summit, it invites visitors to compare different tree species with the artificial systems that have replaced them. By inserting wooden blocks carved from real trees, users activate visualisations displaying the environmental and productivity data of the corresponding artificial units. The experience brings together the materiality of nature and the precision of technology, encouraging reflection on what is preserved, and what is sacrificed, when sustainability is reduced to a matter of measurable performance."
         },
         't6': { 
             idNum: "06", 
-            titleSvg: "assets/projects/titles/EDEN.svg", 
-            field_it: "SOCIALE", 
-            field_en: "SOCIAL", 
+            titleSvg: "assets/projects/t6/title.svg", 
+            microName: "eden",
+            field_it: "xxxx", 
+            field_en: "xxxx", 
             team: "ECO", 
             whatif_it: "E se ricreassimo biosistemi autosufficienti per isolarci del tutto dalla biosfera terrestre?",
             whatif_en: "What if we created self-sufficient biosystems to isolate ourselves from the biosphere?",
-            desc1_it: "Monitoraggio dei flussi di fotosintesi artificiale all'interno del biosistema EDEN.",
-            desc1_en: "Monitoring of artificial photosynthesis flows within the EDEN biosystem.",
-            desc2_it: "Simulazione climatica della camera a atmosfera controllata per test di sopravvivenza vegetale.",
-            desc2_en: "Climate simulation of the controlled atmosphere chamber for plant survival testing."
+            desc1_it: "E-DEN esplora il conflitto cognitivo generato dalla costante esposizione a relazioni, connessioni e stimoli sociali. Partendo dall’ipotesi che il disagio mentale contemporaneo derivi dall’eccessiva interazione con gli altri, il progetto si sviluppa attorno a una domanda: e se la mente umana funzionasse meglio isolandosi? In questo scenario, l’isolamento viene riconosciuto come condizione ottimale per il benessere e l’efficienza della mente. E-DEN si presenta come un’azienda di biotecnologie che, attraverso principi di ottimismo tecnologico, auto-ottimizzazione e autonomia individuale, sviluppa tecnologie capaci di allenare la mente a privilegiare la distanza sociale come forma di equilibrio, controllo e protezione cognitiva.",
+            desc1_en: "E-DEN explores the cognitive conflict generated by constant exposure to relationships, connections and social stimuli. Based on the hypothesis that contemporary mental distress stems from excessive interaction with others, the project asks: what if the human mind functioned better in isolation? Within this scenario, isolation is redefined as the optimal condition for mental wellbeing and efficiency. E-DEN presents itself as a biotechnology company that, grounded in technological optimism, self-optimisation and individual autonomy, develops technologies designed to train the mind to favour social withdrawal as a form of balance, control and cognitive protection.",
+            desc2_it: "Il progetto prende forma attraverso ARMOR, un dispositivo indossabile che applica i principi del condizionamento classico per modificare progressivamente il comportamento dell’utente. Sensori di prossimità, sistemi di visione artificiale e una pellicola commutabile alterano l’esperienza sensoriale in presenza di altre persone, favorendo spontaneamente l’allontanamento. Un’applicazione dedicata accompagna il percorso di allenamento cognitivo, consentendo di monitorare i progressi e individuare percorsi a bassa densità sociale. Attraverso questo ecosistema, E-DEN propone una riflessione critica sulle logiche contemporanee di ottimizzazione dell’individuo e sulle conseguenze di una società che considera l’isolamento non come eccezione, ma come ideale da perseguire.",
+            desc2_en: "The project takes shape through ARMOR, a wearable device that applies the principles of classical conditioning to gradually reshape the user's behaviour. Proximity sensors, computer vision systems and a switchable visual filter alter the sensory experience whenever other people are detected, encouraging voluntary social distancing. A dedicated mobile application supports the user's cognitive training by tracking progress and suggesting routes with lower social density. Through this ecosystem, E-DEN offers a critical reflection on contemporary ideals of self-optimisation, questioning the consequences of a society that embraces isolation not as an exception, but as a desirable goal."
         },
         't7': { 
             idNum: "07", 
-            titleSvg: "assets/projects/titles/RHEAL.svg", 
-            field_it: "SALUTE SPECULATIVA", 
-            field_en: "SPECULATIVE HEALTH", 
+            titleSvg: "assets/projects/t7/title.svg", 
+            microName: "rheal",
+            field_it: "xxxx", 
+            field_en: "xxxx", 
             team: "MED", 
-            whatif_it: "E se la telemedicina d'emergenza automatizzata decidesse autonomamente le priorità di cura?",
-            whatif_en: "What if automated emergency telemedicine independently decided treatment priorities?",
-            desc1_it: "Mappatura dei flussi sanitari e dei canali di comunicazione per la telemedicina d'emergenza.",
-            desc1_en: "Mapping of health flows and communication channels for emergency telemedicine.",
-            desc2_it: "Analisi della latenza di trasmissione dei dati diagnostici vitali verso i server centrali.",
-            desc2_en: "Analysis of transmission latency of vital diagnostic data to central servers."
+            whatif_it: "E se tutte le comunicazioni digitali fossero filtrate per il benessere degli utenti?",
+            whatif_en: "What if all digital communications were filtered for the well-being of users?",
+            desc1_it: "RHEAL esplora il conflitto digitale e le tensioni generate dalla gestione e dalla diffusione delle informazioni negli ecosistemi online contemporanei. Partendo dalla domanda: “e se tutte le comunicazioni digitali fossero filtrate per il benessere degli utenti?”, il progetto immagina uno scenario in cui la tutela della salute psicologica e della stabilità sociale diventa il principio guida dell’infrastruttura comunicativa europea. In questo contesto, RHEAL si presenta come un’azienda tecnologica che sviluppa sistemi di moderazione basati sull’intelligenza artificiale, capaci di riformulare testi, immagini e contenuti multimediali prima della loro diffusione, trasformando il controllo dell’informazione in uno strumento di governo e prevenzione dei conflitti.",
+            desc1_en: "RHEAL explores digital conflict and the tensions generated by the management and circulation of information within contemporary online ecosystems. Starting from the question: “what if all digital communications were filtered for the well-being of users?”, the project envisions a future in which psychological health and social stability become the guiding principles of Europe's communication infrastructure. Within this scenario, RHEAL presents itself as a technology company developing AI-based moderation systems capable of reformulating text, images and multimedia content before they are displayed, turning information control into a tool for governance and conflict prevention.",
+            desc2_it: "Il progetto prende forma attraverso RhealOS, un sistema composto da un microprocessore dedicato, un ambiente operativo dimostrativo e un’interfaccia di controllo fisica. Al centro dell’esperienza si trova il RH34L Chip, che integra localmente l’intelligenza artificiale e modifica i contenuti prima che vengano visualizzati. Attraverso un controller, il pubblico può regolare diversi livelli di moderazione e osservare in tempo reale le trasformazioni dei messaggi, accompagnato da Calmy, un assistente virtuale che guida l’interazione. L’esperienza si conclude con una valutazione delle scelte effettuate, invitando a riflettere sul delicato equilibrio tra sicurezza, libertà di espressione e controllo delle informazioni.",
+            desc2_en: "The project takes shape through RhealOS, a system composed of a dedicated microprocessor, a demonstration operating environment and a physical control interface. At the centre of the experience is the RH34L Chip, which locally integrates artificial intelligence and modifies incoming content before it reaches the user. Through a controller, visitors can adjust different levels of moderation and observe messages being transformed in real time, guided by Calmy, a virtual assistant that accompanies the interaction. The experience concludes with an evaluation of the user's choices, encouraging critical reflection on the balance between security, freedom of expression and information control."
         },
         't8': { 
             idNum: "08", 
-            titleSvg: "assets/projects/titles/SOEMA.svg", 
+            titleSvg: "assets/projects/t8/title.svg", 
+            microName: "soema",
             field_it: "INFRASTRUTTURA", 
             field_en: "INFRASTRUCTURE", 
             team: "SOEMA", 
-            whatif_it: "E se le reti di sensori urbani gestissero in totale autonomia le risorse climatiche delle città?",
-            whatif_en: "What if urban sensor networks autonomously managed city climatic resource allocation?",
-            desc1_it: "La rete di sensori ambientali SOEMA rileva variazioni termiche nella zona periferica.",
-            desc1_en: "The SOEMA environmental sensor network detects thermal variations in the peripheral zone.",
-            desc2_it: "Aggregazione dei dati meteorologici per la prevenzione di catastrofi locali simulate.",
-            desc2_en: "Aggregation of meteorological data for simulated local disaster prevention."
+            whatif_it: "E se i corpi delle vittime dei processi infrastrutturali diventassero essi stessi materiale da costruzione?",
+            whatif_en: "What if the bodies of those sacrificed by infrastructure development became building materials themselves?",
+            desc1_it: "SOEMA esplora il conflitto infrastrutturale attraverso una riflessione sulle conseguenze umane celate dietro la costruzione delle grandi opere. A partire da fenomeni come espropriazioni territoriali, sfruttamento del lavoro e morti nei cantieri, il progetto si sviluppa attorno a una domanda radicale: “e se i corpi delle vittime dei processi infrastrutturali diventassero essi stessi materiale da costruzione?”. Lo scenario immagina un futuro in cui la logica dell’economia circolare viene estesa alla materia organica umana. In questo contesto nasce SOEMA, un’azienda che trasforma ciò che il progresso produce come scarto in materiali edilizi, reinterpretando sfruttamento, sacrificio e perdita attraverso il linguaggio della sostenibilità e dell’innovazione.",
+            desc1_en: "SOEMA explores infrastructural conflict through a reflection on the hidden human consequences of large-scale infrastructure projects. Starting from issues such as land expropriation, labour exploitation and deaths on construction sites, the project asks: “what if the bodies of those sacrificed by infrastructure development became building materials themselves?”. It envisions a future in which the principles of the circular economy are extended to human organic matter. Within this scenario, SOEMA emerges as a company that transforms what progress produces as waste into construction materials, reframing exploitation, sacrifice and loss through the language of sustainability and innovation.",
+            desc2_it: "Il progetto prende forma attraverso una collezione di materiali derivati da specifici contesti infrastrutturali globali, tra cui Albuphas, Keratex, Adiplon ed Emolite. Presentati all’interno di un campionario interattivo, questi materiali permettono ai visitatori di scoprirne proprietà, provenienza e processi produttivi attraverso un percorso di consultazione stratificato. Svelando progressivamente le storie nascoste dietro ogni campione, SOEMA invita a riflettere criticamente sul rapporto tra sviluppo, memoria e valore umano, mettendo in discussione le narrazioni che accompagnano il progresso infrastrutturale.",
+            desc2_en: "The project takes shape through a collection of materials derived from specific global infrastructure contexts, including Albuphas, Keratex, Adiplon and Emolite. Presented within an interactive sample catalogue, these materials allow visitors to explore their properties, origins and production processes through a layered experience. By gradually revealing the stories concealed behind each material, SOEMA encourages critical reflection on the relationship between development, memory and human value, questioning the narratives that underpin contemporary infrastructure and progress."
         },
         't9': { 
             idNum: "09", 
-            titleSvg: "assets/projects/titles/Risorsa_3.svg", 
+            titleSvg: "assets/projects/t9/title.svg", 
+            microName: "risorsa_3",
             field_it: "CULTURA", 
             field_en: "CULTURE", 
-            team: "UNEC", 
-            whatif_it: "E se la nostra presenza fisica in pubblico fosse condizionata da un punteggio di fiducia di rete?",
-            whatif_en: "What if our physical presence in public depended on a digital network trust score?",
-            desc1_it: "Controllo giudiziario remoto e telepresenza tramite nodi di sicurezza ad alta priorità.",
-            desc1_en: "Remote judicial control and telepresence through high-priority security nodes.",
-            desc2_it: "Analisi forense digitale dei registri di sistema per identificare accessi non autorizzati.",
-            desc2_en: "Digital forensic analysis of system logs to identify unauthorized access."
+            team: "synchro", 
+            whatif_it: "E se il tempo fosse uno strumento di potere?",
+            whatif_en: "What if time were an instrument of power?",
+            desc1_it: "SYNCHRO esplora il conflitto metrico contemporaneo, interrogandosi sul tempo non come misura neutrale, ma come strumento di controllo e potere geopolitico. A partire dalla domanda: “e se il tempo fosse uno strumento di potere?”, il progetto immagina uno scenario in cui la definizione dell’ora di riferimento globale diventa oggetto di competizione tra Stati. In questo contesto nasce lo Zero Hour Day, un evento annuale durante il quale SYNCHRO misura il livello di sincronizzazione delle routine quotidiane dei cittadini di ogni Paese. La nazione più sincronizzata ottiene il diritto di imporre il proprio fuso orario come standard globale, rivelando come anche i sistemi apparentemente oggettivi possano diventare strumenti di egemonia.",
+            desc1_en: "SYNCHRO explores contemporary metric conflict by questioning time not as a neutral measure, but as an instrument of control and geopolitical power. Starting from the question: “what if time were an instrument of power?”, the project imagines a scenario in which the definition of global standard time becomes the object of competition between nations. Within this context, Zero Hour Day is introduced as an annual event in which SYNCHRO measures the synchronisation of citizens' daily routines. The nation with the highest level of temporal consistency earns the right to impose its time zone as the global standard, revealing how even seemingly objective systems can become mechanisms of hegemony.",
+            desc2_it: "Il progetto prende forma attraverso il Chronodex, un dispositivo interattivo che registra la distribuzione delle attività quotidiane degli utenti. All’interno di una cabina dedicata, ogni partecipante ricostruisce la propria giornata suddividendo le ventiquattro ore in quattro categorie fondamentali: sonno, alimentazione, lavoro e altre attività. I dati raccolti vengono trasmessi in tempo reale e contribuiscono alla definizione dell’indice di sincronizzazione nazionale. Attraverso questo processo, SYNCHRO riflette criticamente sul rapporto tra misurazione, partecipazione e controllo, mettendo in discussione il ruolo delle metriche nella costruzione degli equilibri politici e sociali contemporanei.",
+            desc2_en: "The project takes shape through the Chronodex, an interactive device that records the distribution of users' daily activities. Inside a dedicated booth, participants reconstruct a typical day by dividing twenty-four hours into four key categories: sleep, eating, work and other activities. The collected data is transmitted in real time and contributes to the national synchronisation index. Through this process, SYNCHRO offers a critical reflection on the relationship between measurement, participation and control, questioning the role of metrics in shaping contemporary political and social structures."
         },
         't10': { 
             idNum: "10", 
-            titleSvg: "assets/projects/titles/RECLAIM.svg", 
+            titleSvg: "assets/projects/t10/title.svg", 
+            microName: "reclaim",
             field_it: "SOCIALE", 
             field_en: "SOCIAL", 
             team: "RECLAIM", 
-            whatif_it: "E se l'ottimizzazione dell'efficienza umana fosse gestita da algoritmi diagnostici costanti?",
-            whatif_en: "What if human efficiency optimization was governed by continuous diagnostic algorithms?",
-            desc1_it: "Diagnostica profonda dei parametri core del sistema per prevenire crash imprevisti.",
-            desc1_en: "Deep diagnostics of core system parameters to prevent unexpected crashes.",
-            desc2_it: "Ottimizzazione delle risorse hardware e riallocazione dinamica della memoria cache.",
-            desc2_en: "Hardware resource optimization and dynamic reallocation of cache memory."
+            whatif_it: "E se i cittadini potessero organizzarsi per rivendicare attivamente il controllo dei propri spazi urbani?",
+            whatif_en: "What if citizens could organize themselves to actively reclaim control of their urban spaces?",
+            desc1_it: "RECLAIM esplora il conflitto urbano generato dal turismo di massa e dalle sue conseguenze sul tessuto sociale delle città contemporanee. A partire dall’aumento del costo della vita, dalla trasformazione degli spazi pubblici e dalla progressiva marginalizzazione dei residenti, il progetto si sviluppa attorno a una domanda: “e se i cittadini potessero organizzarsi per rivendicare attivamente il controllo dei propri spazi urbani?”. Lo scenario immagina una realtà in cui la pressione turistica alimenta nuove forme di resistenza civica. In questo contesto nasce RECLAIM, un’organizzazione decentralizzata ispirata alle DAO (Decentralized Autonomous Organizations) che trasforma il malcontento diffuso in un’azione collettiva coordinata, rendendo il conflitto urbano visibile, condiviso e misurabile.",
+            desc1_en: "RECLAIM explores the urban conflict generated by mass tourism and its impact on the social fabric of contemporary cities. Starting from rising living costs, the transformation of public spaces and the gradual marginalisation of local residents, the project asks: “what if citizens could organise themselves to actively reclaim control of their urban spaces?”. It envisions a scenario in which increasing tourist pressure gives rise to new forms of civic resistance. Within this context, RECLAIM emerges as a decentralised organisation inspired by Decentralized Autonomous Organizations (DAOs), transforming widespread frustration into coordinated collective action and making urban conflict visible, shared and measurable.",
+            desc2_it: "Il progetto prende forma attraverso un ecosistema di strumenti fisici e digitali che promuovono la partecipazione attiva dei cittadini. Manifesti, stencil e interventi urbani introducono il progetto nello spazio pubblico e conducono alla piattaforma digitale, dove le azioni vengono raccolte e condivise. Al centro dell’esperienza si trova RECLAIMX, un’arma fittizia autoprodotta e integrata con un’applicazione mobile che consente di individuare i turisti e colpirli simbolicamente. Attraverso dinamiche partecipative e meccaniche di gamification, il progetto invita a riflettere criticamente sul rapporto tra cittadinanza, spazio pubblico e turismo contemporaneo.",
+            desc2_en: "The project takes shape through an ecosystem of physical and digital tools that encourage active civic participation. Posters, stencils and urban interventions introduce the project into public space and lead users to a digital platform where actions are collected and shared. At the heart of the experience is RECLAIMX, a self-produced fictitious weapon integrated with a mobile application that allows citizens to identify tourists and symbolically target them. Through participatory dynamics and gamified interactions, the project encourages critical reflection on the relationship between citizenship, public space and contemporary tourism."
         },
         't11': { 
             idNum: "11", 
-            titleSvg: "assets/projects/titles/UNEC.svg", 
+            titleSvg: "assets/projects/t11/title.svg", 
+            microName: "unec",
             field_it: "ECOSISTEMA DI RETE", 
             field_en: "NETWORK ECOSYSTEM", 
             team: "NET", 
-            whatif_it: "E se le relazioni sociali fossero modellate solo su protocolli crittografici di mutua convenienza?",
-            whatif_en: "What if social relationships were modeled strictly on cryptographic mutual-benefit protocols?",
-            desc1_it: "Mappatura dell'ecosistema di rete UNEC e delle relazioni di fiducia tra i nodi.",
-            desc1_en: "Mapping of the UNEC network ecosystem and trust relationships between nodes.",
-            desc2_it: "Simulazione di attacchi informatici distribuiti per testare la resilienza della struttura.",
-            desc2_en: "Simulation of distributed cyber attacks to test the resilience of the structure."
-        }
+            whatif_it: "E se la tecnologia biomedica diventasse l’ultimo strumento per preservare la memoria delle civiltà a rischio di scomparsa?",
+            whatif_en: "What if biomedical technology became the last tool to preserve the memory of endangered civilisations?",
+            desc1_it: "UNEC riflette sulle conseguenze culturali dei conflitti contemporanei e sul rischio di estinzione delle identità collettive. A partire dall’osservazione di come guerre, tensioni geopolitiche e processi di omologazione possano compromettere il patrimonio immateriale delle comunità, il progetto si sviluppa attorno a una domanda: “e se la tecnologia biomedica diventasse l’ultimo strumento per preservare la memoria delle civiltà a rischio di scomparsa?”. Ambientato tra il 2068 e il 2075, immagina la nascita di UNEC (United Nations for Endangered Cultures), un’organizzazione internazionale che utilizza la crioconservazione dei “guardiani culturali” per garantire la sopravvivenza futura di culture minacciate, superando i limiti di archivi e musei tradizionali.",
+            desc1_en: "UNEC reflects on the cultural consequences of contemporary conflicts and the risk of collective identities becoming extinct. Starting from the observation that wars, geopolitical tensions and processes of cultural homogenisation can irreversibly threaten intangible heritage, the project asks: “what if biomedical technology became the last tool capable of preserving the memory of endangered civilisations?”. Set between 2068 and 2075, it envisions the creation of UNEC (United Nations for Endangered Cultures), an international organisation that uses the cryopreservation of “cultural guardians” to ensure the future survival of threatened cultures, moving beyond the limitations of traditional archives and museums.",
+            desc2_it: "Il progetto prende forma attraverso Cryocare, un dispositivo interattivo che coinvolge il pubblico nel programma Adopt a Culture. Attraverso un’esperienza fisica e digitale, gli utenti assumono il ruolo di custodi temporanei di una cultura a rischio, prendendosi cura dei bisogni simbolici e materiali di un guardiano culturale crioconservato. L’interazione consente di sbloccare progressivamente frammenti di patrimonio immateriale, mentre una piattaforma digitale ne documenta il percorso di apprendimento. Attraverso questo ecosistema, UNEC invita a riflettere criticamente sui limiti delle strategie contemporanee di conservazione e sul rapporto tra tutela culturale, musealizzazione e nuove forme di controllo esercitate in nome della preservazione.",
+            desc2_en: "The project takes shape through Cryocare, an interactive device that engages the public in the Adopt a Cultureprogramme. Through a physical and digital experience, users become temporary custodians of an endangered culture, caring for the symbolic and material needs of a cryopreserved cultural guardian. As the interaction unfolds, fragments of intangible heritage are progressively unlocked, while a dedicated digital platform records the user's journey. Through this ecosystem, UNEC encourages critical reflection on the limits of contemporary preservation strategies and on the relationship between cultural protection, musealisation and new forms of control exercised in the name of conservation."
+       }
     };
 
     const domNodes = document.querySelectorAll('.target-node');
@@ -2081,11 +2591,12 @@ function generateColormap() {
         for(let p = 0; p < 3; p++) particles.push({ distance: (6 + Math.random() * 12) * SCALE_FACTOR, angle: Math.random() * Math.PI * 2, orbitSpeed: (Math.random() - 0.5) * 0.01, baseRadius: (42 + Math.random() * 20) * SCALE_FACTOR, intensityBase: 0.25 });
         for(let p = 0; p < 4; p++) particles.push({ distance: (18 + Math.random() * 30) * SCALE_FACTOR, angle: Math.random() * Math.PI * 2, orbitSpeed: (Math.random() - 0.5) * 0.005, baseRadius: (70 + Math.random() * 40) * SCALE_FACTOR, intensityBase: 0.1 });
 
-        // Distribuzione circolare uniforme e spaziatura angolare per evitare sovrapposizioni radiali/angolari
-        // I nodi sono distribuiti equamente sulla circonferenza (360 gradi / 11 nodi = ~32.7 gradi per nodo) con un piccolo jitter
-        let angle = (index / domNodes.length) * Math.PI * 2 + (Math.random() - 0.5) * 0.12;
-        // La distanza dal centro varia tra 0.35, 0.6 e 0.85 per sparpagliarli radialmente
-        let distancePct = 0.35 + (index % 3) * 0.25;
+        // Posizionamento calcolato per evitare i reticoli (assi 0, 90, 180, 270) e i cerchi concentrici (r=0.35, 0.58, 0.86)
+        const safeAngles = [20, 55, 75, 110, 145, 165, 200, 235, 255, 295, 335];
+        let angle = safeAngles[index % safeAngles.length] * (Math.PI / 180) + (Math.random() - 0.5) * 0.05;
+        // Distanze calcolate per cadere esattamente *tra* gli anelli concentrici
+        const safeDistances = [0.26, 0.46, 0.72];
+        let distancePct = safeDistances[index % safeDistances.length];
 
         targets.push({ 
             id: node.id, 
@@ -2120,7 +2631,8 @@ function generateColormap() {
 
     let mouseX = centerX, mouseY = centerY, mouseDistFromCenter = 0, lineAngle = 0;
     let mouseLineAngle = lineAngle; 
-    const RADAR_FILTER_ALPHA = 0.12; 
+    const RADAR_FILTER_ALPHA_INSIDE = 0.1; 
+    const RADAR_FILTER_ALPHA_OUTSIDE = 0.05; 
     // allowInteractions is declared at the top of the script
 
     // Variabili di Stato UI
@@ -2131,16 +2643,14 @@ function generateColormap() {
     let touchActive = false;
 
     // confine gli eventi del radar al solo container per separare interazioni con pannelli flottanti
-    container.addEventListener('mousemove', (e) => {
-        if (!allowInteractions) return; // ignore cursor movements durante entry
+    document.addEventListener('mousemove', (e) => {
+        if (!allowInteractions || (isDetailView && !isMobile())) return; // ignore cursor movements durante entry o quando miniaturizzato
         const rect = container.getBoundingClientRect();
+        const absCenterX = rect.left + centerX;
+        const absCenterY = rect.top + centerY;
         mouseX = e.clientX - rect.left; mouseY = e.clientY - rect.top;
-        mouseLineAngle = Math.atan2(mouseY - centerY, mouseX - centerX);
-        mouseDistFromCenter = Math.hypot(mouseX - centerX, mouseY - centerY);
-    });
-    container.addEventListener('mouseleave', () => {
-        // quando il cursore esce dal radar, manteniamo l'angolo corrente (evitiamo scatti)
-        mouseLineAngle = lineAngle;
+        mouseLineAngle = Math.atan2(e.clientY - absCenterY, e.clientX - absCenterX);
+        mouseDistFromCenter = Math.hypot(e.clientX - absCenterX, e.clientY - absCenterY);
     });
 
     // --- HELPER MOBILE, HAMBURGER & SCROLL SCANNER ---
@@ -2167,6 +2677,7 @@ function generateColormap() {
     }
 
     const mobileHoverCard = document.getElementById('mobile-hover-card');
+    let lastMobileHoveredId = null;
     
     function updateMobileScanner() {
         const menu = document.getElementById('col-left-body');
@@ -2210,19 +2721,40 @@ function generateColormap() {
         
         if (hovered) {
             currentSelectedTarget = hovered;
-            // Map data to the mobile hover card
             const data = projectData[hovered.id] || { desc_it: "Dati criptati.", desc_en: "Encrypted data." };
-            const mobHovId = document.getElementById('mob-hov-id');
-            if (mobHovId) mobHovId.innerText = data.idNum || "??";
             
+            // Popola micro logo
+            const mobHovMicro = document.getElementById('mob-hov-micro-img');
+            if (mobHovMicro) {
+                if (data.microName) {
+                    mobHovMicro.src = `micrografiche/${data.microName}.svg`;
+                    mobHovMicro.style.display = 'block';
+                } else {
+                    mobHovMicro.style.display = 'none';
+                }
+            }
+            
+            // Popola titolo
             const titleWrap = document.getElementById('mob-hov-title-wrapper');
             if (titleWrap) {
-                titleWrap.innerHTML = data.titleSvg ? `<img src="${data.titleSvg}" alt="Title SVG">` : `<span>PROJECT</span>`;
+                titleWrap.innerHTML = data.titleSvg ? `<img src="${data.titleSvg}" alt="Title SVG">` : `<span style="font-size:1rem; font-weight:bold; color:#fff;">PROJECT</span>`;
             }
+            
+            // Popola whatif text (con scramble animazione solo se è cambiato il target)
+            const mobHovWhatif = document.getElementById('mob-hov-whatif');
+            if (mobHovWhatif) {
+                const whatifText = currentLang === 'it' ? (data.whatif_it || data.whatif_en) : (data.whatif_en || data.whatif_it);
+                if (hovered.id !== lastMobileHoveredId) {
+                    runScramble(mobHovWhatif, whatifText || "", 20);
+                }
+            }
+            lastMobileHoveredId = hovered.id;
+            
             if (mobileHoverCard) mobileHoverCard.classList.add('visible');
         } else {
             if (mobileHoverCard) mobileHoverCard.classList.remove('visible');
             currentSelectedTarget = null;
+            lastMobileHoveredId = null;
         }
     }
 
@@ -2273,8 +2805,8 @@ function generateColormap() {
         const txt2 = currentLang === 'it' ? locales.it.aboutText2 : locales.en.aboutText2;
         const aboutTxt1El = document.getElementById('about-text-1');
         const aboutTxt2El = document.getElementById('about-text-2');
-        if (aboutTxt1El) aboutTxt1El.innerText = txt1;
-        if (aboutTxt2El) aboutTxt2El.innerText = txt2;
+        if (aboutTxt1El) aboutTxt1El.textContent = txt1;
+        if (aboutTxt2El) aboutTxt2El.textContent = txt2;
 
         // Nascondi il titolo dei progetti e attiva lo stato About
         const titleBox = panel.querySelector('.info-title-box');
@@ -2287,9 +2819,11 @@ function generateColormap() {
         // Miniaturizza radar su desktop (chiamato prima per misurare le coordinate pre-layout corrette)
         if (radarWrapper && !isMobile()) miniaturizeRadar(radarWrapper, '');
 
-        // Mostra il pannello e la colonna destra
+        // Mostra il pannello e la colonna destra (con about-mode per full width)
         panel.classList.add('visible', 'about-panel');
-        if (colRight) colRight.classList.add('visible');
+        if (colRight) {
+            colRight.classList.add('visible', 'about-mode');
+        }
         if (layout) layout.classList.add('detail-open');
         isDetailView = true; // Allinea lo stato della vista dettaglio
 
@@ -2298,8 +2832,8 @@ function generateColormap() {
         if (closeBtn) closeBtn.style.display = 'block';
 
         // Aggiorna navigazione (imposta ABOUT come attivo/illuminato)
-        document.getElementById('toggle-radar').classList.add('active');
-        document.getElementById('toggle-index').classList.remove('active');
+        document.getElementById('toggle-radar')?.classList.add('active');
+        document.getElementById('toggle-index')?.classList.remove('active');
     }
     function triggerDetailView() {
         // If About panel is active, ignore radar clicks
@@ -2311,6 +2845,9 @@ function generateColormap() {
         const radarWrapper = document.querySelector('.radar-wrapper');
         const colRight = document.querySelector('.col-right');
         const layout = document.querySelector('.layout');
+
+        // Se eravamo in about mode, rimuovi per tornare alla colonna stretta
+        if (colRight) colRight.classList.remove('about-mode');
 
         // Nascondi hover overlay e mobile preview card (non servono più, apre il pannello completo)
         document.getElementById('hover-overlay')?.classList.remove('visible');
@@ -2333,34 +2870,89 @@ function generateColormap() {
         document.getElementById('detail-state').classList.add('active');
         if (panel) panel.classList.add('visible');
 
-        // Populate 2 image slots and texts interspersed
-        const mediaSlot1 = document.getElementById('media-slot-1');
-        const mediaSlot2 = document.getElementById('media-slot-2');
-        
-        if (mediaSlot1) {
-            const img1 = mediaSlot1.querySelector('img');
-            if (img1) img1.src = data.titleSvg || '';
+        const projectId = currentSelectedTarget.id;
+
+        function setupMediaLoading(slot, mediaEl, placeholderText) {
+            if (!slot || !mediaEl) return;
+            
+            // Hide media initially and remove loaded class
+            mediaEl.style.display = 'none';
+            mediaEl.classList.remove('loaded');
+            
+            // Remove existing placeholder if any
+            const existingPlaceholder = slot.querySelector('.placeholder-text');
+            if (existingPlaceholder) existingPlaceholder.remove();
+            
+            // Create loading placeholder
+            const placeholder = document.createElement('div');
+            placeholder.className = 'placeholder-text';
+            placeholder.innerText = `[ LOADING... ]`;
+            slot.appendChild(placeholder);
+            
+            // Clear previous event listeners (to avoid memory leaks / multiple fires)
+            mediaEl.onload = null;
+            mediaEl.onloadedmetadata = null;
+            mediaEl.onerror = null;
+            
+            const onMediaLoadSuccess = () => {
+                if (placeholder && placeholder.parentNode) placeholder.remove();
+                mediaEl.style.display = 'block';
+                mediaEl.classList.add('loaded');
+            };
+            
+            if (mediaEl.tagName.toLowerCase() === 'img') {
+                mediaEl.onload = onMediaLoadSuccess;
+            } else if (mediaEl.tagName.toLowerCase() === 'video') {
+                mediaEl.onloadedmetadata = onMediaLoadSuccess;
+            }
+            
+            mediaEl.onerror = () => {
+                if (placeholder && placeholder.parentNode) placeholder.remove();
+                mediaEl.style.display = 'none';
+                mediaEl.classList.remove('loaded');
+                
+                // Show data missing placeholder
+                const errorPlaceholder = document.createElement('div');
+                errorPlaceholder.className = 'placeholder-text';
+                errorPlaceholder.innerText = placeholderText;
+                slot.appendChild(errorPlaceholder);
+            };
         }
-        if (mediaSlot2) {
-            const img2 = mediaSlot2.querySelector('img');
-            const nodeImg = currentSelectedTarget.node.querySelector('img');
-            if (img2 && nodeImg) img2.src = nodeImg.src || '';
+
+        // Populate 8 images
+        for (let i = 1; i <= 8; i++) {
+            const imgEl = document.getElementById(`detail-img-${i}`);
+            if (imgEl) {
+                const parentSlot = imgEl.parentElement;
+                setupMediaLoading(parentSlot, imgEl, `[ DATA_MISSING / IMG_${i} ]`);
+                imgEl.src = `assets/projects/${projectId}/${i}.jpg`;
+            }
+        }
+
+        // Populate 2 videos
+        for (let i = 1; i <= 2; i++) {
+            const vidEl = document.getElementById(`detail-vid-${i}`);
+            if (vidEl) {
+                const parentSlot = vidEl.parentElement;
+                setupMediaLoading(parentSlot, vidEl, `[ DATA_MISSING / VID_${i} ]`);
+                vidEl.src = `assets/projects/${projectId}/${i}.mp4`;
+            }
         }
 
         const focusEl = document.getElementById('detail-focus');
         const desc1El = document.getElementById('detail-text-1');
         const desc2El = document.getElementById('detail-text-2');
         
-        if (focusEl) runScramble(focusEl, currentLang === 'it' ? (data.whatif_it || data.whatif_en) : (data.whatif_en || data.whatif_it), 15);
-        if (desc1El) runScramble(desc1El, currentLang === 'it' ? (data.desc1_it || data.desc1_en) : (data.desc1_en || data.desc1_it), 15);
-        if (desc2El) runScramble(desc2El, currentLang === 'it' ? (data.desc2_it || data.desc2_en) : (data.desc2_en || data.desc2_it), 15);
+        if (focusEl) focusEl.textContent = currentLang === 'it' ? (data.whatif_it || data.whatif_en) : (data.whatif_en || data.whatif_it);
+        if (desc1El) desc1El.textContent = currentLang === 'it' ? (data.desc1_it || data.desc1_en) : (data.desc1_en || data.desc1_it);
+        if (desc2El) desc2El.textContent = currentLang === 'it' ? (data.desc2_it || data.desc2_en) : (data.desc2_en || data.desc2_it);
 
         const groupEl = document.getElementById('info-group-val');
-        if (groupEl) runScramble(groupEl, data.team || "N/A", 15);
-
+        if (groupEl) groupEl.textContent = data.team || "N/A";
+ 
         // In detail view, highlight INDEX_VIEW
-        document.getElementById('toggle-radar').classList.remove('active');
-        document.getElementById('toggle-index').classList.add('active');
+        document.getElementById('toggle-radar')?.classList.remove('active');
+        document.getElementById('toggle-index')?.classList.add('active');
 
         // Miniaturizza solo su desktop (su mobile il radar rimane in alto)
         const selectedLogo = currentSelectedTarget.node.querySelector('img')?.src || '';
@@ -2370,6 +2962,22 @@ function generateColormap() {
 
         const closeBtn = document.getElementById('close-detail');
         if (closeBtn) closeBtn.style.display = 'block';
+
+        // Evita problemi di rendering a causa del calcolo della larghezza dell'immagine durante la transizione CSS del pannello.
+        // Forza un reflow di tutte le immagini/video già caricate a intervalli durante la transizione.
+        [150, 350, 650].forEach(delay => {
+            setTimeout(() => {
+                if (panel) {
+                    const loadedMedia = panel.querySelectorAll('img.loaded, video.loaded');
+                    loadedMedia.forEach(el => {
+                        const prevDisplay = el.style.display;
+                        el.style.display = 'none';
+                        el.offsetHeight; // trigger reflow
+                        el.style.display = prevDisplay || 'block';
+                    });
+                }
+            }, delay);
+        });
     }
 
     // AZIONE: CLICK (solo dentro il radar-container)
@@ -2390,6 +2998,9 @@ function generateColormap() {
             const radarWrapper = document.querySelector('.radar-wrapper');
             const colRight = document.querySelector('.col-right');
             const layout = document.querySelector('.layout');
+            
+            if (colRight) colRight.classList.remove('about-mode');
+
             // Ripristina radar solo su desktop (su mobile non era miniaturizzato)
             if (radarWrapper && !isMobile()) restoreRadar(radarWrapper);
             if (colRight) colRight.classList.remove('visible');
@@ -2419,8 +3030,8 @@ function generateColormap() {
                 setTimeout(() => hud.classList.add('visible'), 60);
             }
             // Ripristina active state navigation (nessun elemento attivo/illuminato per default)
-            document.getElementById('toggle-radar').classList.remove('active');
-            document.getElementById('toggle-index').classList.remove('active');
+            document.getElementById('toggle-radar')?.classList.remove('active');
+            document.getElementById('toggle-index')?.classList.remove('active');
         });
     }
 
@@ -2437,8 +3048,11 @@ function generateColormap() {
             return;
         }
         time += 0.5;
-        lineAngle += angleDiff(mouseLineAngle, lineAngle) * RADAR_FILTER_ALPHA;
+        
+        let currentFilterAlpha = (mouseDistFromCenter <= radarRadius) ? RADAR_FILTER_ALPHA_INSIDE : RADAR_FILTER_ALPHA_OUTSIDE;
+        lineAngle += angleDiff(mouseLineAngle, lineAngle) * currentFilterAlpha;
         sweep.style.transform = `rotate(${lineAngle * (180 / Math.PI)}deg)`;
+        
         heatCtx.clearRect(0, 0, heatCanvas.width, heatCanvas.height);
         heatCtx.globalCompositeOperation = 'lighter'; 
 
@@ -2478,7 +3092,7 @@ function generateColormap() {
                 if (isPuntato) t.flareValue += (0.15 - t.flareValue) * 0.2; else t.flareValue += (0 - t.flareValue) * 0.05; 
 
                 // Evita l'ammatassamento al centro (spinta verso l'esterno se troppo vicini al centro)
-                const minCenterDist = _isMobileCache ? 45 : 140;
+                const minCenterDist = _isMobileCache ? 65 : 140;
                 if (distCenter < minCenterDist) {
                     let pushForce = (minCenterDist - distCenter) * 0.025;
                     let pushAngle = Math.atan2(t.y - centerY, t.x - centerX);
@@ -2492,7 +3106,7 @@ function generateColormap() {
                 // Clamping rigido dentro il perimetro del radar per evitare nodi fuori dallo schermo
                 const currentDist = Math.hypot(t.x - centerX, t.y - centerY);
                 const maxAllowedDist = _isMobileCache
-                    ? radarRadius * 0.80
+                    ? radarRadius * 0.90
                     : radarRadius * 0.90;
 
                 if (currentDist > maxAllowedDist) {
@@ -2601,11 +3215,26 @@ function generateColormap() {
                     const proj = projectData[currentSelectedTarget.id] || { idNum: "??", titleSvg: "", field: "UNKNOWN", team: "UNKNOWN" };
 
                     // Popola SOLO l'overlay flottante — col-right non si tocca, il radar non si sposta
-                    document.getElementById('hov-id').innerText = proj.idNum;
+                    const hovMicro = document.getElementById('hov-micro-img');
+                    if (hovMicro) {
+                        if (proj.microName) {
+                            hovMicro.src = `micrografiche/${proj.microName}.svg`;
+                            hovMicro.style.display = 'block';
+                        } else {
+                            hovMicro.style.display = 'none';
+                        }
+                    }
+
                     const hovTitleWrap = document.getElementById('hov-title-wrapper');
-                    hovTitleWrap.innerHTML = proj.titleSvg ? `<img src="${proj.titleSvg}" alt="Title SVG">` : `<h2>SCANNING...</h2>`;
-                    runScramble(document.getElementById('hov-field'), proj.field || "N/A", 30);
-                    runScramble(document.getElementById('hov-team'), proj.team || "N/A", 30);
+                    if (hovTitleWrap) {
+                        hovTitleWrap.innerHTML = proj.titleSvg ? `<img src="${proj.titleSvg}" alt="Title SVG">` : `<span style="font-size:1.2rem;">SCANNING...</span>`;
+                    }
+                    
+                    const hovWhatif = document.getElementById('hov-whatif');
+                    if (hovWhatif) {
+                        const whatifText = currentLang === 'it' ? (proj.whatif_it || proj.whatif_en) : (proj.whatif_en || proj.whatif_it);
+                        runScramble(hovWhatif, whatifText || "", 20);
+                    }
 
                     if (hoverOverlay) hoverOverlay.classList.add('visible');
                 } else if (!isDetailView) {

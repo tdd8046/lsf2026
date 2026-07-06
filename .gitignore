@@ -1,0 +1,21 @@
+.DS_Store
+**/.DS_Store
+ggpp/
+sound design/
+Risorsa 1.png
+Risorsa 2.svg
+Risorsa 3.svg
+Risorsa 4.svg
+Risorsa 5.svg
+Risorsa 6.svg
+Risorsa 7.svg
+Risorsa 8.svg
+mostra/.vite/
+mostra/undeclared/temp.js
+mostra/undeclared/temp2.js
+mostra/undeclared/temp3.js
+
+# Ignora tutti i file video
+**/*.mp4
+**/*.mov
+**/*.webm
