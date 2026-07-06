@@ -14,8 +14,3 @@ mostra/.vite/
 mostra/undeclared/temp.js
 mostra/undeclared/temp2.js
 mostra/undeclared/temp3.js
-
-# Ignora tutti i file video
-**/*.mp4
-**/*.mov
-**/*.webm
