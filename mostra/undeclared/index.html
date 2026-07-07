@@ -7,9 +7,9 @@
     <link rel="icon" href="assets/icons/target.svg" type="image/x-icon">
     <style>
         :root {
-            --col-left-width: clamp(310px, 34%, 460px);
+            --col-left-width: clamp(280px, 26vw, 460px);
             --col-right-width: 260px;
-            --hover-overlay-width: clamp(220px, 22vw, 340px);
+            --hover-overlay-width: clamp(220px, 18vw, 340px);
             --subtle-glow: 0 0 2px rgba(255, 255, 255, 0.25);
             --strong-glow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 15px rgba(255, 255, 255, 0.45);
         }
@@ -29,13 +29,15 @@
         }
 
         body, html {
-            margin: 0; padding: 0; width: 100vw; height: 100vh;
+            margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: #000; color: #fff;
             font-family: 'Mostra Regular', monospace;
             font-variation-settings: "slnt" 0, "ital" 0;
             overflow: hidden; box-sizing: border-box;
             cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M1,8 L1,1 L8,1 M16,1 L23,1 L23,8 M23,16 L23,23 L16,23 M8,23 L1,23 L1,16' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3Ccircle cx='12' cy='12' r='1.5' fill='%23ffffff'/%3E%3C/svg%3E") 12 12, crosshair; user-select: none;
             display: flex; align-items: center; justify-content: center;
+            /* Prevent iOS Safari bounce scroll */
+            position: fixed; top: 0; left: 0;
         }
 
         * {
@@ -139,13 +141,14 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            height: 100%;
+            flex: 1 1 auto;
+            height: auto;
         }
         /* LED scrolling ticker wrapper (moved line and glow here) */
         .ticker-wrap {
             box-sizing: border-box;
             width: calc(100% - 12px);
-            margin: 0 6px 28px 6px;
+            margin: 0 6px 12px 6px;
             overflow: hidden;
             white-space: nowrap;
             border-bottom: 0.5px solid rgba(255, 255, 255, 0.7); /* Line moved from university header */
@@ -334,8 +337,10 @@
             width: calc(100% - var(--col-left-width)) !important;
         }
         
-        /* Blocca le interazioni del radar quando miniaturizzato su desktop */
-        .layout.detail-open .radar-wrapper,
+        /* Blocca le interazioni dei nodi quando miniaturizzato su desktop, ma tieni attivo il radar per click e hover */
+        .layout.detail-open .radar-wrapper {
+            pointer-events: auto !important;
+        }
         .layout.detail-open .target-node {
             pointer-events: none !important;
         }
@@ -411,9 +416,9 @@
            RADAR CENTRALE
            ========================================= */
         .radar-wrapper {
-            --radar-size: min(82vh, calc(0.82 * (100vw - var(--col-left-width) - var(--hover-overlay-width))));
+            --radar-size: min(82vh, calc(0.82 * (100vw - var(--col-left-width) - var(--hover-overlay-width) - 48px)));
             position: absolute;
-            left: calc((100vw - var(--col-left-width) - var(--hover-overlay-width)) / 2 - var(--radar-size) / 2);
+            left: calc((100vw - var(--col-left-width) - var(--hover-overlay-width) - 48px) / 2 - var(--radar-size) / 2 + 24px);
             top: calc(50% - var(--radar-size) / 2);
             width: var(--radar-size);
             height: auto;
@@ -538,8 +543,8 @@
 
         #display-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; filter: blur(1.5px); }
         .radar-center-dot { position: absolute; top: 50%; left: 50%; width: 5px; height: 5px; background: #fff; transform: translate(-50%, -50%); border-radius: 50%; z-index: 20; }
-        .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 100%); transform-origin: left center; pointer-events: none; z-index: 15; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
-
+        .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 100%); transform-origin: left center; pointer-events: none; z-index: 15; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        #sweep-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 14; filter: blur(14px); opacity: 0.85; }
         .target-node { position: absolute; width: 60px; height: 60px; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.2s ease, filter 0.2s ease; display: flex; align-items: center; justify-content: center; border-radius: 50%; z-index: 25; pointer-events: auto; contain: layout style; }
         .target-node img {
             width: 86%;
@@ -860,39 +865,35 @@
 
 
 
-        /* MOBILE OVERHAUL BASE STYLES */
-        html.mobile-scroll-active,
-        body.mobile-scroll-active { overflow-y: auto !important; overflow-x: hidden !important; height: 300vh !important; display: block !important; }
-        body.mobile-scroll-active .fisheye-bezel,
-        body.mobile-scroll-active .layout { position: fixed; inset: 0; }
+
         .hamburger-btn { display: none; background: transparent; border: none; color: #fff; cursor: pointer; padding: 8px; z-index: 1000; }
         .mobile-hover-card { display: none; }
 
         /* =========================================
            RESPONSIVE — MOBILE
            ========================================= */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .target-node {
-                width: 44px !important;
-                height: 44px !important;
+                width: 60px !important;
+                height: 60px !important;
             }
             .target-node.hovered {
                 opacity: 1 !important;
                 filter: 
-                    drop-shadow(0 0 10px #fff) 
-                    drop-shadow(0 0 20px #fff) 
-                    drop-shadow(0 0 35px rgba(255, 255, 255, 0.85)) !important;
+                drop-shadow(0 0 10px #fff) 
+                drop-shadow(0 0 20px #fff) 
+                drop-shadow(0 0 35px rgba(255, 255, 255, 0.85)) !important;
             }
             .target-node.selected {
                 opacity: 1 !important;
                 filter: 
-                    drop-shadow(0 0 12px #fff) 
-                    drop-shadow(0 0 24px #fff) 
-                    drop-shadow(0 0 40px rgba(255, 255, 255, 0.85)) !important;
+                drop-shadow(0 0 12px #fff) 
+                drop-shadow(0 0 24px #fff) 
+                drop-shadow(0 0 40px rgba(255, 255, 255, 0.85)) !important;
             }
             .target-node.selected::before {
-                width: 37px !important;
-                height: 37px !important;
+                width: 44px !important;
+                height: 44px !important;
             }
             .layout { flex-direction: column !important; }
 
@@ -909,11 +910,11 @@
 
             .hamburger-btn {
                 display: block !important;
-                position: absolute !important;
+                position: fixed !important;
                 right: 16px !important;
-                top: 50% !important;
-                transform: translateY(-50%) !important;
-                z-index: 1000 !important;
+                top: 16px !important;
+                transform: none !important;
+                z-index: 1300 !important;
                 background: transparent;
                 border: none;
                 color: #fff;
@@ -923,29 +924,78 @@
             
             .col-left-body {
                 display: none;
-                position: fixed; top: 100px; left: 0; width: 100%; height: calc(100vh - 100px);
-                background: rgba(8, 8, 8, 0.98);
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.97);
                 backdrop-filter: blur(10px);
-                z-index: 900;
-                padding: 24px;
+                -webkit-backdrop-filter: blur(10px);
+                z-index: 1200;
+                /* padding-top: lascia spazio alla header (56px bar + ~24px ticker) */
+                padding: 90px 24px 24px 24px;
                 flex-direction: column;
                 overflow-y: auto;
             }
             .col-left-body.menu-open { display: flex !important; }
             
              .mobile-hover-card {
-                 display: flex; flex-direction: column; justify-content: center;
-                 position: fixed; bottom: -220px; left: 16px; right: 16px;
-                 background: #000000 !important;
+                 display: flex; flex-direction: row; align-items: stretch;
+                 position: fixed; bottom: -200px; left: 12px; right: 12px;
+                 background: rgba(0, 0, 0, 0) !important;
                  border: none !important;
                  border-radius: 0 !important;
-                 padding: 16px 20px !important;
-                 z-index: 800;
+                 padding: 0 !important;
+                 z-index: 850;
                  transition: bottom 0.4s cubic-bezier(.2,.9,.2,1);
                  box-shadow: none !important;
                  cursor: pointer;
+                 min-height: 80px;
+                 pointer-events: auto;
              }
-             .mobile-hover-card.visible { bottom: 20px; }
+             .mobile-hover-card.visible { bottom: 12px; }
+             /* LEFT: micro-logo square */
+             .mob-hov-left {
+                 display: flex;
+                 flex-direction: column;
+                 align-items: center;
+                 justify-content: center;
+                 width: 80px;
+                 min-width: 80px;
+                 padding: 14px 10px;
+                 gap: 0;
+                 flex-shrink: 0;
+                 border-right: 0.5px solid rgba(255,255,255,0.2);
+                 box-sizing: border-box;
+                 background: rgba(0,0,0,0.55);
+             }
+             /* RIGHT: title + whatif stacked */
+             .mob-hov-right {
+                 flex: 1;
+                 display: flex;
+                 flex-direction: column;
+                 justify-content: center;
+                 padding: 12px 14px;
+                 box-sizing: border-box;
+                 min-width: 0;
+                 gap: 8px;
+                 background: rgba(0,0,0,0.45);
+             }
+             .mob-hov-title-row {
+                 display: flex;
+                 align-items: center;
+                 justify-content: flex-start;
+                 min-height: 18px;
+                 overflow: hidden;
+             }
+             .mob-hov-title-row img {
+                 height: 14px;
+                 width: auto;
+                 max-width: 100%;
+                 object-fit: contain;
+                 filter: brightness(0) invert(1);
+             }
             .mobile-hover-indicator { font-size: 0.65rem; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; margin-top: 8px; text-align: right; }
 
             .col-left {
@@ -961,7 +1011,7 @@
                 border-right: none;
                 border-bottom: none !important;
                 background: #000 !important;
-                z-index: 1000 !important;
+                z-index: 1250 !important; /* sopra il menu overlay: header rimane visibile */
             }
             .col-left-spacer {
                 display: none !important;
@@ -1022,21 +1072,23 @@
             }
 
             .col-center {
+                position: relative !important;
                 flex: 1 1 0 !important;
                 width: 100% !important;
                 min-height: 0;
+                overflow: hidden !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
             }
             .radar-wrapper {
-                --radar-size: min(94vw, 50svh) !important; /* Ingrandito per occupare maggior spazio disponibile su mobile */
+                --radar-size: min(93vw, 62svh) !important;
                 width: var(--radar-size) !important;
                 height: var(--radar-size) !important;
                 position: absolute !important;
                 left: 50% !important;
-                top: 50% !important; /* Ancorato esattamente alla griglia del contenitore */
-                transform: translate3d(-50%, -50%, 0) !important; /* Nessun offset manuale, matematicamente centrato */
+                top: 50% !important;
+                transform: translate3d(-50%, -50%, 0) !important;
                 will-change: transform;
                 margin: 0 !important;
                 display: flex !important;
@@ -1278,7 +1330,7 @@
             position: relative;
             background: #000;
             padding: 16px 14px;
-            margin: 0 0 12px 0; /* Avvicinato al claim */
+            margin: 0 0 8px 0; /* Minimo bilanciato */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1364,15 +1416,23 @@
             height: 48px;
         }
         #mob-hov-micro-img {
-            height: 36px;
+            height: 44px;
+            width: 44px;
+            object-fit: contain;
         }
 
-        /* Synchronized animations: start exactly when parent becomes visible */
+        /* Synchronized glow pulse: tutti partono insieme, stesso delay */
         .hover-overlay.visible #hov-title-wrapper img,
         .hover-overlay.visible #hov-micro-img,
         .mobile-hover-card.visible #mob-hov-title-wrapper img,
         .mobile-hover-card.visible #mob-hov-micro-img {
             animation: svgGlowPulse 2.5s infinite ease-in-out;
+            animation-delay: 0s;
+        }
+        /* Quando cambia progetto, forza restart sincronizzato */
+        .mobile-hover-card.visible .mob-hov-title-row img {
+            animation: svgGlowPulse 2.5s infinite ease-in-out;
+            animation-delay: 0s;
         }
         #mob-hov-title-wrapper span {
             font-size: 1rem; font-weight: bold; letter-spacing: 0.1em; color: #fff;
@@ -1383,7 +1443,7 @@
             filter: brightness(0) invert(1);
         }
         /* Su mobile il tap va diretto sul nodo, overlay non serve */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .hover-overlay { display: none !important; }
         }
 
@@ -1401,7 +1461,7 @@
             will-change: transform;
             transition: opacity 0.25s ease;
         }
-        @media (min-width: 769px) {
+        @media (min-width: 1025px) {
             body, html, a, button, [onclick], .target-node, .lang-btn, .nav-links li, .nav-link-content, #close-detail, .hamburger-btn {
                 cursor: none !important;
             }
@@ -1411,8 +1471,6 @@
         }
         .custom-cursor .cursor-crosshair {
             width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M1,8 L1,1 L8,1 M16,1 L23,1 L23,8 M23,16 L23,23 L16,23 M8,23 L1,23 L1,16' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E");
-            background-size: 100% 100%;
             transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
             transform: rotate(0deg);
         }
@@ -1439,6 +1497,25 @@
         .custom-cursor.cursor-hover .cursor-ring {
             opacity: 1;
             transform: scale(1);
+        }
+        
+        /* Stile magnetico speciale quando si fa hover sul mini-radar */
+        .custom-cursor.cursor-mini-radar {
+            width: var(--cursor-mini-size, 24px) !important;
+            height: var(--cursor-mini-size, 24px) !important;
+            margin-left: calc(var(--cursor-mini-size, 24px) / -2) !important;
+            margin-top: calc(var(--cursor-mini-size, 24px) / -2) !important;
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), margin-left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), margin-top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+        }
+        .custom-cursor.cursor-mini-radar .cursor-crosshair {
+            transform: rotate(0deg) !important; /* Blocca rotazione */
+            transition: none !important;
+        }
+        .custom-cursor.cursor-mini-radar .cursor-dot {
+            display: none !important;
+        }
+        .custom-cursor.cursor-mini-radar .cursor-ring {
+            display: none !important;
         }
 
         /* Nuova Gerarchia Thermal (Footer/Nav) */
@@ -1535,6 +1612,52 @@
             align-items: center;
             gap: 12px;
         }
+
+        /* Responsive adjustments for short screen heights on desktop */
+        @media (max-height: 800px) and (min-width: 1025px) {
+            .col-left {
+                padding: 16px 20px !important;
+            }
+            .logo-reticle {
+                margin-bottom: 8px !important;
+                padding: 12px 10px !important;
+            }
+            .ticker-wrap {
+                margin-bottom: 8px !important;
+                padding: 10px 0 !important;
+            }
+            .thermal-nav-block, .thermal-meta-block {
+                gap: 8px !important;
+                font-size: 0.95rem !important;
+            }
+            .thermal-divider {
+                margin: 6px 0 16px 0 !important;
+            }
+        }
+        @media (max-height: 700px) and (min-width: 1025px) {
+            .col-left {
+                padding: 12px 16px !important;
+            }
+            .logo-reticle {
+                margin-bottom: 4px !important;
+                padding: 8px 6px !important;
+                min-height: unset !important;
+            }
+            .logo-reticle .logo-png {
+                max-width: 200px !important;
+            }
+            .ticker-wrap {
+                margin-bottom: 4px !important;
+                padding: 6px 0 !important;
+            }
+            .thermal-nav-block, .thermal-meta-block {
+                gap: 6px !important;
+                font-size: 0.85rem !important;
+            }
+            .thermal-divider {
+                margin: 4px 0 12px 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1623,14 +1746,14 @@
                     </div>
                 </div>
 
+                <!-- (Spazio vuoto in fondo per accogliere il radar miniatura) -->
+                <div class="col-left-spacer" id="col-left-spacer" style="height: 0px; flex-shrink: 0; transition: height 600ms cubic-bezier(.2,.9,.2,1);" aria-hidden="true"></div>
             </div> <!-- End col-left-body -->
             <!-- (University Name removed) -->
-            <!-- (Spazio vuoto in fondo per accogliere il radar miniatura) -->
-            <div class="col-left-spacer" style="height: 240px; flex-shrink: 0;" aria-hidden="true"></div>
         </aside>
 
         <main class="col-center" id="radar-zone">
-            <img src="../sfondo.svg?v=2" id="bg-grid-img" alt="Grid Background" />
+            <img src="assets/sfondo.svg?v=2" id="bg-grid-img" alt="Grid Background" />
             
             <div class="radar-wrapper" id="radar-wrapper">
                 <div class="radar-container" id="radar-container">
@@ -1641,7 +1764,7 @@
                             <style>
                               .cls-1, .cls-2 {
                                 fill: none;
-                                stroke: rgba(255,255,255,0.4);
+                                stroke: rgba(255,255,255,0.9);
                                 stroke-miterlimit: 10;
                                 stroke-width: 1px;
                               }
@@ -1651,7 +1774,7 @@
                               }
                               .cls-outer {
                                 stroke-width: 1.5px;
-                                stroke: rgba(255,255,255,0.6);
+                                stroke: rgba(255,255,255,1);
                               }
                             </style>
                           </defs>
@@ -1716,6 +1839,7 @@
                         </svg>
                     </div>
                     <div class="radar-center-dot"></div>
+                    <canvas id="sweep-canvas"></canvas>
                     <div class="radar-sweep" id="radar-sweep"></div>
 
                     <div class="target-node" id="t1"><img src="assets/projects/t1/logo.svg" alt="t1"/></div>
@@ -1890,32 +2014,34 @@
             </div>
 
             <!-- WHATIF TEXT -->
-            <div class="hover-whatif-text scramble-target glowing-text-strong" id="hov-whatif" style="font-size: 0.85rem; font-weight: 1000; letter-spacing: 0.1em; line-height: 1.6; color: rgba(255,255,255,0.85); width: 260px; height: 100px; display: flex; align-items: center; justify-content: center; text-transform: uppercase;">
+            <div class="hover-whatif-text scramble-target glowing-text-strong" id="hov-whatif" style="font-size: 0.85rem; font-weight: 1000; letter-spacing: 0.1em; line-height: 1.6; color: rgba(255,255,255,0.85); width: 100%; max-width: 260px; min-height: 100px; height: auto; display: flex; align-items: center; justify-content: center; text-transform: uppercase;">
             </div>
         </div>
     </div>
 
     <!-- MOBILE HOVER CARD (Bottom Sheet) -->
-    <div class="mobile-hover-card" id="mobile-hover-card" onclick="triggerDetailView()">
-        <div class="hover-overlay-body" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-            <div class="hover-logo-micro" style="margin-bottom: 12px; min-height: 36px; width: 100%; display: flex; justify-content: center; align-items: center;">
-                <img id="mob-hov-micro-img" src="" alt="Micro Logo" style="height: 36px; max-width: 100%; display:none; object-fit: contain;">
-            </div>
-
-            <!-- TITLE SVG -->
-            <div class="hover-title-main" style="display:flex; align-items:center; justify-content: center; margin-bottom: 24px; width: 100%;">
-                <div id="mob-hov-title-wrapper" style="height: 20px; display:flex; align-items:center; justify-content:center; flex-grow: 1; min-width: 0;"></div>
-            </div>
-
-            <!-- WHATIF TEXT -->
-            <div class="hover-whatif-text scramble-target glowing-text-strong" id="mob-hov-whatif" style="font-size: 0.75rem; font-weight: 1000; letter-spacing: 0.08em; line-height: 1.5; color: rgba(255,255,255,0.85); width: 100%; text-align: center; text-transform: uppercase;">
+    <div class="mobile-hover-card" id="mobile-hover-card">
+        <!-- LEFT: micro-logo only, large and centered -->
+        <div class="mob-hov-left">
+            <img id="mob-hov-micro-img" src="" alt="" style="height: 44px; width: 44px; object-fit: contain; display:none; flex-shrink:0;">
+        </div>
+        <!-- RIGHT: project title SVG (top) + whatif text (bottom) -->
+        <div class="mob-hov-right">
+            <div class="mob-hov-title-row" id="mob-hov-title-wrapper"></div>
+            <div class="hover-whatif-text scramble-target glowing-text-strong" id="mob-hov-whatif"
+                 style="font-size: 0.72rem; font-weight: 1000; letter-spacing: 0.06em; line-height: 1.45;
+                        color: rgba(255,255,255,0.85); text-transform: uppercase; word-break: break-word;">
             </div>
         </div>
     </div>
 </div>
 
 <div id="custom-cursor" class="custom-cursor" aria-hidden="true">
-    <div class="cursor-crosshair"></div>
+    <div class="cursor-crosshair">
+        <svg viewBox="0 0 24 24" width="100%" height="100%" style="display: block; width:100%; height:100%;">
+            <path d="M1,8 L1,1 L8,1 M16,1 L23,1 L23,8 M23,16 L23,23 L16,23 M8,23 L1,23 L1,16" fill="none" stroke="#ffffff" stroke-width="0.8" vector-effect="non-scaling-stroke"/>
+        </svg>
+    </div>
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
 </div>
@@ -2108,12 +2234,15 @@
     const container = document.getElementById('radar-container');
     const displayCanvas = document.getElementById('display-canvas');
     const displayCtx = displayCanvas.getContext('2d');
+    const sweepCanvas = document.getElementById('sweep-canvas');
+    const sweepCtx = sweepCanvas ? sweepCanvas.getContext('2d') : null;
     const sweep = document.getElementById('radar-sweep');
     const heatCanvas = document.createElement('canvas');
     const heatCtx = heatCanvas.getContext('2d', { willReadFrequently: true });
     
     let width, height, centerX, centerY, radarRadius;
     let lastWidth = 0;
+    let prevLineAngle = 0;
     const RESOLUTION_SCALE = 0.5; 
     let colorPalette = [];
 
@@ -2167,6 +2296,7 @@ function generateColormap() {
         lastWidth = width;
 
         displayCanvas.width = width; displayCanvas.height = height;
+        if (sweepCanvas) { sweepCanvas.width = width; sweepCanvas.height = height; }
         heatCanvas.width = Math.floor(width * RESOLUTION_SCALE); 
         heatCanvas.height = Math.floor(height * RESOLUTION_SCALE);
         centerX = width / 2; centerY = height / 2;
@@ -2174,8 +2304,8 @@ function generateColormap() {
 
         if (typeof targets !== 'undefined' && targets && targets.length > 0) {
             targets.forEach(t => {
-                const minDist = window.innerWidth <= 768 ? 65 : 130;
-                let dist = minDist + t.distancePct * (radarRadius * (window.innerWidth <= 768 ? 0.90 : 0.62) - minDist);
+                const minDist = window.innerWidth <= 1024 ? 65 : 130;
+                let dist = minDist + t.distancePct * (radarRadius * (window.innerWidth <= 1024 ? 0.90 : 0.62) - minDist);
                 t.baseX = centerX + Math.cos(t.angle) * dist;
                 t.baseY = centerY + Math.sin(t.angle) * dist;
                 t.x = t.baseX;
@@ -2239,15 +2369,9 @@ function generateColormap() {
         const safetyTimeout = setTimeout(skipEntryAnimation, 8000);
 
         // Se siamo su mobile, possiamo saltare l'animazione complessa o renderla istantanea
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth <= 1024) {
             clearTimeout(safetyTimeout);
             skipEntryAnimation();
-            setTimeout(() => {
-                const maxScroll = document.body.scrollHeight - window.innerHeight;
-                if (maxScroll > 0) {
-                    window.scrollTo(0, maxScroll / 2);
-                }
-            }, 100);
             return;
         }
 
@@ -2326,6 +2450,30 @@ function generateColormap() {
         });
     })();
 
+    // Funzioni per calcolare l'ingombro originale del radar in coordinate fixed/viewport
+    function getRadarOriginalRect() {
+        const colLeft = document.querySelector('.col-left');
+        const colLeftWidth = colLeft ? colLeft.getBoundingClientRect().width : 360;
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        // --hover-overlay-width: clamp(220px, 18vw, 340px)
+        const hoverOverlayWidth = Math.min(Math.max(220, windowWidth * 0.18), 340);
+        
+        // --radar-size: min(82vh, calc(0.82 * (100vw - var(--col-left-width) - var(--hover-overlay-width) - 48px)))
+        const radarSize = Math.min(windowHeight * 0.82, 0.82 * (windowWidth - colLeftWidth - hoverOverlayWidth - 48));
+        
+        const origLeft = colLeftWidth + ((windowWidth - colLeftWidth - hoverOverlayWidth - 48) / 2 - radarSize / 2 + 24);
+        const origTop = (windowHeight / 2) - (radarSize / 2);
+        
+        return {
+            left: origLeft,
+            top: origTop,
+            width: radarSize,
+            height: radarSize
+        };
+    }
+
     // Funzioni per miniaturizzare e ripristinare l'HUD con animazioni smooth usando trasformazioni e mostra il logo selezionato
     function miniaturizeRadar(radarWrapper, logoSrc){
         if(!radarWrapper) return;
@@ -2336,7 +2484,15 @@ function generateColormap() {
         const colLeft = document.querySelector('.col-left');
         const colLeftWidth = colLeft ? colLeft.getBoundingClientRect().width : 360;
         
-        const targetW = Math.min(colLeftWidth - 48, 280); // Ingrandito come richiesto
+        // Limita l'ingombro del radar in base all'altezza del viewport per schermi bassi (es. MacBook 13")
+        let maxRadarW = 230;
+        if (window.innerHeight < 700) {
+            maxRadarW = 130;
+        } else if (window.innerHeight < 800) {
+            maxRadarW = 180;
+        }
+        
+        const targetW = Math.min(colLeftWidth - 48, maxRadarW);
         const targetH = targetW; // 1:1 aspect ratio per mantenere il cerchio
         const targetLeft = Math.round((colLeftWidth - targetW) / 2); // centramento orizzontale in col-left
         const targetBottom = 32;
@@ -2355,6 +2511,13 @@ function generateColormap() {
         radarWrapper.style.transformOrigin = 'center center';
         radarWrapper.style.zIndex = 2000;
         radarWrapper.style.willChange = 'left, top, width, height, border-radius';
+        
+        // Espande lo spacer della colonna sinistra per spingere i testi verso l'alto
+        const spacer = document.getElementById('col-left-spacer');
+        if (spacer) {
+            spacer.style.height = `${targetH + 32}px`;
+        }
+
         // force layout before animating
         void radarWrapper.offsetWidth;
         radarWrapper.style.left = `${targetLeft}px`;
@@ -2378,6 +2541,12 @@ function generateColormap() {
         const origWidth = radarWrapper.dataset.origWidth || '';
         const origHeight = radarWrapper.dataset.origHeight || '';
         
+        // Collassa lo spacer della colonna sinistra per riportare i testi al loro posto
+        const spacer = document.getElementById('col-left-spacer');
+        if (spacer) {
+            spacer.style.height = '0px';
+        }
+
         radarWrapper.style.left = origLeft;
         radarWrapper.style.top = origTop;
         radarWrapper.style.width = origWidth;
@@ -2655,10 +2824,22 @@ function generateColormap() {
 
     // --- HELPER MOBILE, HAMBURGER & SCROLL SCANNER ---
     // Cache del risultato isMobile: si aggiorna solo su resize, non ogni frame
-    let _isMobileCache = window.innerWidth <= 768;
+    let _isMobileCache = window.innerWidth <= 1024;
     const isMobile = () => _isMobileCache;
-    window.addEventListener('resize', () => { _isMobileCache = window.innerWidth <= 768; }, { passive: true });
+    window.addEventListener('resize', () => { _isMobileCache = window.innerWidth <= 1024; }, { passive: true });
     let autoSweepAngle = 0;
+    
+    // --- IDLE CONTROL (mobile) ---
+    // L'idle gira solo finche' l'utente non tocca lo schermo la prima volta.
+    // Poi si ferma per sempre — nessun restart automatico.
+    let isIdle = true;
+    
+    function onUserInteraction() {
+        isIdle = false; // si ferma una volta sola, non riparte mai
+    }
+
+    const mobileHoverCard = document.getElementById('mobile-hover-card');
+    let lastMobileHoveredId = null;
 
     function toggleMobileMenu() {
         const menu = document.getElementById('col-left-body');
@@ -2670,16 +2851,13 @@ function generateColormap() {
                 if (isOpen) {
                     mobileHoverCard.classList.remove('visible');
                 } else {
-                    updateMobileScanner();
+                    updateMobileScannerFromAngle(mouseLineAngle);
                 }
             }
         }
     }
 
-    const mobileHoverCard = document.getElementById('mobile-hover-card');
-    let lastMobileHoveredId = null;
-    
-    function updateMobileScanner() {
+    function updateMobileScannerFromAngle(angle) {
         const menu = document.getElementById('col-left-body');
         const isMenuOpen = menu && menu.classList.contains('menu-open');
         
@@ -2688,31 +2866,12 @@ function generateColormap() {
             return;
         }
         
-        let scrollY = window.scrollY;
-        const maxScroll = document.body.scrollHeight - window.innerHeight;
-        if (maxScroll <= 0) return;
-
-        // Finto scroll infinito: se raggiungiamo i bordi, eseguiamo il wrap
-        if (scrollY >= maxScroll - 6) {
-            window.scrollTo(0, 16);
-            return;
-        } else if (scrollY <= 6) {
-            window.scrollTo(0, maxScroll - 16);
-            return;
-        }
-        
-        let scrollPct = scrollY / maxScroll; // 0 to 1
-        scrollPct = Math.max(0, Math.min(1, scrollPct)); // Clamp between 0 and 1 to handle iOS elastic bounce scroll
-        
-        // Collega lo scroll direttamente all'angolo della retta polare del radar (2 rotazioni complete)
-        mouseLineAngle = scrollPct * Math.PI * 4;
-        
         let hovered = null;
         let minDiff = 0.22; // tolleranza in radianti (circa 12.6 gradi)
         
         for (let target of targets) {
             const tAngle = Math.atan2(target.y - centerY, target.x - centerX);
-            const diff = Math.abs(angleDiff(lineAngle, tAngle));
+            const diff = Math.abs(angleDiff(angle, tAngle));
             if (diff < minDiff) {
                 minDiff = diff;
                 hovered = target;
@@ -2734,10 +2893,12 @@ function generateColormap() {
                 }
             }
             
-            // Popola titolo
+            // Popola titolo (in mob-hov-title-wrapper, ora e' una .mob-hov-title-row)
             const titleWrap = document.getElementById('mob-hov-title-wrapper');
             if (titleWrap) {
-                titleWrap.innerHTML = data.titleSvg ? `<img src="${data.titleSvg}" alt="Title SVG">` : `<span style="font-size:1rem; font-weight:bold; color:#fff;">PROJECT</span>`;
+                titleWrap.innerHTML = data.titleSvg 
+                    ? `<img src="${data.titleSvg}" alt="Title">` 
+                    : `<span style="font-size:0.75rem; font-weight:bold; color:#fff; letter-spacing:0.1em; text-transform:uppercase;">${hovered.id.toUpperCase()}</span>`;
             }
             
             // Popola whatif text (con scramble animazione solo se è cambiato il target)
@@ -2757,35 +2918,144 @@ function generateColormap() {
             lastMobileHoveredId = null;
         }
     }
-
-    window.addEventListener('scroll', updateMobileScanner, { passive: true });
+    
     window.addEventListener('resize', () => {
         if (isMobile()) {
-            document.documentElement.classList.add('mobile-scroll-active');
-            document.body.classList.add('mobile-scroll-active');
-            const maxScroll = document.body.scrollHeight - window.innerHeight;
-            if (maxScroll > 0 && window.scrollY === 0) {
-                window.scrollTo(0, maxScroll / 2);
-            }
-            updateMobileScanner();
+            updateMobileScannerFromAngle(mouseLineAngle);
         } else {
-            document.documentElement.classList.remove('mobile-scroll-active');
-            document.body.classList.remove('mobile-scroll-active');
             if (mobileHoverCard) mobileHoverCard.classList.remove('visible');
+            
+            // Recalculate mini-radar coordinates/dimensions if it is active
+            const radarWrapper = document.querySelector('.radar-wrapper');
+            if (radarWrapper && radarWrapper.classList.contains('mini')) {
+                const colLeft = document.querySelector('.col-left');
+                const colLeftWidth = colLeft ? colLeft.getBoundingClientRect().width : 360;
+                
+                let maxRadarW = 230;
+                if (window.innerHeight < 700) {
+                    maxRadarW = 130;
+                } else if (window.innerHeight < 800) {
+                    maxRadarW = 180;
+                }
+                const targetW = Math.min(colLeftWidth - 48, maxRadarW);
+                const targetH = targetW;
+                const targetLeft = Math.round((colLeftWidth - targetW) / 2);
+                const targetBottom = 32;
+                const targetTop = window.innerHeight - targetBottom - targetH;
+                
+                radarWrapper.style.transition = 'none'; // no transition during window resizing to make it track instantly
+                radarWrapper.style.left = `${targetLeft}px`;
+                radarWrapper.style.top = `${targetTop}px`;
+                radarWrapper.style.width = `${targetW}px`;
+                radarWrapper.style.height = `${targetH}px`;
+                
+                // Update spacer height instantly
+                const spacer = document.getElementById('col-left-spacer');
+                if (spacer) {
+                    spacer.style.transition = 'none';
+                    spacer.style.height = `${targetH + 32}px`;
+                    // restore transition style on spacer after rendering
+                    requestAnimationFrame(() => {
+                        spacer.style.transition = 'height 600ms cubic-bezier(.2,.9,.2,1)';
+                    });
+                }
+                
+                // Recalculate original rect for restore transition
+                const origRect = getRadarOriginalRect();
+                radarWrapper.dataset.origLeft = `${origRect.left}px`;
+                radarWrapper.dataset.origTop = `${origRect.top}px`;
+                radarWrapper.dataset.origWidth = `${origRect.width}px`;
+                radarWrapper.dataset.origHeight = `${origRect.height}px`;
+            }
         }
     });
 
-    // Initialize on load
-    if (isMobile()) {
-        document.documentElement.classList.add('mobile-scroll-active');
-        document.body.classList.add('mobile-scroll-active');
-        setTimeout(() => {
-            const maxScroll = document.body.scrollHeight - window.innerHeight;
-            if (maxScroll > 0) {
-                window.scrollTo(0, maxScroll / 2);
-            }
-        }, 100);
-    }
+    // --- TOUCH CONTROL: puro scroll incrementale ---
+    // Il dito NON punta il raggio - uno swipe verticale ruota il raggio proporzionalmente
+    // come girare una rotella. Nessun atan2, nessun posizionamento diretto.
+    
+    let touchStartY = null;
+    let touchStartAngle = null;
+    let touchTapStartY = null;
+    let touchTapStartTime = null;
+    const SCROLL_SENSITIVITY = 0.006; // radianti per pixel swipato
+    const TAP_THRESHOLD_PX = 10;      // px di movimento massimo per considerarlo un tap
+    const TAP_THRESHOLD_MS = 250;     // ms massimi per un tap
+    
+    window.addEventListener('touchstart', function(e) {
+        // Ferma l'idle IMMEDIATAMENTE al primo tocco — ovunque sullo schermo
+        if (_isMobileCache) onUserInteraction();
+        
+        // Non interferire con bottoni, link e altri elementi interattivi nativi
+        const isInteractive = e.target.closest('button, a, [onclick], input, select');
+        if (isInteractive) return;
+        
+        // Permetti normalmente se siamo in pannelli scrollabili
+        const scrollable = e.target.closest('.col-right, .col-left-body');
+        if (scrollable) return;
+        
+        // Tap sulla hover card = apri dettaglio
+        const hoverCard = e.target.closest('#mobile-hover-card');
+        if (hoverCard) {
+            touchTapStartY = e.touches[0].clientY;
+            touchTapStartTime = Date.now();
+            return;
+        }
+        
+        if (!allowInteractions || isDetailView) return;
+        if (e.touches.length === 1) {
+            e.preventDefault();
+            touchStartY = e.touches[0].clientY;
+            touchStartAngle = mouseLineAngle;
+            touchTapStartY = e.touches[0].clientY;
+            touchTapStartTime = Date.now();
+        }
+    }, { passive: false });
+    
+    window.addEventListener('touchend', function(e) {
+        const hoverCard = e.target.closest('#mobile-hover-card');
+        if (hoverCard && touchTapStartY !== null) {
+            triggerDetailView();
+        }
+        touchStartY = null;
+        touchStartAngle = null;
+        touchTapStartY = null;
+        touchTapStartTime = null;
+    }, { passive: true });
+    
+    window.addEventListener('touchmove', function(e) {
+        const scrollable = e.target.closest('.col-right, .col-left-body');
+        if (scrollable) return;
+        e.preventDefault();
+        
+        if (!allowInteractions || isDetailView) return;
+        const menu = document.getElementById('col-left-body');
+        if (menu && menu.classList.contains('menu-open')) return;
+        
+        if (e.touches.length === 1 && touchStartY !== null) {
+            onUserInteraction(); // segnala interazione attiva
+            const deltaY = e.touches[0].clientY - touchStartY;
+            mouseLineAngle = touchStartAngle + deltaY * SCROLL_SENSITIVITY;
+            updateMobileScannerFromAngle(mouseLineAngle);
+        }
+    }, { passive: false });
+    
+    // Blocco iOS bounce globale
+    document.addEventListener('touchmove', function(e) {
+        const scrollable = e.target.closest('.col-right, .col-left-body');
+        if (!scrollable) e.preventDefault();
+    }, { passive: false });
+    
+    // Desktop: scroll wheel -> rotazione raggio (non scorre la pagina)
+    window.addEventListener('wheel', function(e) {
+        const scrollable = e.target.closest('.col-right, .col-left-body');
+        if (scrollable) return;
+        e.preventDefault();
+        if (!allowInteractions || isDetailView) return;
+        mouseLineAngle += e.deltaY * 0.003;
+    }, { passive: false });
+
+
 
     // --- AZIONE: apri vista dettaglio (condivisa da click e touch) ---
     // Function to show About content in the info panel
@@ -2981,8 +3251,15 @@ function generateColormap() {
     }
 
     // AZIONE: CLICK (solo dentro il radar-container)
-    container.addEventListener('click', () => {
+    container.addEventListener('click', (ev) => {
         if (!allowInteractions) return;
+        const radarWrapper = document.querySelector('.radar-wrapper');
+        if (radarWrapper && radarWrapper.classList.contains('mini')) {
+            ev.stopPropagation();
+            const closeBtn = document.getElementById('close-detail');
+            if (closeBtn) closeBtn.click();
+            return;
+        }
         triggerDetailView();
     });
 
@@ -2995,6 +3272,7 @@ function generateColormap() {
     if (closeBtn) {
         closeBtn.addEventListener('click', (ev) => {
             ev.stopPropagation();
+            if (window.resetCursorMiniRadarState) window.resetCursorMiniRadarState();
             const radarWrapper = document.querySelector('.radar-wrapper');
             const colRight = document.querySelector('.col-right');
             const layout = document.querySelector('.layout');
@@ -3050,8 +3328,48 @@ function generateColormap() {
         time += 0.5;
         
         let currentFilterAlpha = (mouseDistFromCenter <= radarRadius) ? RADAR_FILTER_ALPHA_INSIDE : RADAR_FILTER_ALPHA_OUTSIDE;
+        
+        if (_isMobileCache) {
+            // Idle rotation: gira lentamente solo in idle (nessuna interazione recente)
+            if (isIdle) {
+                mouseLineAngle += 0.003;
+            }
+        }
+        
         lineAngle += angleDiff(mouseLineAngle, lineAngle) * currentFilterAlpha;
-        sweep.style.transform = `rotate(${lineAngle * (180 / Math.PI)}deg)`;
+        
+        if (sweep) {
+            sweep.style.transform = `rotate(${lineAngle * (180 / Math.PI)}deg)`;
+        }
+        
+        if (sweepCanvas && sweepCtx) {
+            // Fade out previous frames on a transparent canvas
+            sweepCtx.globalCompositeOperation = 'destination-out';
+            sweepCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; // controls trail decay speed (higher = shorter, lower = longer)
+            sweepCtx.fillRect(0, 0, width, height);
+            
+            sweepCtx.globalCompositeOperation = 'source-over';
+            
+            const rawDiff = angleDiff(lineAngle, prevLineAngle);
+            const absDiff = Math.abs(rawDiff);
+            
+            // Draw intermediate lines to smooth out the trail and prevent discrete "steps" or "gaps"
+            // Use extremely small step sizes (0.002 radians / ~0.11 degrees) for a truly infinitesimal trail
+            const numSteps = Math.max(1, Math.min(200, Math.ceil(absDiff / 0.002)));
+            
+            sweepCtx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+            sweepCtx.lineWidth = 1.0;
+            
+            sweepCtx.beginPath();
+            for (let i = 0; i < numSteps; i++) {
+                const ratio = i / numSteps;
+                const intermediateAngle = prevLineAngle + rawDiff * ratio;
+                sweepCtx.moveTo(centerX, centerY);
+                sweepCtx.lineTo(centerX + Math.cos(intermediateAngle) * (radarRadius * 0.95), centerY + Math.sin(intermediateAngle) * (radarRadius * 0.95));
+            }
+            sweepCtx.stroke();
+        }
+        prevLineAngle = lineAngle;
         
         heatCtx.clearRect(0, 0, heatCanvas.width, heatCanvas.height);
         heatCtx.globalCompositeOperation = 'lighter'; 
@@ -3256,10 +3574,48 @@ function generateColormap() {
 
         let cursorX = -100;
         let cursorY = -100;
+        
+        let isHoveringMiniRadar = false;
+        let miniRadarCenter = { x: 0, y: 0 };
+        let miniRadarSize = 0;
+
+        const radarWrapper = document.querySelector('.radar-wrapper');
+        
+        if (radarWrapper) {
+            const updateMiniRadarHover = () => {
+                if (radarWrapper.classList.contains('mini')) {
+                    isHoveringMiniRadar = true;
+                    const rect = radarWrapper.getBoundingClientRect();
+                    miniRadarCenter.x = rect.left + rect.width / 2;
+                    miniRadarCenter.y = rect.top + rect.height / 2;
+                    miniRadarSize = rect.width;
+                    customCursor.style.setProperty('--cursor-mini-size', `${miniRadarSize + 36}px`);
+                    customCursor.classList.add('cursor-mini-radar');
+                } else {
+                    isHoveringMiniRadar = false;
+                    customCursor.classList.remove('cursor-mini-radar');
+                    customCursor.style.removeProperty('--cursor-mini-size');
+                }
+            };
+
+            radarWrapper.addEventListener('mouseenter', updateMiniRadarHover);
+            radarWrapper.addEventListener('mousemove', updateMiniRadarHover);
+            
+            radarWrapper.addEventListener('mouseleave', () => {
+                isHoveringMiniRadar = false;
+                customCursor.classList.remove('cursor-mini-radar');
+                customCursor.style.removeProperty('--cursor-mini-size');
+            });
+        }
 
         window.addEventListener('mousemove', (e) => {
-            cursorX = e.clientX;
-            cursorY = e.clientY;
+            if (isHoveringMiniRadar) {
+                cursorX = miniRadarCenter.x;
+                cursorY = miniRadarCenter.y;
+            } else {
+                cursorX = e.clientX;
+                cursorY = e.clientY;
+            }
             customCursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
             customCursor.style.opacity = '1'; // Rende visibile al primo movimento
         });
@@ -3281,6 +3637,13 @@ function generateColormap() {
                 customCursor.classList.remove('cursor-hover');
             }
         });
+
+        // Expose a global way to reset the mini radar hover state on close
+        window.resetCursorMiniRadarState = function() {
+            isHoveringMiniRadar = false;
+            customCursor.classList.remove('cursor-mini-radar');
+            customCursor.style.removeProperty('--cursor-mini-size');
+        };
     })();
 </script>
 </body>
