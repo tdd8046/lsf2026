@@ -691,6 +691,23 @@
 
         .data-label { font-size: 0.95rem; opacity: 0.6; margin-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.15); }
         .data-value { font-weight: bold; text-transform: uppercase; color: #fff; font-size: 1.25rem; }
+        .team-carousel { overflow: hidden; position: relative; }
+        .team-carousel .team-scroll {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            gap: 1.4rem;
+            animation: team-scroll 22s linear infinite;
+            will-change: transform;
+        }
+        .team-carousel .team-scroll::after {
+            content: '';
+            flex: 0 0 1rem;
+        }
+        @keyframes team-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
 
         .click-prompt {
             margin-top: auto; font-size: 0.8rem; font-weight: bold; 
@@ -1908,7 +1925,9 @@
                             </div>
                             <div>
                                 <div class="data-label">PARTICIPANTS:</div>
-                                <div class="data-value scramble-target" id="info-team"></div>
+                                <div class="data-value team-carousel" id="info-team">
+                                    <div class="team-scroll" id="info-team-scroll"></div>
+                                </div>
                             </div>
                         </div>
 
@@ -2193,6 +2212,7 @@
                 
                 const groupEl = document.getElementById('info-group-val');
                 if (groupEl) groupEl.textContent = dataNode.team || "N/A";
+                updateTeamCarousel(dataNode.team || "N/A");
             }
         } else if (isDetailView && !currentSelectedTarget) {
             // Aggiorna dinamicamente i testi dell'About se l'utente cambia lingua
@@ -2262,6 +2282,19 @@
                 element.innerText = finalString;
             }
         }, speed);
+    }
+
+    function updateTeamCarousel(teamString) {
+        const scrollEl = document.getElementById('info-team-scroll');
+        if (!scrollEl) return;
+
+        const label = (teamString || "N/A").trim();
+        const separator = " • ";
+        const repeated = `${label}${separator}${label}${separator}`;
+
+        scrollEl.textContent = repeated;
+        const duration = Math.max(18, Math.min(32, Math.ceil(label.length / 3) + 14));
+        scrollEl.style.animationDuration = `${duration}s`;
     }
 
     // --- SETUP RADAR ---
@@ -3230,7 +3263,7 @@ function generateColormap() {
         }
         
         runScramble(document.getElementById('info-field'), currentLang === 'it' ? (data.field_it || data.field_en) : (data.field_en || data.field_it), 15);
-        runScramble(document.getElementById('info-team'), data.team || "N/A", 15);
+        updateTeamCarousel(data.team || "N/A");
 
         // Attiva stato dettaglio nel pannello col-right
         document.getElementById('overview-state').classList.remove('active');
