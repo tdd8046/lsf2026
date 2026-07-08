@@ -101,6 +101,7 @@
             position: relative;
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             background-color: #020202;
             overflow: hidden;
             box-shadow: inset 0 0 90px rgba(0,0,0,0.85);
@@ -153,7 +154,7 @@
             white-space: nowrap;
             border-bottom: 0.5px solid rgba(255, 255, 255, 0.7); /* Line moved from university header */
             box-shadow: 0 4px 12px -6px rgba(255, 255, 255, 0.15);
-            padding: 14px 0;
+            padding: 8px 0;
             display: flex;
             align-items: center;
         }
@@ -337,11 +338,11 @@
             width: calc(100% - var(--col-left-width)) !important;
         }
         
-        /* Blocca le interazioni dei nodi quando miniaturizzato su desktop, ma tieni attivo il radar per click e hover */
-        .layout.detail-open .radar-wrapper {
+        /* Blocca le interazioni dei nodi quando miniaturizzato, ma tieni attivo il radar per click e hover */
+        .radar-wrapper.mini {
             pointer-events: auto !important;
         }
-        .layout.detail-open .target-node {
+        .radar-wrapper.mini .target-node {
             pointer-events: none !important;
         }
 
@@ -819,14 +820,15 @@
             transition: opacity 300ms ease;
         }
         .letter-cell {
-            width: clamp(18px, 4vw, 48px);
+            height: clamp(12px, 2.8vw, 30px);
+            width: auto;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: aspect-ratio 35ms ease;
         }
         .letter-cell svg {
-            width: 100%;
+            width: auto;
             height: 100%;
             fill: #fff;
         }
@@ -898,7 +900,7 @@
             .layout { flex-direction: column !important; }
 
             .col-left-header-bar {
-                height: 56px !important;
+                height: 44px !important;
                 width: 100% !important;
                 position: relative !important;
                 display: flex !important;
@@ -907,7 +909,7 @@
                 padding: 0 16px 0 16px !important;
                 box-sizing: border-box !important;
                 z-index: 1300 !important;
-                min-height: 56px !important;
+                min-height: 44px !important;
             }
 
             .hamburger-btn {
@@ -926,12 +928,23 @@
 
             .logo-reticle {
                 width: min(100%, calc(100% - 80px)) !important;
-                max-width: 242px !important;
+                max-width: 260px !important;
+                min-height: 40px !important;
+                height: 40px !important;
+                padding: 0 14px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border: none !important;
+                background: transparent !important;
             }
 
             .logo-png {
-                width: 100% !important;
-                max-width: 100% !important;
+                width: 90% !important;
+                max-width: 250px !important;
+                height: auto !important;
+                display: block !important;
+                margin: 0 !important;
             }
 
             .ticker-wrap,
@@ -947,12 +960,13 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
+                height: 100dvh;
                 background: rgba(0, 0, 0, 0.97);
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
                 z-index: 1200;
-                /* padding-top: lascia spazio alla header (56px bar + ticker mobile) */
-                padding: 128px 24px 24px 24px;
+                /* padding-top: lascia spazio alla header (44px bar + ticker mobile) */
+                padding: 96px 24px 24px 24px;
                 flex-direction: column;
                 overflow-y: auto;
             }
@@ -1060,7 +1074,7 @@
             .ticker-wrap {
                 width: 100% !important;
                 margin: 0 !important;
-                padding: 10px 0 !important;
+                padding: 6px 0 !important;
                 border-bottom: 1.5px solid rgba(255, 255, 255, 0.7) !important;
                 border-top: 1px solid #111 !important;
                 box-sizing: border-box !important;
@@ -1140,7 +1154,7 @@
                  z-index: 1100 !important;
              }
              .col-right.visible {
-                 max-height: 50vh;
+                 max-height: 50dvh;
                  width: 100% !important;
                  flex: none !important;
                  padding: 0 !important;
@@ -1155,7 +1169,7 @@
                  overflow: visible !important;
              }
              .layout.detail-open .col-right {
-                 max-height: 88vh;
+                 max-height: 88dvh;
                  flex: none !important;
                  width: 100% !important;
                  border-radius: 0 !important; /* Completamente piatto */
@@ -1280,16 +1294,17 @@
                   font-size: 1rem !important;
               }
             .logo-reticle {
-                min-height: unset !important;
+                min-height: 40px !important;
+                height: 40px !important;
                 margin: 0 !important;
-                padding: 0 !important;
+                padding: 0 14px !important;
                 border: none !important;
                 background: transparent !important;
                 display: flex !important;
                 align-items: center !important;
-                justify-content: flex-start !important;
+                justify-content: center !important;
             }
-            .logo-reticle::before, .logo-reticle::after {
+            .logo-reticle::after {
                 display: none !important;
             }
             #bg-grid-img {
@@ -1347,36 +1362,37 @@
         .logo-reticle {
             position: relative;
             background: #000;
-            padding: 16px 14px;
-            margin: 0 0 8px 0; /* Minimo bilanciato */
+            padding: 8px 14px;
+            margin: 0 0 4px 0; /* Minimo bilanciato per allineamento */
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 56px;
+            min-height: 44px;
             z-index: 1000;
+            cursor: pointer;
         }
         .logo-reticle::before {
             content: '';
             position: absolute;
-            inset: 0 4px; /* un po' di margine ai lati */
+            inset: 0 0px; /* Brackets sui bordi esterni */
             pointer-events: none;
             z-index: 1;
             background:
                 /* LEFT BRACKET */
-                linear-gradient(white, white) left center / 0.5px 44px no-repeat,
-                linear-gradient(white, white) left center / 16px 0.5px no-repeat,
-                linear-gradient(white, white) 5px center / 0.5px 22px no-repeat,
+                linear-gradient(white, white) left center / 0.5px 32px no-repeat,
+                linear-gradient(white, white) left center / 10px 0.5px no-repeat,
+                linear-gradient(white, white) 4px center / 0.5px 16px no-repeat,
                 /* RIGHT BRACKET */
-                linear-gradient(white, white) right center / 0.5px 44px no-repeat,
-                linear-gradient(white, white) right center / 16px 0.5px no-repeat,
-                linear-gradient(white, white) calc(100% - 5px) center / 0.5px 22px no-repeat;
+                linear-gradient(white, white) right center / 0.5px 32px no-repeat,
+                linear-gradient(white, white) right center / 10px 0.5px no-repeat,
+                linear-gradient(white, white) calc(100% - 4px) center / 0.5px 16px no-repeat;
             opacity: 0.8;
         }
         .logo-reticle::after {
             display: none;
         }
         .logo-reticle .logo-png {
-            width: 105%; max-width: 300px; height: auto; margin-bottom: 0;
+            width: 90%; max-width: 250px; height: auto; margin-bottom: 0;
         }
 
         /* STILE TARGETING COMUNE PER HOVER E DETAIL: brackets esterni e ticks top/bottom */
@@ -2471,7 +2487,9 @@ function generateColormap() {
     // Funzioni per calcolare l'ingombro originale del radar in coordinate fixed/viewport
     function getRadarOriginalRect() {
         const colLeft = document.querySelector('.col-left');
-        const colLeftWidth = colLeft ? colLeft.getBoundingClientRect().width : 360;
+        const rectColLeft = colLeft ? colLeft.getBoundingClientRect() : { left: 0, top: 0, width: 360, bottom: window.innerHeight };
+        const colLeftLeft = rectColLeft.left;
+        const colLeftWidth = rectColLeft.width;
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
         
@@ -2481,8 +2499,8 @@ function generateColormap() {
         // --radar-size: min(82vh, calc(0.82 * (100vw - var(--col-left-width) - var(--hover-overlay-width) - 48px)))
         const radarSize = Math.min(windowHeight * 0.82, 0.82 * (windowWidth - colLeftWidth - hoverOverlayWidth - 48));
         
-        const origLeft = colLeftWidth + ((windowWidth - colLeftWidth - hoverOverlayWidth - 48) / 2 - radarSize / 2 + 24);
-        const origTop = (windowHeight / 2) - (radarSize / 2);
+        const origLeft = colLeftLeft + colLeftWidth + ((windowWidth - colLeftWidth - hoverOverlayWidth - 48) / 2 - radarSize / 2 + 24);
+        const origTop = rectColLeft.top + (windowHeight / 2) - (radarSize / 2);
         
         return {
             left: origLeft,
@@ -2500,7 +2518,9 @@ function generateColormap() {
         
         // Calcola dinamicamente la larghezza della colonna sinistra per contenere perfettamente il radar
         const colLeft = document.querySelector('.col-left');
-        const colLeftWidth = colLeft ? colLeft.getBoundingClientRect().width : 360;
+        const rectColLeft = colLeft ? colLeft.getBoundingClientRect() : { left: 0, top: 0, width: 360, bottom: window.innerHeight };
+        const colLeftLeft = rectColLeft.left;
+        const colLeftWidth = rectColLeft.width;
         
         // Limita l'ingombro del radar in base all'altezza del viewport per schermi bassi (es. MacBook 13")
         let maxRadarW = 230;
@@ -2512,14 +2532,18 @@ function generateColormap() {
         
         const targetW = Math.min(colLeftWidth - 48, maxRadarW);
         const targetH = targetW; // 1:1 aspect ratio per mantenere il cerchio
-        const targetLeft = Math.round((colLeftWidth - targetW) / 2); // centramento orizzontale in col-left
+        const targetLeft = colLeftLeft + Math.round((colLeftWidth - targetW) / 2); // centramento orizzontale in col-left
         const targetBottom = 32;
-        const targetTop = window.innerHeight - targetBottom - targetH;
+        const targetTop = rectColLeft.bottom - targetBottom - targetH;
 
         radarWrapper.dataset.origLeft = `${rect.left}px`;
         radarWrapper.dataset.origTop = `${rect.top}px`;
         radarWrapper.dataset.origWidth = `${rect.width}px`;
         radarWrapper.dataset.origHeight = `${rect.height}px`;
+        
+        // Append dynamically to body to bypass layout containment context (e.g. transforms/transitions on parents)
+        document.body.appendChild(radarWrapper);
+
         radarWrapper.style.position = 'fixed';
         radarWrapper.style.left = `${rect.left}px`;
         radarWrapper.style.top = `${rect.top}px`;
@@ -2585,6 +2609,13 @@ function generateColormap() {
             
             // Disattiva temporaneamente la transizione per resettare lo stato fixed senza scatti
             radarWrapper.style.transition = 'none';
+            
+            // Append back to the original container before clearing styles
+            const radarZone = document.getElementById('radar-zone');
+            if (radarZone) {
+                radarZone.appendChild(radarWrapper);
+            }
+            
             radarWrapper.style.position = '';
             radarWrapper.style.left = '';
             radarWrapper.style.top = '';
@@ -2617,7 +2648,7 @@ function generateColormap() {
             microName: "ujdge",
             field_it: "GIUSTIZIA", 
             field_en: "JUSTICE", 
-            team: "Francesca Tartaglia", 
+            team: "Leonardo Bolzoni Giorgia Nova Marta Stella Ratti Simone Re Carlo Scotti Francesca Tartaglia", 
             whatif_it: "E se il tribunale mediatico venisse istituzionalizzato?",
             whatif_en: "What if trial by media were institutionalised?",
             desc1_it: "U-JUDGE esplora il conflitto mediatico contemporaneo e il ruolo crescente dell’opinione pubblica nella costruzione del giudizio collettivo. Partendo dall’osservazione del processo mediatico come spazio parallelo alla giustizia istituzionale, il progetto si sviluppa attorno a una domanda: e se il tribunale mediatico venisse istituzionalizzato? Ambientato in un’Italia del 2030 segnata dal collasso della fiducia nelle istituzioni, immagina un sistema di giustizia partecipata fondato sul principio della Wisdom of the Crowd, in cui opinioni, commenti e votazioni dei cittadini acquisiscono valore legale. In questo scenario, U-JUDGE si configura come una piattaforma capace di trasformare il consenso sociale in verità istituzionale, interrogando il rapporto tra partecipazione democratica, responsabilità e costruzione della verità.",
@@ -2631,9 +2662,9 @@ function generateColormap() {
             microName: "alua",
             field_it: "BUROCRAZIA", 
             field_en: "BUREAUCRACY", 
-            team: "ALUA", 
+            team: "Davide Benetton, Camilla Costato, Alice D'Andrea, Sofia Splendore, Camilla Vicario, Francesco Zanchetta", 
             whatif_it: "E se fosse possibile stipulare una polizza assicurativa sui propri rapporti interpersonali?",
-            whatif_en: "What if it were possible to insure interpersonal relationships?",
+            whatif_en: "What if bureaucracy was the only cure to relationship?",
             desc1_it: "ALUA esplora il conflitto burocratico applicato alle relazioni umane. Partendo dal paradosso per cui i beni materiali vengono assicurati mentre i legami affettivi restano esposti all’incertezza, il progetto si sviluppa attorno a una domanda: “e se fosse possibile stipulare una polizza assicurativa sui propri rapporti interpersonali?”. In questo scenario nasce ALUA (Agenzia Legami Umani Assicurati), il primo ente assicurativo dedicato alla valutazione, classificazione e tutela dei legami umani. Attraverso metodologie ispirate al risk assessment e all’underwriting, le relazioni vengono trasformate in asset da monitorare e regolamentare, sostituendo l’incertezza emotiva con garanzie contrattuali e protocolli verificabili.",
             desc1_en: "ALUA explores bureaucratic conflict as applied to human relationships. Starting from the paradox that material possessions are routinely insured while emotional bonds remain exposed to uncertainty, the project asks: “what if it were possible to insure interpersonal relationships?”. Within this scenario, ALUA (Agenzia Legami Umani Assicurati) emerges as the first insurance organisation dedicated to the assessment, classification and protection of human bonds. Drawing on methodologies inspired by risk assessment and underwriting, relationships become assets to be monitored and regulated, replacing emotional uncertainty with contractual guarantees and verifiable protocols.",
             desc2_it: "Il progetto prende forma attraverso EyeDeal, una postazione interattiva dedicata alla stipula delle polizze. Il sistema combina dati dichiarativi e parametri biometrici per valutare la solidità della relazione: gli utenti definiscono natura e intensità del proprio legame, mentre sensori dedicati registrano le loro risposte fisiologiche durante una serie di interazioni guidate. Al termine dell’esperienza viene generata una polizza personalizzata che assegna una fascia di rischio e stabilisce clausole proporzionate alla presunta stabilità del rapporto. Stampato su carta termica destinata a deteriorarsi nel tempo, il contratto diventa metafora della fragilità della memoria emotiva e del tentativo di trasformare i sentimenti in procedure amministrative.",
@@ -2645,7 +2676,7 @@ function generateColormap() {
             microName: "fragma",
             field_it: "LINGUAGGIO", 
             field_en: "LANGUAGE", 
-            team: "FRAGMA", 
+            team: "Jonathan Allen, Alessandro Bacci, Mattia Micucci, Alessandro Salvi, Carlotta Schiavi, Eleonora Villa", 
             whatif_it: "E se le parole fossero armi ingegnerizzate?",
             whatif_en: "What if words were engineered weapons?",
             desc1_it: "FRAGMA esplora il rapporto tra linguaggio, percezione e potere, partendo dall’idea che le parole non si limitino a descrivere la realtà, ma contribuiscano a costruirla. Da questa premessa nasce una domanda: e se le parole fossero armi ingegnerizzate? Collocato all’intersezione tra guerra cognitiva e tecnologie neurolinguistiche, il progetto immagina un futuro in cui il linguaggio diventa uno strumento strategico capace di influenzare il giudizio individuale e modellare la percezione collettiva. In questo scenario, FRAGMA è un’azienda che sviluppa sistemi linguistici per governi e istituzioni, utilizzando intelligenza artificiale, dataset psicometrici e analisi computazionale per costruire nuove realtà narrative.",
@@ -2659,9 +2690,9 @@ function generateColormap() {
             microName: "icon",
             field_it: "SIMBOLO", 
             field_en: "SYMBOL", 
-            team: "ICON", 
+            team: "Zaira Aiello, Gaia Cherubini, Martina Dolci, Silvia Panzeri, Martina Piccolo", 
             whatif_it: "E se i marchi commerciali sostituissero le parole?",
-            whatif_en: "What if commercial brands replaced words?",
+            whatif_en: "What if commercial symbols replaced words?",
             desc1_it: "ICON esplora il ruolo crescente dei brand nella costruzione dell’immaginario collettivo e la loro capacità di influenzare non solo i consumi, ma anche il linguaggio. Partendo dal fenomeno della volgarizzazione dei marchi, il progetto si sviluppa attorno a una domanda: e se i simboli commerciali sostituissero le parole? Lo scenario immagina un futuro prossimo in cui l’Institute of Common Nomenclature (ICON) regolamenta e commercializza il linguaggio, trasformando i vocaboli in risorse economiche acquistabili dalle aziende. Nasce così il Lexicon, un sistema linguistico fondato sui simboli commerciali che sostituisce progressivamente il linguaggio tradizionale con una comunicazione standardizzata e immediatamente riconoscibile.",
             desc1_en: "ICON explores the growing role of brands in shaping the collective imagination and their ability to influence not only consumer behaviour, but language itself. Starting from the phenomenon of trademark genericisation, the project asks: what if commercial symbols replaced words? It envisions a near future in which the Institute of Common Nomenclature (ICON) regulates and commercialises language, transforming words into economic assets that can be purchased by companies. This gives rise to the Lexicon, a linguistic system based on commercial symbols that gradually replaces traditional language with a standardised and instantly recognisable form of communication.",
             desc2_it: "Il progetto prende forma attraverso l’ICON Starter Kit, un sistema didattico progettato per apprendere il nuovo linguaggio. Al centro dell’esperienza si trova un dispositivo modulare composto da quattro slot corrispondenti alle principali funzioni sintattiche della frase. Inserendo tessere recanti loghi commerciali, l’utente costruisce enunciati elaborati e visualizzati in tempo reale. Completato da un dizionario ufficiale e da strumenti educativi dedicati, il progetto invita a riflettere sulle conseguenze culturali, sociali e politiche della privatizzazione del linguaggio e di una comunicazione governata da interessi economici e identità di marca.",
@@ -2673,9 +2704,9 @@ function generateColormap() {
             microName: "treeal",
             field_it: "AMBIENTALE", 
             field_en: "ENVIRONMENTAL", 
-            team: "TREAAL", 
+            team: "Silvia Andreoletti, Aurelia La Carrubba, Simone Ma, Rebecca Porta, Martina Santolini, Luca Vidale", 
             whatif_it: "E se gli alberi artificiali diventassero più sostenibili di quelli naturali?",
-            whatif_en: "What if artificial trees became more sustainable than natural ones?",
+            whatif_en: "What if artificial trees were greener than natural ones?",
             desc1_it: "TREEAL esplora il conflitto ecologico attraverso il rapporto tra natura e tecnologia, interrogandosi sulle conseguenze di una crescente tendenza a valutare gli ecosistemi secondo criteri di efficienza e performance. A partire dalla domanda: “e se gli alberi artificiali diventassero più sostenibili di quelli naturali?”, il progetto immagina uno scenario in cui la complessità biologica delle foreste viene progressivamente sostituita da sistemi ingegnerizzati. In questo contesto nasce TREEAL, un’azienda specializzata nella conversione delle foreste naturali in infrastrutture artificiali composte da Treeal Units, dispositivi in grado di assorbire CO₂, purificare l’aria, produrre energia e contribuire alla regolazione climatica. Il progetto mette in discussione una visione della sostenibilità fondata esclusivamente sulla misurazione delle prestazioni, nella quale la biodiversità viene sostituita da indicatori quantitativi di efficienza.",
             desc1_en: "TREEAL explores ecological conflict through the relationship between nature and technology, questioning the consequences of evaluating ecosystems according to criteria of efficiency and performance. Starting from the question: “what if artificial trees became more sustainable than natural ones?”, the project envisions a future in which the biological complexity of forests is gradually replaced by engineered systems. Within this scenario, TREEAL emerges as a company specialising in the conversion of natural forests into artificial infrastructures composed of Treeal Units devices capable of absorbing CO₂, purifying the air, generating energy and contributing to climate regulation. The project questions a vision of sustainability based solely on measurable performance, where biodiversity is replaced by quantitative indicators of efficiency.",
             desc2_it: "Il progetto prende forma attraverso il Data Tree Model, un dispositivo interattivo che rende visibili le prestazioni delle Treeal Units. Installato all’interno del Treeal Expansion Summit, invita il pubblico a confrontare diverse specie arboree con i sistemi artificiali che le hanno sostituite. Inserendo blocchi di legno ricavati da alberi reali, l’utente attiva visualizzazioni che mostrano i dati ambientali e produttivi delle corrispondenti unità artificiali. L’esperienza mette in dialogo la materialità della natura e la precisione della tecnologia, invitando a riflettere su ciò che viene preservato e ciò che viene sacrificato quando la sostenibilità viene ridotta a una questione di performance.",
@@ -2687,9 +2718,9 @@ function generateColormap() {
             microName: "eden",
             field_it: "xxxx", 
             field_en: "xxxx", 
-            team: "ECO", 
+            team: "Gloria Cattaneo, Chiara Cucchetti, Sofia Gelleni, Sofia Panciera, Sofia Piccinelli, Federica Porrini", 
             whatif_it: "E se ricreassimo biosistemi autosufficienti per isolarci del tutto dalla biosfera terrestre?",
-            whatif_en: "What if we created self-sufficient biosystems to isolate ourselves from the biosphere?",
+            whatif_en: "What if human mind worked better in isolation?",
             desc1_it: "E-DEN esplora il conflitto cognitivo generato dalla costante esposizione a relazioni, connessioni e stimoli sociali. Partendo dall’ipotesi che il disagio mentale contemporaneo derivi dall’eccessiva interazione con gli altri, il progetto si sviluppa attorno a una domanda: e se la mente umana funzionasse meglio isolandosi? In questo scenario, l’isolamento viene riconosciuto come condizione ottimale per il benessere e l’efficienza della mente. E-DEN si presenta come un’azienda di biotecnologie che, attraverso principi di ottimismo tecnologico, auto-ottimizzazione e autonomia individuale, sviluppa tecnologie capaci di allenare la mente a privilegiare la distanza sociale come forma di equilibrio, controllo e protezione cognitiva.",
             desc1_en: "E-DEN explores the cognitive conflict generated by constant exposure to relationships, connections and social stimuli. Based on the hypothesis that contemporary mental distress stems from excessive interaction with others, the project asks: what if the human mind functioned better in isolation? Within this scenario, isolation is redefined as the optimal condition for mental wellbeing and efficiency. E-DEN presents itself as a biotechnology company that, grounded in technological optimism, self-optimisation and individual autonomy, develops technologies designed to train the mind to favour social withdrawal as a form of balance, control and cognitive protection.",
             desc2_it: "Il progetto prende forma attraverso ARMOR, un dispositivo indossabile che applica i principi del condizionamento classico per modificare progressivamente il comportamento dell’utente. Sensori di prossimità, sistemi di visione artificiale e una pellicola commutabile alterano l’esperienza sensoriale in presenza di altre persone, favorendo spontaneamente l’allontanamento. Un’applicazione dedicata accompagna il percorso di allenamento cognitivo, consentendo di monitorare i progressi e individuare percorsi a bassa densità sociale. Attraverso questo ecosistema, E-DEN propone una riflessione critica sulle logiche contemporanee di ottimizzazione dell’individuo e sulle conseguenze di una società che considera l’isolamento non come eccezione, ma come ideale da perseguire.",
@@ -2701,7 +2732,7 @@ function generateColormap() {
             microName: "rheal",
             field_it: "xxxx", 
             field_en: "xxxx", 
-            team: "MED", 
+            team: "Laura Barelli, Emanuele Gazzaniga, Rebecca Mazza, Miriam Lopez, Katia Passigato", 
             whatif_it: "E se tutte le comunicazioni digitali fossero filtrate per il benessere degli utenti?",
             whatif_en: "What if all digital communications were filtered for the well-being of users?",
             desc1_it: "RHEAL esplora il conflitto digitale e le tensioni generate dalla gestione e dalla diffusione delle informazioni negli ecosistemi online contemporanei. Partendo dalla domanda: “e se tutte le comunicazioni digitali fossero filtrate per il benessere degli utenti?”, il progetto immagina uno scenario in cui la tutela della salute psicologica e della stabilità sociale diventa il principio guida dell’infrastruttura comunicativa europea. In questo contesto, RHEAL si presenta come un’azienda tecnologica che sviluppa sistemi di moderazione basati sull’intelligenza artificiale, capaci di riformulare testi, immagini e contenuti multimediali prima della loro diffusione, trasformando il controllo dell’informazione in uno strumento di governo e prevenzione dei conflitti.",
@@ -2715,9 +2746,9 @@ function generateColormap() {
             microName: "soema",
             field_it: "INFRASTRUTTURA", 
             field_en: "INFRASTRUCTURE", 
-            team: "SOEMA", 
+            team: "Rafael Frick, Martina Ghezzi, Simone Menoni, Alice Miyake, Giacomo Piganzoli, Marie Samba", 
             whatif_it: "E se i corpi delle vittime dei processi infrastrutturali diventassero essi stessi materiale da costruzione?",
-            whatif_en: "What if the bodies of those sacrificed by infrastructure development became building materials themselves?",
+            whatif_en: "What if human body became building materials?",
             desc1_it: "SOEMA esplora il conflitto infrastrutturale attraverso una riflessione sulle conseguenze umane celate dietro la costruzione delle grandi opere. A partire da fenomeni come espropriazioni territoriali, sfruttamento del lavoro e morti nei cantieri, il progetto si sviluppa attorno a una domanda radicale: “e se i corpi delle vittime dei processi infrastrutturali diventassero essi stessi materiale da costruzione?”. Lo scenario immagina un futuro in cui la logica dell’economia circolare viene estesa alla materia organica umana. In questo contesto nasce SOEMA, un’azienda che trasforma ciò che il progresso produce come scarto in materiali edilizi, reinterpretando sfruttamento, sacrificio e perdita attraverso il linguaggio della sostenibilità e dell’innovazione.",
             desc1_en: "SOEMA explores infrastructural conflict through a reflection on the hidden human consequences of large-scale infrastructure projects. Starting from issues such as land expropriation, labour exploitation and deaths on construction sites, the project asks: “what if the bodies of those sacrificed by infrastructure development became building materials themselves?”. It envisions a future in which the principles of the circular economy are extended to human organic matter. Within this scenario, SOEMA emerges as a company that transforms what progress produces as waste into construction materials, reframing exploitation, sacrifice and loss through the language of sustainability and innovation.",
             desc2_it: "Il progetto prende forma attraverso una collezione di materiali derivati da specifici contesti infrastrutturali globali, tra cui Albuphas, Keratex, Adiplon ed Emolite. Presentati all’interno di un campionario interattivo, questi materiali permettono ai visitatori di scoprirne proprietà, provenienza e processi produttivi attraverso un percorso di consultazione stratificato. Svelando progressivamente le storie nascoste dietro ogni campione, SOEMA invita a riflettere criticamente sul rapporto tra sviluppo, memoria e valore umano, mettendo in discussione le narrazioni che accompagnano il progresso infrastrutturale.",
@@ -2727,11 +2758,11 @@ function generateColormap() {
             idNum: "09", 
             titleSvg: "assets/projects/t9/title.svg", 
             microName: "risorsa_3",
-            field_it: "CULTURA", 
-            field_en: "CULTURE", 
-            team: "synchro", 
+            field_it: "xxxx", 
+            field_en: "xxxx", 
+            team: "Federica Casartelli, Sofia Rainone, Davide Rebizzi, Chiara Radaelli, Emma Troni", 
             whatif_it: "E se il tempo fosse uno strumento di potere?",
-            whatif_en: "What if time were an instrument of power?",
+            whatif_en: "What if time was an instrument of power?",
             desc1_it: "SYNCHRO esplora il conflitto metrico contemporaneo, interrogandosi sul tempo non come misura neutrale, ma come strumento di controllo e potere geopolitico. A partire dalla domanda: “e se il tempo fosse uno strumento di potere?”, il progetto immagina uno scenario in cui la definizione dell’ora di riferimento globale diventa oggetto di competizione tra Stati. In questo contesto nasce lo Zero Hour Day, un evento annuale durante il quale SYNCHRO misura il livello di sincronizzazione delle routine quotidiane dei cittadini di ogni Paese. La nazione più sincronizzata ottiene il diritto di imporre il proprio fuso orario come standard globale, rivelando come anche i sistemi apparentemente oggettivi possano diventare strumenti di egemonia.",
             desc1_en: "SYNCHRO explores contemporary metric conflict by questioning time not as a neutral measure, but as an instrument of control and geopolitical power. Starting from the question: “what if time were an instrument of power?”, the project imagines a scenario in which the definition of global standard time becomes the object of competition between nations. Within this context, Zero Hour Day is introduced as an annual event in which SYNCHRO measures the synchronisation of citizens' daily routines. The nation with the highest level of temporal consistency earns the right to impose its time zone as the global standard, revealing how even seemingly objective systems can become mechanisms of hegemony.",
             desc2_it: "Il progetto prende forma attraverso il Chronodex, un dispositivo interattivo che registra la distribuzione delle attività quotidiane degli utenti. All’interno di una cabina dedicata, ogni partecipante ricostruisce la propria giornata suddividendo le ventiquattro ore in quattro categorie fondamentali: sonno, alimentazione, lavoro e altre attività. I dati raccolti vengono trasmessi in tempo reale e contribuiscono alla definizione dell’indice di sincronizzazione nazionale. Attraverso questo processo, SYNCHRO riflette criticamente sul rapporto tra misurazione, partecipazione e controllo, mettendo in discussione il ruolo delle metriche nella costruzione degli equilibri politici e sociali contemporanei.",
@@ -2741,11 +2772,11 @@ function generateColormap() {
             idNum: "10", 
             titleSvg: "assets/projects/t10/title.svg", 
             microName: "reclaim",
-            field_it: "SOCIALE", 
-            field_en: "SOCIAL", 
-            team: "RECLAIM", 
+            field_it: "xxxx", 
+            field_en: "xxxx", 
+            team: "Gaia Becchi, Chiara Bonzi, Cesare Donelli, Giacomo Galli, Christian Giannarelli, Alez Longo", 
             whatif_it: "E se i cittadini potessero organizzarsi per rivendicare attivamente il controllo dei propri spazi urbani?",
-            whatif_en: "What if citizens could organize themselves to actively reclaim control of their urban spaces?",
+            whatif_en: "What if citizens could hunt tourists to take their cities back?",
             desc1_it: "RECLAIM esplora il conflitto urbano generato dal turismo di massa e dalle sue conseguenze sul tessuto sociale delle città contemporanee. A partire dall’aumento del costo della vita, dalla trasformazione degli spazi pubblici e dalla progressiva marginalizzazione dei residenti, il progetto si sviluppa attorno a una domanda: “e se i cittadini potessero organizzarsi per rivendicare attivamente il controllo dei propri spazi urbani?”. Lo scenario immagina una realtà in cui la pressione turistica alimenta nuove forme di resistenza civica. In questo contesto nasce RECLAIM, un’organizzazione decentralizzata ispirata alle DAO (Decentralized Autonomous Organizations) che trasforma il malcontento diffuso in un’azione collettiva coordinata, rendendo il conflitto urbano visibile, condiviso e misurabile.",
             desc1_en: "RECLAIM explores the urban conflict generated by mass tourism and its impact on the social fabric of contemporary cities. Starting from rising living costs, the transformation of public spaces and the gradual marginalisation of local residents, the project asks: “what if citizens could organise themselves to actively reclaim control of their urban spaces?”. It envisions a scenario in which increasing tourist pressure gives rise to new forms of civic resistance. Within this context, RECLAIM emerges as a decentralised organisation inspired by Decentralized Autonomous Organizations (DAOs), transforming widespread frustration into coordinated collective action and making urban conflict visible, shared and measurable.",
             desc2_it: "Il progetto prende forma attraverso un ecosistema di strumenti fisici e digitali che promuovono la partecipazione attiva dei cittadini. Manifesti, stencil e interventi urbani introducono il progetto nello spazio pubblico e conducono alla piattaforma digitale, dove le azioni vengono raccolte e condivise. Al centro dell’esperienza si trova RECLAIMX, un’arma fittizia autoprodotta e integrata con un’applicazione mobile che consente di individuare i turisti e colpirli simbolicamente. Attraverso dinamiche partecipative e meccaniche di gamification, il progetto invita a riflettere criticamente sul rapporto tra cittadinanza, spazio pubblico e turismo contemporaneo.",
@@ -2755,11 +2786,11 @@ function generateColormap() {
             idNum: "11", 
             titleSvg: "assets/projects/t11/title.svg", 
             microName: "unec",
-            field_it: "ECOSISTEMA DI RETE", 
-            field_en: "NETWORK ECOSYSTEM", 
-            team: "NET", 
+            field_it: "xxxx", 
+            field_en: "xxxx", 
+            team: "Arianna Ambrosi, Sveva Bicego, Gaia Manera, Sofia Manicardi, Marta Mazzoleni", 
             whatif_it: "E se la tecnologia biomedica diventasse l’ultimo strumento per preservare la memoria delle civiltà a rischio di scomparsa?",
-            whatif_en: "What if biomedical technology became the last tool to preserve the memory of endangered civilisations?",
+            whatif_en: "What if the only way to preserve a culture was to freeze it?",
             desc1_it: "UNEC riflette sulle conseguenze culturali dei conflitti contemporanei e sul rischio di estinzione delle identità collettive. A partire dall’osservazione di come guerre, tensioni geopolitiche e processi di omologazione possano compromettere il patrimonio immateriale delle comunità, il progetto si sviluppa attorno a una domanda: “e se la tecnologia biomedica diventasse l’ultimo strumento per preservare la memoria delle civiltà a rischio di scomparsa?”. Ambientato tra il 2068 e il 2075, immagina la nascita di UNEC (United Nations for Endangered Cultures), un’organizzazione internazionale che utilizza la crioconservazione dei “guardiani culturali” per garantire la sopravvivenza futura di culture minacciate, superando i limiti di archivi e musei tradizionali.",
             desc1_en: "UNEC reflects on the cultural consequences of contemporary conflicts and the risk of collective identities becoming extinct. Starting from the observation that wars, geopolitical tensions and processes of cultural homogenisation can irreversibly threaten intangible heritage, the project asks: “what if biomedical technology became the last tool capable of preserving the memory of endangered civilisations?”. Set between 2068 and 2075, it envisions the creation of UNEC (United Nations for Endangered Cultures), an international organisation that uses the cryopreservation of “cultural guardians” to ensure the future survival of threatened cultures, moving beyond the limitations of traditional archives and museums.",
             desc2_it: "Il progetto prende forma attraverso Cryocare, un dispositivo interattivo che coinvolge il pubblico nel programma Adopt a Culture. Attraverso un’esperienza fisica e digitale, gli utenti assumono il ruolo di custodi temporanei di una cultura a rischio, prendendosi cura dei bisogni simbolici e materiali di un guardiano culturale crioconservato. L’interazione consente di sbloccare progressivamente frammenti di patrimonio immateriale, mentre una piattaforma digitale ne documenta il percorso di apprendimento. Attraverso questo ecosistema, UNEC invita a riflettere criticamente sui limiti delle strategie contemporanee di conservazione e sul rapporto tra tutela culturale, musealizzazione e nuove forme di controllo esercitate in nome della preservazione.",
@@ -2938,16 +2969,54 @@ function generateColormap() {
     }
     
     window.addEventListener('resize', () => {
+        const radarWrapper = document.querySelector('.radar-wrapper');
+        const spacer = document.getElementById('col-left-spacer');
+        
         if (isMobile()) {
             updateMobileScannerFromAngle(mouseLineAngle);
+            
+            // Se eravamo in detail view desktop ed eravamo miniaturizzati, ripristina la struttura mobile
+            if (radarWrapper && radarWrapper.classList.contains('mini')) {
+                radarWrapper.classList.remove('mini');
+                
+                // Append back to original container before clearing styles
+                const radarZone = document.getElementById('radar-zone');
+                if (radarZone) {
+                    radarZone.appendChild(radarWrapper);
+                }
+
+                radarWrapper.style.position = '';
+                radarWrapper.style.left = '';
+                radarWrapper.style.top = '';
+                radarWrapper.style.width = '';
+                radarWrapper.style.height = '';
+                radarWrapper.style.transition = '';
+                radarWrapper.style.transformOrigin = '';
+                radarWrapper.style.zIndex = '';
+                radarWrapper.style.willChange = '';
+                
+                // Rimuovi anche lo spacer
+                if (spacer) {
+                    spacer.style.height = '0px';
+                }
+            }
         } else {
             if (mobileHoverCard) mobileHoverCard.classList.remove('visible');
             
+            // Se siamo su desktop, in detail view, e il radar NON è miniaturizzato, allora miniaturizzalo!
+            if (isDetailView && radarWrapper && !radarWrapper.classList.contains('mini')) {
+                const selectedLogo = currentSelectedTarget && currentSelectedTarget.node 
+                    ? (currentSelectedTarget.node.querySelector('img')?.src || '') 
+                    : '';
+                miniaturizeRadar(radarWrapper, selectedLogo);
+            }
+            
             // Recalculate mini-radar coordinates/dimensions if it is active
-            const radarWrapper = document.querySelector('.radar-wrapper');
             if (radarWrapper && radarWrapper.classList.contains('mini')) {
                 const colLeft = document.querySelector('.col-left');
-                const colLeftWidth = colLeft ? colLeft.getBoundingClientRect().width : 360;
+                const rectColLeft = colLeft ? colLeft.getBoundingClientRect() : { left: 0, top: 0, width: 360, bottom: window.innerHeight };
+                const colLeftLeft = rectColLeft.left;
+                const colLeftWidth = rectColLeft.width;
                 
                 let maxRadarW = 230;
                 if (window.innerHeight < 700) {
@@ -2957,9 +3026,9 @@ function generateColormap() {
                 }
                 const targetW = Math.min(colLeftWidth - 48, maxRadarW);
                 const targetH = targetW;
-                const targetLeft = Math.round((colLeftWidth - targetW) / 2);
+                const targetLeft = colLeftLeft + Math.round((colLeftWidth - targetW) / 2);
                 const targetBottom = 32;
-                const targetTop = window.innerHeight - targetBottom - targetH;
+                const targetTop = rectColLeft.bottom - targetBottom - targetH;
                 
                 radarWrapper.style.transition = 'none'; // no transition during window resizing to make it track instantly
                 radarWrapper.style.left = `${targetLeft}px`;
@@ -2968,7 +3037,6 @@ function generateColormap() {
                 radarWrapper.style.height = `${targetH}px`;
                 
                 // Update spacer height instantly
-                const spacer = document.getElementById('col-left-spacer');
                 if (spacer) {
                     spacer.style.transition = 'none';
                     spacer.style.height = `${targetH + 32}px`;
@@ -3023,9 +3091,16 @@ function generateColormap() {
         if (!allowInteractions || isDetailView) return;
         if (e.touches.length === 1) {
             e.preventDefault();
-            touchStartY = e.touches[0].clientY;
-            touchStartAngle = mouseLineAngle;
-            touchTapStartY = e.touches[0].clientY;
+            const touch = e.touches[0];
+            const rect = container.getBoundingClientRect();
+            const absCenterX = rect.left + centerX;
+            const absCenterY = rect.top + centerY;
+            
+            mouseLineAngle = Math.atan2(touch.clientY - absCenterY, touch.clientX - absCenterX);
+            updateMobileScannerFromAngle(mouseLineAngle);
+            
+            touchStartY = touch.clientY;
+            touchTapStartY = touch.clientY;
             touchTapStartTime = Date.now();
         }
     }, { passive: false });
@@ -3052,8 +3127,12 @@ function generateColormap() {
         
         if (e.touches.length === 1 && touchStartY !== null) {
             onUserInteraction(); // segnala interazione attiva
-            const deltaY = e.touches[0].clientY - touchStartY;
-            mouseLineAngle = touchStartAngle + deltaY * SCROLL_SENSITIVITY;
+            const touch = e.touches[0];
+            const rect = container.getBoundingClientRect();
+            const absCenterX = rect.left + centerX;
+            const absCenterY = rect.top + centerY;
+            
+            mouseLineAngle = Math.atan2(touch.clientY - absCenterY, touch.clientX - absCenterX);
             updateMobileScannerFromAngle(mouseLineAngle);
         }
     }, { passive: false });
@@ -3649,7 +3728,7 @@ function generateColormap() {
         // Delega eventi per rilevare l'hover sugli elementi interattivi
         document.addEventListener('mouseover', (e) => {
             const target = e.target;
-            if (target && target.closest && target.closest('a, button, [onclick], .pointer-class, [role="button"], .lang-btn, .nav-link-content, #close-detail, .target-node, .hamburger-btn')) {
+            if (target && target.closest && target.closest('a, button, [onclick], .pointer-class, [role="button"], .lang-btn, .nav-link-content, #close-detail, .target-node, .hamburger-btn, .logo-reticle')) {
                 customCursor.classList.add('cursor-hover');
             } else {
                 customCursor.classList.remove('cursor-hover');
@@ -3662,6 +3741,25 @@ function generateColormap() {
             customCursor.classList.remove('cursor-mini-radar');
             customCursor.style.removeProperty('--cursor-mini-size');
         };
+    })();
+
+    // Rendi il logo header cliccabile per ritornare all'inizio (chiude menu mobile e viste dettaglio/about)
+    (function() {
+        const logoReticle = document.querySelector('.logo-reticle');
+        if (logoReticle) {
+            logoReticle.addEventListener('click', () => {
+                // Chiudi menu mobile se aperto
+                const menu = document.getElementById('col-left-body');
+                if (menu && menu.classList.contains('menu-open')) {
+                    if (typeof toggleMobileMenu === 'function') toggleMobileMenu();
+                }
+                // Simula il click del pulsante close-detail per tornare alla home radar
+                const closeBtn = document.getElementById('close-detail');
+                if (closeBtn && closeBtn.style.display !== 'none') {
+                    closeBtn.click();
+                }
+            });
+        }
     })();
 </script>
 </body>
