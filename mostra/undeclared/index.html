@@ -939,7 +939,7 @@
 
 
         .hamburger-btn { display: none; background: transparent; border: none; color: #fff; cursor: pointer; padding: 8px; z-index: 1000; }
-        .mobile-hover-card, .mobile-exhibition-info { display: none; }
+        .mobile-hover-card, .mobile-exhibition-info, .mobile-welcome-cta { display: none; }
 
         /* =========================================
            RESPONSIVE — MOBILE
@@ -1090,11 +1090,60 @@
                  z-index: 50;
                  pointer-events: none;
                  font-family: 'Mostra Regular', monospace;
-                 font-size: 0.65rem;
-                 letter-spacing: 0.08em;
-                 color: rgba(255, 255, 255, 0.45);
+                 font-size: 0.76rem;
+                 letter-spacing: 0.12em;
+                 color: #ffffff;
+                 font-weight: 700;
+                 text-shadow: 0 0 4px rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.95);
                  text-transform: uppercase;
                  text-align: center;
+             }
+
+             .mobile-welcome-cta {
+                 display: flex !important;
+                 flex-direction: column;
+                 align-items: center;
+                 justify-content: center;
+                 gap: 8px;
+                 position: absolute;
+                 bottom: 5vh;
+                 left: 50%;
+                 transform: translateX(-50%);
+                 width: 90%;
+                 max-width: 320px;
+                 z-index: 60;
+                 pointer-events: none;
+                 font-family: 'Mostra Regular', monospace;
+                 font-size: 0.72rem;
+                 letter-spacing: 0.08em;
+                 color: rgba(255, 255, 255, 0.75);
+                 text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+                 animation: ctaPulse 1.8s infinite alternate ease-in-out;
+                 transition: opacity 0.4s ease, transform 0.4s ease;
+             }
+             .mobile-welcome-cta.hidden {
+                 opacity: 0 !important;
+                 transform: translate(-50%, 20px) !important;
+                 pointer-events: none;
+             }
+             @keyframes ctaPulse {
+                 0% { transform: translate(-50%, 0) scale(0.96); opacity: 0.55; }
+                 100% { transform: translate(-50%, -6px) scale(1.02); opacity: 0.95; }
+             }
+
+             .mobile-swipe-hint {
+                 font-size: 0.55rem !important;
+                 font-weight: normal !important;
+                 letter-spacing: 0.15em !important;
+                 color: rgba(255, 255, 255, 0.5) !important;
+                 text-transform: uppercase !important;
+                 margin-top: 8px;
+                 border: 0.5px solid rgba(255, 255, 255, 0.2);
+                 padding: 3px 10px;
+                 border-radius: 10px;
+                 background: rgba(0, 0, 0, 0.4);
+                 text-align: center;
+                 width: auto;
              }
 
              .mobile-hover-card {
@@ -1343,26 +1392,26 @@
                  overflow: visible !important;
              }
              .layout.detail-open .col-right {
-                 max-height: 88dvh;
-                 flex: none !important;
-                 width: 100% !important;
-                 border-radius: 0 !important; /* Completamente piatto */
-                 box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
-                 display: flex !important;
-                 z-index: 2000 !important;
-                 padding: 0 !important;
-                 overflow-y: auto !important;
-                 flex-direction: column !important;
-                 background: rgba(0, 0, 0, 0.4) !important;
-                 backdrop-filter: blur(8px) !important;
-                 -webkit-backdrop-filter: blur(8px) !important;
-             }
-             .info-panel {
+                  max-height: 88dvh;
+                  flex: none !important;
+                  width: 100% !important;
+                  border-radius: 0 !important; /* Completamente piatto */
+                  box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+                  display: flex !important;
+                  z-index: 2000 !important;
+                  padding: 0 !important;
+                  overflow-y: auto !important;
+                  flex-direction: column !important;
                   background: #000000 !important;
-                  margin: 20px 16px !important;
-                  min-height: auto !important;
-                  padding: 24px 20px !important;
+                  backdrop-filter: none !important;
+                  -webkit-backdrop-filter: none !important;
               }
+              .info-panel {
+                   background: #000000 !important;
+                   margin: 20px 16px 0 16px !important;
+                   min-height: auto !important;
+                   padding: 24px 20px 100px 20px !important;
+               }
               .info-panel-body {
                   width: 100% !important;
                   margin: 0 !important;
@@ -2005,6 +2054,13 @@
                 <span id="mobile-exh-datetime">11.07.2026 — 11:00 - 19:00</span>
             </div>
 
+            <!-- WELCOME CTA: scroll vertical indicator -->
+            <div class="mobile-welcome-cta" id="mobile-welcome-cta">
+                <span class="cta-arrow">↓</span>
+                <span class="cta-text" id="lang-welcome-cta">[ SWIPE DOWN OR DRAG TO EXPLORE ]</span>
+                <span class="cta-arrow">↓</span>
+            </div>
+
             <img src="assets/sfondo.svg?v=2" id="bg-grid-img" alt="Grid Background" />
             
             <div class="radar-wrapper" id="radar-wrapper">
@@ -2285,16 +2341,17 @@
             <img id="mob-hov-micro-img" src="" alt="" style="height: 44px; width: 44px; object-fit: contain; display:none; flex-shrink:0;">
         </div>
         <!-- RIGHT: project title SVG (top) + whatif text (bottom) -->
-        <div class="mob-hov-right">
-            <div class="mob-hov-title-row" id="mob-hov-title-wrapper"></div>
-            <div class="hover-whatif-text scramble-target glowing-text-strong" id="mob-hov-whatif"
-                 style="font-size: 0.72rem; font-weight: 1000; letter-spacing: 0.06em; line-height: 1.45;
-                        color: rgba(255,255,255,0.85); text-transform: uppercase; word-break: break-word;">
+            <div class="mob-hov-right">
+                <div class="mob-hov-title-row" id="mob-hov-title-wrapper"></div>
+                <div class="hover-whatif-text scramble-target glowing-text-strong" id="mob-hov-whatif"
+                     style="font-size: 0.72rem; font-weight: 1000; letter-spacing: 0.06em; line-height: 1.45;
+                            color: rgba(255,255,255,0.85); text-transform: uppercase; word-break: break-word;">
+                </div>
+                <div class="mobile-swipe-hint" id="mobile-swipe-hint">&larr; SWIPE TO BROWSE &rarr;</div>
+                <div class="mob-hov-image">
+                    <img id="mob-hov-img" src="" alt="Preview" style="display:none; width: 100%; height: auto; object-fit: cover; border-radius: 16px;" />
+                </div>
             </div>
-            <div class="mob-hov-image">
-                <img id="mob-hov-img" src="" alt="Preview" style="display:none; width: 100%; height: auto; object-fit: cover; border-radius: 16px;" />
-            </div>
-        </div>
     </div>
 </div>
 
@@ -2327,7 +2384,9 @@
             tr1: "> POLITECNICO DI MILANO <",
             tr2: "> SCUOLA DEL DESIGN <",
             bl1: "> DESIGN DELLA COMUNICAZIONE <",
-            bl2: "> LABORATORIO DI SINTESI FINALE C1 <"
+            bl2: "> LABORATORIO DI SINTESI FINALE C1 <",
+            welcomeCta: "[ SCORRI IN BASSO O TRASCINA PER ESPLORARE ]",
+            swipeHint: "← SCORRI LA CARD PER NAVIGARE →"
         },
         en: {
             claim: "HIGHLIGHTING HIDDEN CONFLICTS THROUGH COMMUNICATION AND SPECULATIVE DESIGN",
@@ -2345,7 +2404,9 @@
             tr1: "> POLITECNICO DI MILANO <",
             tr2: "> SCHOOL OF DESIGN <",
             bl1: "> COMMUNICATION DESIGN <",
-            bl2: "> FINAL SYNTHESIS STUDIO C1 <"
+            bl2: "> FINAL SYNTHESIS STUDIO C1 <",
+            welcomeCta: "[ SWIPE DOWN OR DRAG TO EXPLORE ]",
+            swipeHint: "← SWIPE CARD TO BROWSE →"
         }
     };
 
@@ -2411,6 +2472,12 @@
 
         const mobDatetimeEl = document.getElementById('mobile-exh-datetime');
         if (mobDatetimeEl) runScramble(mobDatetimeEl, data.datetime, 20);
+
+        const mobCtaEl = document.getElementById('lang-welcome-cta');
+        if (mobCtaEl) runScramble(mobCtaEl, data.welcomeCta, 20);
+
+        const mobSwipeEl = document.getElementById('mobile-swipe-hint');
+        if (mobSwipeEl) runScramble(mobSwipeEl, data.swipeHint, 20);
 
         // Se la detail view è aperta, aggiorna anche le scritte e i dettagli del nodo
         if (isDetailView && currentSelectedTarget) {
@@ -3258,6 +3325,10 @@ function generateColormap() {
             radarWrapper.classList.add('compact');
             requestAnimationFrame(initDimensions);
         }
+        const welcomeCta = document.getElementById('mobile-welcome-cta');
+        if (welcomeCta) {
+            welcomeCta.classList.add('hidden');
+        }
     }
 
     function unlockMobileRadar() {
@@ -3270,6 +3341,10 @@ function generateColormap() {
         }
         if (mobileHoverCard) {
             mobileHoverCard.classList.remove('visible');
+        }
+        const welcomeCta = document.getElementById('mobile-welcome-cta');
+        if (welcomeCta) {
+            welcomeCta.classList.remove('hidden');
         }
         currentSelectedTarget = null;
         lastMobileHoveredId = null;
@@ -3321,8 +3396,12 @@ function generateColormap() {
         }
         
         // MAGNETIC ON LAST: if we didn't find any node at this angle, but we already have a selected target, keep it!
-        if (!hovered && currentSelectedTarget) {
-            hovered = currentSelectedTarget;
+        if (!hovered) {
+            if (currentSelectedTarget) {
+                hovered = currentSelectedTarget;
+            } else if (mobileRadarLocked) {
+                hovered = targets[0]; // fallback
+            }
         }
         
         if (hovered) {
@@ -3848,17 +3927,38 @@ function generateColormap() {
             if (closeBtn) closeBtn.click();
             return;
         }
-        triggerDetailView();
+
+        if (_isMobileCache) {
+            ev.stopPropagation();
+            if (isDetailView) return;
+
+            if (mobileRadarLocked) {
+                // Se bloccato, toccare l'area vuota del radar esce dal focus
+                const clickedNode = ev.target.closest('.target-node');
+                if (!clickedNode) {
+                    unlockMobileRadar();
+                    return;
+                }
+            } else {
+                // Se non bloccato, toccare il radar attiva il focus e seleziona il progetto
+                lockMobileRadar();
+                updateMobileScannerFromAngle(mouseLineAngle);
+                return;
+            }
+        } else {
+            triggerDetailView();
+        }
     });
 
-    // Click outside radar wrapper to exit focus on mobile
+    // Click fuori dal radar o su sfondo per uscire dal focus su mobile
     const colCenter = document.getElementById('radar-zone');
     if (colCenter) {
         colCenter.addEventListener('click', (ev) => {
             if (_isMobileCache && mobileRadarLocked && !isDetailView) {
+                const clickedNode = ev.target.closest('.target-node');
                 const clickedRadar = ev.target.closest('.radar-wrapper');
                 const clickedCard = ev.target.closest('#mobile-hover-card');
-                if (!clickedRadar && !clickedCard) {
+                if (!clickedNode && !clickedRadar && !clickedCard) {
                     unlockMobileRadar();
                 }
             }
