@@ -2194,11 +2194,11 @@
                     <div class="info-content-box brutalist-bg">
                         <div id="overview-state" class="active">
                             <div>
-                                <div class="data-label">AMBITO:</div>
+                                <div class="data-label" id="lang-ambito-label">AMBITO:</div>
                                 <div class="data-value scramble-target" id="info-field"></div>
                             </div>
                             <div>
-                                <div class="data-label">PARTICIPANTS:</div>
+                                <div class="data-label" id="lang-participants-label">PARTICIPANTS:</div>
                                 <div class="data-value team-carousel" id="info-team">
                                     <div class="team-scroll" id="info-team-scroll"></div>
                                 </div>
@@ -2308,14 +2308,14 @@
 
                             <!-- Download Poster -->
                             <div class="about-poster-wrapper" style="text-align: center; margin-bottom: 60px;">
-                                <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; border: 1px solid rgba(255,255,255,0.3); padding: 14px 28px; display: inline-block; transition: all 0.2s;" class="hover-glow-btn">
+                                <a id="lang-download-poster" href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; border: 1px solid rgba(255,255,255,0.3); padding: 14px 28px; display: inline-block; transition: all 0.2s;" class="hover-glow-btn">
                                     [ DOWNLOAD THE POSTER ]
                                 </a>
                             </div>
 
                             <!-- Progetti Precedenti -->
                             <div class="about-prev-projects" style="text-align: center; padding-bottom: 60px; position: relative; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center;">
-                                <div style="font-size: 1.05rem; color: rgba(255,255,255,0.5); margin-bottom: 24px; letter-spacing: 0.1em;">PROGETTI PRECEDENTI</div>
+                                <div id="lang-prev-projects-label" style="font-size: 1.05rem; color: rgba(255,255,255,0.5); margin-bottom: 24px; letter-spacing: 0.1em;">PROGETTI PRECEDENTI</div>
                                 <div style="display: flex; flex-direction: column; gap: 14px;">
                                     <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; BELIEVE IT OR NOT &lt;</a>
                                     <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; RAW SCENARIOS &lt;</a>
@@ -2404,11 +2404,13 @@
             bl1: "> DESIGN DELLA COMUNICAZIONE <",
             bl2: "> LABORATORIO DI SINTESI FINALE C1 <",
             welcomeCta: "[ SCORRI IN BASSO O TRASCINA PER ESPLORARE ]",
-            swipeHint: "← SCORRI LA CARD PER NAVIGARE →"
+            swipeHint: "← SCORRI LA CARD PER NAVIGARE →",
+            downloadPoster: "[ SCARICA IL POSTER ]",
+            prevProjects: "PROGETTI PRECEDENTI"
         },
         en: {
             claim: "HIGHLIGHTING HIDDEN CONFLICTS THROUGH COMMUNICATION AND SPECULATIVE DESIGN",
-            uni: "Laboratorio di Sintesi Finale C1<br>Design Della Comunicazione<br>Scuola del Design<br>Politecnico di Milano",
+            uni: "Final Synthesis Studio C1<br>Communication Design<br>School of Design<br>Politecnico di Milano",
             about: "ABOUT",
             index: "-------",
             ig: "@ANTIDISCIPLINARYLAB",
@@ -2424,11 +2426,13 @@
             bl1: "> COMMUNICATION DESIGN <",
             bl2: "> FINAL SYNTHESIS STUDIO C1 <",
             welcomeCta: "[ SWIPE DOWN OR DRAG TO EXPLORE ]",
-            swipeHint: "← SWIPE CARD TO BROWSE →"
+            swipeHint: "← SWIPE CARD TO BROWSE →",
+            downloadPoster: "[ DOWNLOAD THE POSTER ]",
+            prevProjects: "PREVIOUS PROJECTS"
         }
     };
 
-    let currentLang = 'it';
+    let currentLang = '';
     let targets = [];
     let allowInteractions = false;
 
@@ -2497,6 +2501,18 @@
         const mobSwipeEl = document.getElementById('mobile-swipe-hint');
         if (mobSwipeEl) runScramble(mobSwipeEl, data.swipeHint, 20);
 
+        const ambitoEl = document.getElementById('lang-ambito-label');
+        if (ambitoEl) runScramble(ambitoEl, data.fieldLabel, 20);
+
+        const participantsEl = document.getElementById('lang-participants-label');
+        if (participantsEl) runScramble(participantsEl, data.teamLabel, 20);
+
+        const downloadEl = document.getElementById('lang-download-poster');
+        if (downloadEl) runScramble(downloadEl, data.downloadPoster, 20);
+
+        const prevProjEl = document.getElementById('lang-prev-projects-label');
+        if (prevProjEl) runScramble(prevProjEl, data.prevProjects, 20);
+
         // Se la detail view è aperta, aggiorna anche le scritte e i dettagli del nodo
         if (isDetailView && currentSelectedTarget) {
             const dataNode = projectData[currentSelectedTarget.id];
@@ -2524,11 +2540,22 @@
             if (aboutTxt2El) aboutTxt2El.textContent = txt2;
         }
 
-        const fieldLabelEl = document.querySelector('#overview-state .data-label');
-        if (fieldLabelEl) runScramble(fieldLabelEl, data.fieldLabel, 20);
-
-        const teamLabelEl = document.querySelector('#overview-state div:nth-child(2) .data-label');
-        if (teamLabelEl) runScramble(teamLabelEl, data.teamLabel, 20);
+        // Aggiorna le hover card e desktop overlays aperti
+        if (!isDetailView && currentSelectedTarget) {
+            const dataNode = projectData[currentSelectedTarget.id];
+            if (dataNode) {
+                const mobHovWhatif = document.getElementById('mob-hov-whatif');
+                if (mobHovWhatif) {
+                    const whatifText = lang === 'it' ? (dataNode.whatif_it || dataNode.whatif_en) : (dataNode.whatif_en || dataNode.whatif_it);
+                    runScramble(mobHovWhatif, whatifText || "", 20);
+                }
+                const hovWhatif = document.getElementById('hov-whatif');
+                if (hovWhatif) {
+                    const whatifText = lang === 'it' ? (dataNode.whatif_it || dataNode.whatif_en) : (dataNode.whatif_en || dataNode.whatif_it);
+                    runScramble(hovWhatif, whatifText || "", 20);
+                }
+            }
+        }
 
         const groupLabelEl = document.getElementById('lang-detail-group-label');
         if (groupLabelEl) runScramble(groupLabelEl, data.groupLabel, 20);
@@ -4017,8 +4044,12 @@ function generateColormap() {
             
             if (colRight) colRight.classList.remove('about-mode');
 
-            // Ripristina radar solo su desktop (su mobile non era miniaturizzato)
-            if (radarWrapper && !isMobile()) restoreRadar(radarWrapper);
+            // Ripristina stato radar/layout in base al device
+            if (isMobile()) {
+                unlockMobileRadar();
+            } else {
+                if (radarWrapper) restoreRadar(radarWrapper);
+            }
             if (colRight) colRight.classList.remove('visible');
             if (layout) layout.classList.remove('detail-open');
             // Rimuovi eventuale stile About e ripristina titolo progetti
@@ -4447,6 +4478,9 @@ function generateColormap() {
             });
         }
     })();
+
+    // Inizializza lingua di default all'avvio
+    setLanguage('it');
 </script>
 </body>
 </html>
