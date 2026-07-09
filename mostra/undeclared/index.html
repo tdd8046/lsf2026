@@ -82,7 +82,6 @@
         .meta-row:hover .date-time-label,
         .close-detail:hover,
         .glowing-text-strong,
-        .detail-focus,
         #info-group-val {
             text-shadow: var(--strong-glow) !important;
             opacity: 1 !important;
@@ -149,11 +148,11 @@
         .ticker-wrap {
             box-sizing: border-box;
             width: calc(100% - 12px);
-            margin: 0 6px 12px 6px;
+            margin: -0.05rem 6px 0.8rem 6px !important;
             overflow: hidden;
             white-space: nowrap;
             box-shadow: none;
-            padding: 8px 0;
+            padding: 6px 0 !important;
             display: flex;
             align-items: center;
         }
@@ -505,33 +504,31 @@
             width: 0;
             height: 0;
             border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 1);
+            border: 1px solid rgba(255, 255, 255, 0.65);
             transform: translate(-50%, -50%);
             opacity: 0;
             pointer-events: none;
             z-index: 11;
-            animation: radarSonarWave 12s cubic-bezier(0.2, 0.8, 0.3, 1) infinite;
+            animation: radarSonarWave 16s cubic-bezier(0.1, 0.8, 0.25, 1) infinite;
+        }
+        .radar-sonar-wave-2 {
+            animation-delay: 5.33s;
+        }
+        .radar-sonar-wave-3 {
+            animation-delay: 10.66s;
         }
         @keyframes radarSonarWave {
             0% {
-                width: 0;
-                height: 0;
+                width: 0%;
+                height: 0%;
                 opacity: 0;
             }
-            15% {
-                opacity: 0.55;
-            }
-            65% {
-                width: 90%;
-                height: 90%;
-                opacity: 0.35;
-            }
-            85% {
-                opacity: 0.16;
+            8% {
+                opacity: 0.6;
             }
             100% {
-                width: 90%;
-                height: 90%;
+                width: 96%;
+                height: 96%;
                 opacity: 0;
             }
         }
@@ -565,7 +562,7 @@
         .radar-center-dot { position: absolute; top: 50%; left: 50%; width: 5px; height: 5px; background: #fff; transform: translate(-50%, -50%); border-radius: 50%; z-index: 20; }
         .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 100%); transform-origin: left center; pointer-events: none; z-index: 15; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
         #sweep-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 14; filter: blur(14px); opacity: 0.85; }
-        .target-node { position: absolute; width: 60px; height: 60px; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.2s ease, filter 0.2s ease; display: flex; align-items: center; justify-content: center; border-radius: 50%; z-index: 25; pointer-events: auto; contain: layout style; }
+        .target-node { position: absolute; width: 60px; height: 60px; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.2s ease, filter 0.2s ease; display: flex; align-items: center; justify-content: center; border-radius: 50%; z-index: 25; pointer-events: auto; }
         .target-node img {
             width: 86%;
             height: 86%;
@@ -663,7 +660,7 @@
          .info-badge svg { width: 24px; height: 24px; stroke: #fff; fill: none; }
          .dotted-id { border-bottom: 2px dotted #fff; padding-bottom: 2px; line-height: 1; }
  
-         .info-title-box { border: none; padding: 20px 20px 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; min-height: auto; background: transparent; gap: 10px; }
+         .info-title-box { border: none; padding: 20px 0 0 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; min-height: auto; background: transparent; gap: 10px; }
          .info-title-svg-container { width: 100%; height: 40px !important; display: flex; justify-content: flex-start; align-items: center; }
          .info-title-svg-container img { width: auto !important; height: 40px !important; max-width: 100% !important; object-fit: contain !important; object-position: left center !important; filter: brightness(0) invert(1); }
  
@@ -728,8 +725,7 @@
         }
         .team-carousel .team-scroll::after,
         .group-carousel .group-scroll::after {
-            content: '';
-            flex: 0 0 1rem;
+            display: none;
         }
         .group-carousel {
             padding: 0;
@@ -738,20 +734,28 @@
             box-shadow: none;
             backdrop-filter: none;
             border-radius: 0;
+            overflow: visible;
         }
         .group-carousel::before {
             display: none;
         }
         .group-carousel .group-scroll {
-            animation-name: group-scroll;
-            gap: 1.1rem;
+            display: block;
+            white-space: normal;
+            gap: 0;
+            padding: 0.25rem 0;
+            animation: none !important;
         }
         .group-carousel .group-scroll span {
+            display: block;
             color: #fff;
             text-transform: none;
             font-weight: 900;
             letter-spacing: 0.08em;
             filter: none;
+            margin-bottom: 4px;
+            font-size: 1.15rem;
+            line-height: 1.4;
         }
         @keyframes team-scroll {
             0% { transform: translateX(0); }
@@ -821,9 +825,7 @@
             display: block;
             z-index: 1;
         }
-        .media-slot:hover img.detail-img {
-            transform: scale(1.02);
-        }
+
         .media-slot video.detail-video {
             position: relative;
             width: 100% !important;
@@ -851,7 +853,7 @@
             border-bottom: 1px dashed rgba(255, 255, 255, 0.25);
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(255,255,255,0.7), 0 0 20px rgba(255,255,255,0.4);
+            text-shadow: none !important;
         }
         .detail-text-block {
             font-size: 0.88rem;
@@ -871,36 +873,109 @@
             padding-top: 16px;
         }
 
-        /* ENTRY OVERLAY */
         .entry-overlay {
             position: absolute; inset: 0; display:flex; align-items:center; justify-content:center;
             background: #000;
-            z-index: 9999; pointer-events: none; transition: opacity 700ms ease;
+            z-index: 9999; pointer-events: auto; cursor: pointer; transition: opacity 700ms ease;
+            overflow: hidden;
         }
-        .entry-logo-svg-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: clamp(6px, 1.2vw, 14px);
-            width: 90%;
-            max-width: 750px;
-            height: auto;
-            user-select: none;
-            opacity: 0;
-            transition: opacity 300ms ease;
-        }
-        .letter-cell {
-            height: clamp(12px, 2.8vw, 30px);
-            width: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: aspect-ratio 35ms ease;
-        }
-        .letter-cell svg {
-            width: auto;
+        .entry-video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            fill: #fff;
+            object-fit: cover;
+            z-index: 1;
+            opacity: 0.65; /* mysterious background overlay effect */
+            pointer-events: none;
+        }
+        .entry-logo-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 60px;
+            max-width: 90%;
+            width: 750px;
+            box-sizing: border-box;
+        }
+        .entry-logo-img {
+            width: 100%;
+            height: auto;
+            filter: brightness(0) invert(1);
+            opacity: 0;
+            animation: logoFadeIn 1.2s forwards ease-out;
+        }
+        .entry-brackets {
+            position: absolute;
+            inset: 0 10px; /* brackets start a bit wider */
+            pointer-events: none;
+            background:
+                /* LEFT BRACKET */
+                linear-gradient(white, white) left center / 2px 48px no-repeat,
+                linear-gradient(white, white) left center / 15px 2px no-repeat,
+                linear-gradient(white, white) 6px center / 1px 24px no-repeat,
+                /* RIGHT BRACKET */
+                linear-gradient(white, white) right center / 2px 48px no-repeat,
+                linear-gradient(white, white) right center / 15px 2px no-repeat,
+                linear-gradient(white, white) calc(100% - 6px) center / 1px 24px no-repeat;
+            animation: bracketConstrict 1.8s forwards cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .entry-logo-img {
+            width: 100%;
+            height: auto;
+            filter: brightness(0) invert(1);
+            opacity: 0;
+            animation: logoFadeIn 1.3s forwards cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes logoFadeIn {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.96); 
+            }
+            50% { 
+                opacity: 0.4; 
+                transform: scale(0.98); 
+            }
+            85% { 
+                opacity: 0.9; 
+                transform: scale(1.01); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1); 
+            }
+        }
+        
+        @keyframes bracketConstrict {
+            0% {
+                opacity: 0;
+                inset: -30px -50px;
+            }
+            15% {
+                opacity: 0.8;
+                inset: -30px -50px;
+            }
+            25% {
+                opacity: 0.2;
+                inset: -30px -50px; /* rapid lock search flash */
+            }
+            35% {
+                opacity: 1;
+                inset: -30px -50px;
+            }
+            75% {
+                opacity: 1;
+                inset: 0 20px; /* slides inward rapidly and locks */
+            }
+            100% {
+                opacity: 0.95;
+                inset: 0 20px; /* settled solid lock */
+            }
         }
 
          .close-detail {
@@ -951,17 +1026,9 @@
             }
             .target-node.hovered {
                 opacity: 1 !important;
-                filter: 
-                drop-shadow(0 0 10px #fff) 
-                drop-shadow(0 0 20px #fff) 
-                drop-shadow(0 0 35px rgba(255, 255, 255, 0.85)) !important;
             }
             .target-node.selected {
                 opacity: 1 !important;
-                filter: 
-                drop-shadow(0 0 12px #fff) 
-                drop-shadow(0 0 24px #fff) 
-                drop-shadow(0 0 40px rgba(255, 255, 255, 0.85)) !important;
             }
             .target-node.selected::before {
                 width: 44px !important;
@@ -970,22 +1037,22 @@
             .layout { flex-direction: column !important; }
 
             .col-left-header-bar {
-                height: 44px !important;
+                height: 2.2rem !important;
                 width: 100% !important;
                 position: relative !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                padding: 0 16px 0 16px !important;
+                padding: 0 1rem !important;
                 box-sizing: border-box !important;
                 z-index: 1300 !important;
-                min-height: 44px !important;
+                min-height: 2.2rem !important;
             }
 
             .hamburger-btn {
                 display: block !important;
                 position: absolute !important;
-                right: 10px !important;
+                right: 0.6rem !important;
                 top: 50% !important;
                 transform: translateY(-50%) !important;
                 z-index: 1300 !important;
@@ -993,28 +1060,28 @@
                 border: none;
                 color: #fff;
                 cursor: pointer;
-                padding: 8px;
+                padding: 0.5rem;
             }
 
             .ticker-wrap {
                 box-sizing: border-box !important;
                 width: 100% !important;
-                margin: 0 !important;
+                margin: -0.1rem 0 0 0 !important;
                 overflow: hidden !important;
                 white-space: nowrap !important;
                 box-shadow: none !important;
-                padding: 8px 0 !important;
+                padding: 0.1rem 0 !important;
                 display: flex !important;
                 align-items: center !important;
                 border: none !important;
             }
 
             .logo-reticle {
-                width: min(100%, calc(100% - 80px)) !important;
-                max-width: 320px !important;
-                min-height: 56px !important;
-                height: 56px !important;
-                padding: 12px 18px !important;
+                width: min(100%, calc(100% - 5rem)) !important;
+                max-width: 20rem !important;
+                min-height: 1.8rem !important;
+                height: 1.8rem !important;
+                padding: 0 0.8rem !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
@@ -1030,13 +1097,13 @@
                 z-index: 1 !important;
                 background:
                     /* LEFT BRACKET */
-                    linear-gradient(white, white) left center / 0.5px 24px no-repeat,
-                    linear-gradient(white, white) left center / 8px 0.5px no-repeat,
-                    linear-gradient(white, white) 3px center / 0.5px 12px no-repeat,
+                    linear-gradient(white, white) left center / 0.06rem 1.5rem no-repeat,
+                    linear-gradient(white, white) left center / 0.5rem 0.06rem no-repeat,
+                    linear-gradient(white, white) 0.18rem center / 0.06rem 0.75rem no-repeat,
                     /* RIGHT BRACKET */
-                    linear-gradient(white, white) right center / 0.5px 24px no-repeat,
-                    linear-gradient(white, white) right center / 8px 0.5px no-repeat,
-                    linear-gradient(white, white) calc(100% - 3px) center / 0.5px 12px no-repeat !important;
+                    linear-gradient(white, white) right center / 0.06rem 1.5rem no-repeat,
+                    linear-gradient(white, white) right center / 0.5rem 0.06rem no-repeat,
+                    linear-gradient(white, white) calc(100% - 0.18rem) center / 0.06rem 0.75rem no-repeat !important;
                 opacity: 0.8 !important;
             }
 
@@ -1067,37 +1134,64 @@
                 height: 100%;
                 height: 100dvh;
                 background: rgba(0, 0, 0, 0.97);
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
+                backdrop-filter: blur(0.6rem);
+                -webkit-backdrop-filter: blur(0.6rem);
                 z-index: 1200;
-                /* padding-top: lascia spazio alla header (44px bar + ticker mobile) */
-                padding: 96px 24px 24px 24px;
+                /* padding-top: lascia spazio alla header (2.2rem bar + ticker mobile) */
+                padding: 4.8rem 1.5rem 1.5rem 1.5rem;
                 flex-direction: column;
                 overflow-y: auto;
             }
             .col-left-body.menu-open { display: flex !important; }
-            
-             .mobile-exhibition-info {
-                 display: flex !important;
-                 flex-direction: column;
-                 align-items: center;
-                 justify-content: center;
-                 gap: 4px;
-                 position: absolute;
-                 top: 15px;
-                 left: 0;
-                 right: 0;
-                 z-index: 50;
-                 pointer-events: none;
-                 font-family: 'Mostra Regular', monospace;
-                 font-size: 0.76rem;
-                 letter-spacing: 0.12em;
-                 color: #ffffff;
-                 font-weight: 700;
-                 text-shadow: 0 0 4px rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.95);
-                 text-transform: uppercase;
-                 text-align: center;
-                 transition: opacity 0.4s ease, transform 0.4s ease;
+            .mobile-welcome-cta {
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                position: absolute;
+                bottom: 5vh;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 390px;
+                z-index: 60;
+                pointer-events: none;
+                font-family: 'Mostra Regular', monospace;
+                font-size: 0.84rem;
+                letter-spacing: 0.08em;
+                color: #ffffff !important;
+                text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+                transition: opacity 0.4s ease, transform 0.4s ease;
+                text-align: center;
+            }
+            .mobile-welcome-cta.hidden {
+                opacity: 0 !important;
+                transform: translate(-50%, 20px) !important;
+                pointer-events: none;
+            }
+            .mobile-swipe-hint { display: none !important; }
+            .mobile-exhibition-info {
+                  display: flex !important;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 4px;
+                  position: absolute;
+                  top: 15px;
+                  left: 0;
+                  right: 0;
+                  z-index: 50;
+                  pointer-events: none;
+                  font-family: 'Mostra Regular', monospace;
+                  font-size: 0.76rem;
+                  letter-spacing: 0.12em;
+                  color: #ffffff;
+                  font-weight: 700;
+                  text-shadow: 0 0 4px rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.95);
+                  text-transform: uppercase;
+                  text-align: center;
+                  transition: opacity 0.4s ease, transform 0.4s ease;
              }
              .mobile-exhibition-info.hidden {
                  opacity: 0 !important;
@@ -1105,66 +1199,12 @@
                  pointer-events: none;
              }
 
-             .mobile-welcome-cta {
-                 display: flex !important;
-                 flex-direction: column;
-                 align-items: center;
-                 justify-content: center;
-                 gap: 8px;
-                 position: absolute;
-                 bottom: 5vh;
-                 left: 50%;
-                 transform: translateX(-50%);
-                 width: 90%;
-                 max-width: 390px;
-                 z-index: 60;
-                 pointer-events: none;
-                 font-family: 'Mostra Regular', monospace;
-                 font-size: 0.84rem;
-                 letter-spacing: 0.08em;
-                 color: #ffffff !important;
-                 text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
-                 transition: opacity 0.4s ease, transform 0.4s ease;
-                 text-align: center;
-             }
-             .mobile-welcome-cta.hidden {
-                 opacity: 0 !important;
-                 transform: translate(-50%, 20px) !important;
-                 pointer-events: none;
-             }
-
-             .mobile-swipe-hint {
-                 display: flex !important;
-                 flex-direction: column;
-                 align-items: center;
-                 justify-content: center;
-                 gap: 8px;
-                 position: fixed;
-                 bottom: -80px;
-                 left: 50%;
-                 transform: translateX(-50%);
-                 width: 90%;
-                 max-width: 390px;
-                 z-index: 840;
-                 pointer-events: none;
-                 font-family: 'Mostra Regular', monospace;
-                 font-size: 0.84rem;
-                 letter-spacing: 0.08em;
-                 color: #ffffff !important;
-                 text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
-                 transition: bottom 0.4s cubic-bezier(.2,.9,.2,1), opacity 0.4s ease;
-                 text-align: center;
-             }
-             .mobile-swipe-hint.visible {
-                 bottom: 258px;
-             }
-
              .mobile-hover-card {
                  display: flex; flex-direction: row; align-items: stretch;
                  position: fixed; bottom: -280px; left: 12px; right: 12px;
-                 background: rgba(0, 0, 0, 0.18) !important;
-                 border: 1px solid rgba(255,255,255,0.14) !important;
-                 border-radius: 20px !important;
+                 background: rgba(0, 0, 0, 0.22) !important;
+                 border: none !important;
+                 border-radius: 0 !important;
                  padding: 0 !important;
                  z-index: 850;
                  transition: bottom 0.4s cubic-bezier(.2,.9,.2,1), background 0.3s ease;
@@ -1175,9 +1215,6 @@
                  pointer-events: auto;
                  backdrop-filter: blur(16px);
                  -webkit-backdrop-filter: blur(16px);
-             }
-             .mobile-hover-card::before, .mobile-hover-card::after {
-                 display: none !important;
              }
              .mobile-hover-card.visible { bottom: 14px; }
              /* LEFT: micro-logo square */
@@ -1196,56 +1233,62 @@
                  background: rgba(0,0,0,0.75);
              }
              #mob-hov-micro-img {
-                 height: 70px !important;
-                 width: 70px !important;
-                 object-fit: contain;
-             }
-             /* RIGHT: title + whatif stacked — con immagine come background */
-             .mob-hov-right {
-                 flex: 1;
-                 display: flex;
-                 flex-direction: column;
-                 justify-content: center;
-                 align-items: center;
-                 padding: 20px 24px;
-                 box-sizing: border-box;
-                 min-width: 0;
-                 gap: 12px;
-                 background-size: cover;
-                 background-position: center;
-                 background-repeat: no-repeat;
-                 position: relative;
-                 overflow: hidden;
-             }
-             .mob-hov-right::before {
-                 content: '';
-                 position: absolute;
-                 top: 0; left: 0; right: 0; bottom: 0;
-                 background: rgba(0, 0, 0, 0.45);
-                 pointer-events: none;
-                 border-radius: 0 20px 20px 0;
-                 z-index: 1;
-             }
-             .mob-hov-right > * {
-                 position: relative;
-                 z-index: 2;
-             }
-             .mob-hov-title-row {
-                 display: flex;
-                 align-items: center;
-                 justify-content: center;
-                 height: 28px !important;
-                 width: 100%;
-                 overflow: hidden;
-                 margin-bottom: 6px;
-             }
-             .mob-hov-title-row img {
-                 height: 24px !important;
-                 width: auto !important;
-                 max-width: 100% !important;
-                 object-fit: contain !important;
-                 filter: brightness(0) invert(1);
-             }
+                  height: 70px !important;
+                  width: 70px !important;
+                  object-fit: contain;
+                  padding: 12px !important;
+                  box-sizing: content-box !important;
+              }
+              /* RIGHT: title + whatif stacked — con immagine come background */
+              .mob-hov-right {
+                  flex: 1;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                  align-items: center;
+                  padding: 20px 24px;
+                  box-sizing: border-box;
+                  min-width: 0;
+                  gap: 12px;
+                  background-size: cover;
+                  background-position: center;
+                  background-repeat: no-repeat;
+                  position: relative;
+                  overflow: visible !important;
+              }
+              .mob-hov-right::before {
+                  content: '';
+                  position: absolute;
+                  top: 0; left: 0; right: 0; bottom: 0;
+                  background: rgba(0, 0, 0, 0.45);
+                  pointer-events: none;
+                  border-radius: 0 !important;
+                  z-index: 1;
+              }
+              .mob-hov-right > * {
+                  position: relative;
+                  z-index: 2;
+              }
+              .mob-hov-title-row {
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: auto !important;
+                  min-height: 28px;
+                  width: 100%;
+                  overflow: visible !important;
+                  margin-bottom: 6px;
+              }
+              .mob-hov-title-row img {
+                  max-height: 20px !important;
+                  max-width: 180px !important;
+                  width: auto !important;
+                  height: auto !important;
+                  object-fit: contain !important;
+                  filter: brightness(0) invert(1);
+                  padding: 8px !important;
+                  box-sizing: content-box !important;
+              }
              #mob-hov-whatif {
                  font-size: 0.85rem !important;
                  font-weight: 800 !important;
@@ -1291,7 +1334,7 @@
                 justify-content: center !important;
             }
             .logo-png {
-                width: 242px !important;
+                width: 14.5rem !important;
                 height: auto !important;
                 aspect-ratio: 605.53 / 25.78 !important;
                 margin-bottom: 0 !important;
@@ -1305,8 +1348,8 @@
 
             .ticker-wrap {
                 width: 100% !important;
-                margin: 0 !important;
-                padding: 6px 0 !important;
+                margin: -0.1rem 0 0 0 !important;
+                padding: 0.1rem 0 !important;
                 border-bottom: none !important;
                 border-top: none !important;
                 box-sizing: border-box !important;
@@ -1314,9 +1357,9 @@
             .nav-links {
                 display: flex !important;
                 flex-direction: column !important;
-                gap: 24px !important;
-                margin-top: 20px !important;
-                margin-bottom: 30px !important;
+                gap: 1.5rem !important;
+                margin-top: 1.25rem !important;
+                margin-bottom: 2rem !important;
                 font-size: 1.15rem !important;
                 padding: 0 !important;
                 list-style: none !important;
@@ -1346,12 +1389,12 @@
                 justify-content: center !important;
             }
             .radar-wrapper {
-                --radar-size: min(93vw, 62svh) !important;
+                --radar-size: min(90vw, 50svh) !important;
                 width: var(--radar-size) !important;
                 height: var(--radar-size) !important;
                 position: absolute !important;
                 left: 50% !important;
-                top: 12vh !important;
+                top: 90px !important;
                 transform: translate3d(-50%, 0, 0) !important;
                 will-change: transform;
                 margin: 0 !important;
@@ -1361,9 +1404,9 @@
                 z-index: 10 !important;
             }
             .radar-wrapper.compact {
-                top: 4vh !important;
+                top: 20px !important;
                 transform: translate3d(-50%, 0, 0) !important;
-                width: min(75vw, 35dvh) !important;
+                width: min(82vw, 42dvh) !important;
                 height: auto !important;
                 aspect-ratio: 1 / 1 !important;
             }
@@ -1428,18 +1471,33 @@
               }
               .info-panel {
                    background: #000000 !important;
-                   margin: 20px 16px 0 16px !important;
-                   min-height: auto !important;
+                   margin: 12px 12px 24px 12px !important;
+                   min-height: unset !important;
                    height: auto !important;
-                   padding: 24px 20px 100px 20px !important;
+                   padding: 24px 20px 24px 20px !important;
+                   box-sizing: border-box !important;
+                   display: block !important;
                }
               .info-panel-body {
                   width: 100% !important;
                   margin: 0 !important;
                   gap: 12px !important;
+                  height: auto !important;
+                  min-height: 100% !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  overflow: visible !important;
               }
               .info-title-box {
                   padding: 0 0 12px 0 !important;
+              }
+              .info-title-svg-container img {
+                  max-height: 28px !important;
+                  max-width: calc(100% - 50px) !important;
+                  width: auto !important;
+                  height: auto !important;
+                  object-fit: contain !important;
+                  object-position: left center !important;
               }
               .info-content-box {
                   font-size: 1rem !important;
@@ -1448,12 +1506,13 @@
                   padding: 10px 0 !important;
               }
               .info-panel.about-panel {
-                  margin: 20px 16px !important;
-                  padding: 24px 20px !important;
+                  margin: 12px 12px 24px 12px !important;
+                  padding: 24px 20px 24px 20px !important;
                   width: auto !important;
                   max-width: none !important;
                   height: auto !important;
-                  min-height: auto !important;
+                  min-height: unset !important;
+                  display: block !important;
               }
               .col-right.about-mode {
                   width: 100% !important;
@@ -1498,6 +1557,10 @@
                   font-size: 0.85rem !important;
                   margin-bottom: 12px !important;
               }
+              .credits-grid {
+                  grid-template-columns: 1fr !important;
+                  gap: 30px !important;
+              }
               .close-detail { top: 12px; right: 12px; font-size: 1.1rem; }
               .info-badge { font-size: 1.1rem; }
 
@@ -1538,10 +1601,10 @@
                   font-size: 1rem !important;
               }
             .logo-reticle {
-                min-height: 40px !important;
-                height: 40px !important;
+                min-height: 1.8rem !important;
+                height: 1.8rem !important;
                 margin: 0 !important;
-                padding: 0 14px !important;
+                padding: 0 0.8rem !important;
                 border: none !important;
                 background: transparent !important;
                 display: flex !important;
@@ -1629,12 +1692,13 @@
         .logo-reticle {
             position: relative;
             background: #000;
-            padding: 16px 24px;
-            margin: 0 0 12px 0; /* Increased spacing for better separation */
+            padding: 0.5rem 1.5rem !important;
+            margin: 0 0 0.2rem 0 !important;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 60px;
+            min-height: auto !important;
+            height: 2.8rem !important;
             z-index: 1000;
             cursor: pointer;
         }
@@ -1980,17 +2044,10 @@
 
 <div class="fisheye-bezel">
     <div class="entry-overlay" aria-hidden="true">
-        <div id="entry-logo-svg-wrap" class="entry-logo-svg-wrap">
-            <div class="letter-cell"><svg><use></use></svg></div>
-            <div class="letter-cell"><svg><use></use></svg></div>
-            <div class="letter-cell"><svg><use></use></svg></div>
-            <div class="letter-cell"><svg><use></use></svg></div>
-            <div class="letter-cell"><svg><use></use></svg></div>
-            <div class="letter-cell"><svg><use></use></svg></div>
-            <div class="letter-cell"><svg><use></use></svg></div>
-            <div class="letter-cell"><svg><use></use></svg></div>
-            <div class="letter-cell"><svg><use></use></svg></div>
-            <div class="letter-cell"><svg><use></use></svg></div>
+        <video class="entry-video-bg" src="assets/videos/coming_soon_bg.mp4" loop muted playsinline autoplay></video>
+        <div class="entry-logo-container">
+            <div class="entry-brackets"></div>
+            <img src="archive/Risorsa_1_root.svg" alt="UNDECLARED" class="entry-logo-img">
         </div>
     </div>
     <div class="layout">
@@ -2089,6 +2146,8 @@
                     <canvas id="display-canvas" style="position: absolute; top:0; left:0; width:100%; height:100%; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, black 90%, transparent 93%); mask-image: radial-gradient(closest-side, black 90%, transparent 93%);"></canvas>
                     <div class="radar-hud">
                         <div class="radar-sonar-wave"></div>
+                        <div class="radar-sonar-wave radar-sonar-wave-2"></div>
+                        <div class="radar-sonar-wave radar-sonar-wave-3"></div>
                         <svg id="Livello_2" data-name="Livello 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1567.11 1521.33" width="100%" height="100%" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
                           <defs>
                             <style>
@@ -2313,18 +2372,122 @@
 
                             <!-- Download Poster -->
                             <div class="about-poster-wrapper" style="text-align: center; margin-bottom: 60px;">
-                                <a id="lang-download-poster" href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; border: 1px solid rgba(255,255,255,0.3); padding: 14px 28px; display: inline-block; transition: all 0.2s;" class="hover-glow-btn">
+                                <a id="lang-download-poster" href="assets/poster.pdf" download style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; border: 1px solid rgba(255,255,255,0.3); padding: 14px 28px; display: inline-block; transition: all 0.2s;" class="hover-glow-btn">
                                     [ DOWNLOAD THE POSTER ]
                                 </a>
                             </div>
 
+                            <!-- Credits Section -->
+                            <div class="about-credits" style="width: 100%; max-width: 900px; margin: 40px auto 60px auto; text-align: left; color: #fff; font-family: 'Mostra Regular', monospace; box-sizing: border-box; padding: 0 20px;">
+                                <!-- Header info -->
+                                <div style="margin-bottom: 40px; border-left: 2px solid #fff; padding-left: 15px;">
+                                    <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0 0 6px 0; letter-spacing: 0.05em; text-transform: uppercase;">Laboratorio di Sintesi Finale C1</h3>
+                                    <p style="font-size: 0.88rem; margin: 0; color: rgba(255,255,255,0.7); line-height: 1.5; letter-spacing: 0.02em;">
+                                        Corso di Laurea in Design della Comunicazione<br>
+                                        Scuola del Design / Politecnico di Milano<br>
+                                        A.A. 2024/2025
+                                    </p>
+                                </div>
+                                
+                                <!-- Grid columns -->
+                                <div class="credits-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px 30px; width: 100%;">
+                                    <!-- Col 1 -->
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 900; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 6px;">Professori</h4>
+                                        <p style="font-size: 0.85rem; margin: 0; line-height: 1.7; color: rgba(255,255,255,0.8);">
+                                            Francesco E. Guida<br>
+                                            Pietro Buffa di Castelalto<br>
+                                            Alessandro Masserdotti<br>
+                                            Giacomo Scandolara
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 900; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 6px;">Assistenti alla didattica</h4>
+                                        <p style="font-size: 0.85rem; margin: 0; line-height: 1.7; color: rgba(255,255,255,0.8);">
+                                            Marcello J. Biffi<br>
+                                            Davide Bruno<br>
+                                            Pietro Forino<br>
+                                            Martina Esposito<br>
+                                            Enrico Isidori<br>
+                                            Claudia Tranti
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 900; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 6px;">Project Manager</h4>
+                                        <p style="font-size: 0.85rem; margin: 0; line-height: 1.7; color: rgba(255,255,255,0.8);">
+                                            Chiara Preialmini<br>
+                                            Chiara Sisto
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Col 2 -->
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 900; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 6px;">Graphic Design</h4>
+                                        <p style="font-size: 0.85rem; margin: 0; line-height: 1.7; color: rgba(255,255,255,0.8);">
+                                            Giulia Rossi<br>
+                                            Renata Romagnuolo<br>
+                                            Andrea Torriani<br>
+                                            Francesca Bianchi<br>
+                                            Giorgia Galenda
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 900; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 6px;">Exhibition Design</h4>
+                                        <p style="font-size: 0.85rem; margin: 0; line-height: 1.7; color: rgba(255,255,255,0.8);">
+                                            Elisa Buonaiuti<br>
+                                            Elia Caccia<br>
+                                            Alice Torzoni<br>
+                                            Giulia Roberti<br>
+                                            Greta Piccioli
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 900; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 6px;">Contenuti</h4>
+                                        <p style="font-size: 0.85rem; margin: 0; line-height: 1.7; color: rgba(255,255,255,0.8);">
+                                            Marco Delbue
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Col 3 -->
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 900; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 6px;">Foto e Video</h4>
+                                        <p style="font-size: 0.85rem; margin: 0; line-height: 1.7; color: rgba(255,255,255,0.8);">
+                                            Giulia Ferrari<br>
+                                            Andrea Ferrario<br>
+                                            Pietro Zanotto
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 900; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 6px;">Social Media</h4>
+                                        <p style="font-size: 0.85rem; margin: 0; line-height: 1.7; color: rgba(255,255,255,0.8);">
+                                            Tommaso Boccaletti<br>
+                                            Jessica Pace<br>
+                                            Viola Ambrosini<br>
+                                            Reinier Villanueva
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 900; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 6px;">Sito web</h4>
+                                        <p style="font-size: 0.85rem; margin: 0; line-height: 1.7; color: rgba(255,255,255,0.8);">
+                                            Filippo Mirandola<br>
+                                            Federico Morsia
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Progetti Precedenti -->
-                            <div class="about-prev-projects" style="text-align: center; padding-bottom: 60px; position: relative; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center;">
-                                <div id="lang-prev-projects-label" style="font-size: 1.05rem; color: rgba(255,255,255,0.5); margin-bottom: 24px; letter-spacing: 0.1em;">PROGETTI PRECEDENTI</div>
-                                <div style="display: flex; flex-direction: column; gap: 14px;">
-                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; BELIEVE IT OR NOT &lt;</a>
-                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; RAW SCENARIOS &lt;</a>
-                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; ANTHROPOGENIC NARRATIVES &lt;</a>
+                            <div class="about-prev-projects" style="text-align: center; padding-bottom: 60px; position: relative; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; padding: 0 20px;">
+                                <div id="lang-prev-projects-label" style="font-size: 1.05rem; color: rgba(255,255,255,0.5); margin-bottom: 24px; letter-spacing: 0.1em; text-transform: uppercase;">Edizioni Precedenti</div>
+                                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 28px; max-width: 800px; width: 100%;">
+                                    <a href="http://whatif.antidisciplinarylab.it/" target="_blank" style="color: #fff; text-decoration: none; font-size: 1.05rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; WHAT IF &lt;</a>
+                                    <a href="http://rawscenarios.antidisciplinarylab.it/index.html" target="_blank" style="color: #fff; text-decoration: none; font-size: 1.05rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; RAW SCENARIOS &lt;</a>
+                                    <a href="http://anthropogenicnarratives.antidisciplinarylab.it/index.html" target="_blank" style="color: #fff; text-decoration: none; font-size: 1.05rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; ANTHROPOGENIC NARRATIVES &lt;</a>
+                                    <a href="http://fattididati.antidisciplinarylab.it/home.html" target="_blank" style="color: #fff; text-decoration: none; font-size: 1.05rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; FATTI DI DATI &lt;</a>
+                                    <a href="http://retuals.antidisciplinarylab.it/" target="_blank" style="color: #fff; text-decoration: none; font-size: 1.05rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; RETUALS &lt;</a>
+                                    <a href="http://morte13.antidisciplinarylab.it/" target="_blank" style="color: #fff; text-decoration: none; font-size: 1.05rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; MORTE13 &lt;</a>
+                                    <a href="http://humans.antidisciplinarylab.it/" target="_blank" style="color: #fff; text-decoration: none; font-size: 1.05rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; HUMANS &lt;</a>
+                                    <a href="http://wordsworks.antidisciplinarylab.it/" target="_blank" style="color: #fff; text-decoration: none; font-size: 1.05rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; WORDS WORKS &lt;</a>
                                 </div>
                             </div>
                         </div>
@@ -2372,7 +2535,7 @@
                             color: rgba(255,255,255,0.85); text-transform: uppercase; word-break: break-word;">
                 </div>
                 <div class="mob-hov-image">
-                    <img id="mob-hov-img" src="" alt="Preview" style="display:none; width: 100%; height: auto; object-fit: cover; border-radius: 16px;" />
+                    <img id="mob-hov-img" src="" alt="Preview" style="display:none; width: 100%; height: auto; object-fit: cover; border-radius: 0;" />
                 </div>
             </div>
     </div>
@@ -2402,14 +2565,14 @@
             fieldLabel: "AMBITO:",
             teamLabel: "PARTECIPANTI:",
             groupLabel: "GRUPPO:",
-            aboutText1: "Quest'anno l'evento/mostra di presentazione dei progetti realizzati nel Laboratorio di Sintesi Finale C1 del Corso di Laurea in Design della Comunicazione, Scuola del Design, Politecnico di Milano (a.a. 2024-2025, prof. Francesco E. Guida, Pietro Buffa di Castelalto, Alessandro Masserdotti e Giacomo Scandolara), si tiene il 14 giugno 2025 presso Dotdotdot (via Tertulliano 68, Milano, dalle 11 alle 19).",
-            aboutText2: "Believe It or Not presenta 11 progetti di design della comunicazione, 11 macchine comunicative, 11 scenari speculativi. 11 progetti che raccontano realtà possibili basate su teorie del complotto, usate come punto di partenza per riflettere su immaginari, media e strutture del potere. 11 sistemi comunicativi che interrogano il nostro presente per discutere dei confini tra realtà, finzione e manipolazione e tentano di ridefinire il ruolo del designer della comunicazione.",
+            aboutText1: "Undeclared: Highlighting Hidden Conflicts through Communication and Speculative Design è la mostra che presenta gli esiti dei progetti relativi al Laboratorio di Sintesi Finale C1 (docenti Francesco E. Guida, Pietro Buffa, Alessandro Masserdotti e Giacomo Scandolara) del Corso di Laurea Triennale in Design della Comunicazione, Scuola del Design, Politecnico di Milano. Attraverso una serie di progetti di speculative design, la mostra indaga il tema del conflitto esplorando scenari futuri che riflettono e interpretano le tensioni e le criticità del presente. Undeclared propone una riflessione critica sui processi che modellano la società contemporanea, evidenziando come strutture considerate neutre possano contribuire alla costruzione di scenari di tensione e conflitto. La mostra raccoglie i progetti sviluppati dagli studenti, proponendo un percorso di esplorazione che utilizza il design della comunicazione come mezzo di critica e di confronto con le complessità del presente. I progetti esposti rendono tangibili scenari che, pur non appartenendo al presente, si collocano a una distanza sufficientemente ravvicinata da risultare al tempo stesso familiari e destabilizzanti. Emergono così nuove modalità di vivere, comunicare e interpretare la realtà, mettendo in discussione ciò che viene dato per scontato.",
+            aboutText2: "La mostra si terrà l’11 luglio 2026, dalle ore 11:00 alle 19:00, presso dotdotdot in Via Tertulliano 68, Milano, studio di design transdisciplinare impegnato nella progettazione di esperienze e ambienti che connettono spazi fisici e digitali. Undeclared invita il pubblico a osservare ciò che normalmente sfugge allo sguardo: tensioni silenziose, attriti invisibili e meccanismi sistemici che agiscono sotto la superficie del quotidiano. È un’occasione per confrontarsi con tutto ciò che resta, appunto, non dichiarato.",
             tr1: "> POLITECNICO DI MILANO <",
             tr2: "> SCUOLA DEL DESIGN <",
             bl1: "> DESIGN DELLA COMUNICAZIONE <",
             bl2: "> LABORATORIO DI SINTESI FINALE C1 <",
-            welcomeCta: "[ SCORRI IN BASSO O TRASCINA PER ESPLORARE ]",
-            swipeHint: "← SCORRI LA CARD PER NAVIGARE →",
+            welcomeCta: "[ TRASCINA PER ESPLORARE ]",
+            swipeHint: " < SCORRI LA CARD PER NAVIGARE >",
             downloadPoster: "[ SCARICA IL POSTER ]",
             prevProjects: "PROGETTI PRECEDENTI"
         },
@@ -2424,8 +2587,8 @@
             fieldLabel: "FIELD:",
             teamLabel: "PARTICIPANTS:",
             groupLabel: "GROUP:",
-            aboutText1: "This year, the exhibition of projects created in the Final Synthesis Studio C1 of the Communication Design Bachelor's Degree, School of Design, Politecnico di Milano (a.y. 2024-2025, prof. Francesco E. Guida, Pietro Buffa di Castelalto, Alessandro Masserdotti and Giacomo Scandolara), takes place on June 14, 2025 at Dotdotdot (via Tertulliano 68, Milan, from 11 AM to 7 PM).",
-            aboutText2: "Believe It or Not presents 11 communication design projects, 11 communication machines, 11 speculative scenarios. 11 projects narrating possible realities based on conspiracy theories, used as a starting point to reflect on imaginaries, media, and power structures. 11 communicative systems that question our present to discuss the boundaries between reality, fiction, and manipulation, attempting to redefine the role of the communication designer.",
+            aboutText1: " Undeclared: Highlighting Hidden Conflicts through Communication and Speculative Design is an exhibition presenting the projects from Final Synthesis Studio C1 (professors Francesco E. Guida, Pietro Buffa, Alessandro Masserdotti and Giacomo Scandolara) of the Bachelor’s Degree in Communication Design, School of Design, Politecnico di Milano. Through a series of speculative design projects, the exhibition explores the theme of conflict by examining future scenarios that reflect and interpret the tensions and challenges of the present. Undeclared offers a critical reflection on the processes that shape contemporary society, highlighting how seemingly neutral structures can contribute to situations of tension and conflict. The exhibition brings together the projects developed by the students: an explorative journey that uses communication design as a means of critique and engagement with the complexity of current times. The projects on display bring to life scenarios that, despite not being drawn from the present, are set at such a distance that they feel both familiar and unsettling. In such a way, new ways of living, communicating and interpreting reality emerge, challenging what is taken for granted.",
+            aboutText2: "The exhibition will take place on 11 July 2026, from 11.00 am to 7.00 pm, at dotdotdot – Via Tertulliano 68, Milan, a transdisciplinary design studio focused on experiences and environments that bridge physical and digital spaces. Undeclared invites the public to observe what normally escapes the eye: silent tensions, invisible frictions and systemic mechanisms at work beneath the surface of everyday life. It is an opportunity to engage with everything that remains, precisely, undeclared. ",
             tr1: "> POLITECNICO DI MILANO <",
             tr2: "> SCHOOL OF DESIGN <",
             bl1: "> COMMUNICATION DESIGN <",
@@ -2634,16 +2797,10 @@
         if (!scrollEl) return;
 
         const label = (groupString || "N/A").trim();
-        const separator = " • ";
-        const repeated = `${label}${separator}`.repeat(4).slice(0, -separator.length);
-        const chunks = repeated.split(separator);
+        const chunks = label.split(',').map(item => item.trim()).filter(Boolean);
 
-        scrollEl.innerHTML = chunks.map((item, index) => {
-            return `<span>${item}</span>${index < chunks.length - 1 ? `<span class="group-sep">${separator}</span>` : ''}`;
-        }).join('');
-
-        const duration = Math.max(18, Math.min(32, Math.ceil(label.length / 3) + 14));
-        scrollEl.style.animationDuration = `${duration}s`;
+        scrollEl.innerHTML = chunks.map(item => `<span>${item}</span>`).join('');
+        scrollEl.style.animation = 'none';
     }
 
     // --- SETUP RADAR ---
@@ -2741,10 +2898,9 @@ function generateColormap() {
     // quindi il restore animation termina senza snap.
 
 
-    // ENTRY ANIMATION: show logo text with scramble animation using assets/icons/font_completo.svg character symbols, then fade out
+    // ENTRY ANIMATION: show logo text with constriction brackets animation, then fade out
     (function(){
         const overlay = document.querySelector('.entry-overlay');
-        const logoSvgWrap = document.getElementById('entry-logo-svg-wrap');
         const headerLogo = document.querySelector('.logo-png');
         const hud = document.querySelector('.radar-hud');
         const colRight = document.querySelector('.col-right');
@@ -2753,117 +2909,79 @@ function generateColormap() {
             colRight.classList.remove('visible');
         }
 
-        // Tabella delle larghezze native dei glifi di assets/icons/font_completo.svg (altezza di riferimento 8.64)
-        const charWidths = {
-            'A': 16.82, 'B': 17.82, 'C': 15.74, 'D': 16.61, 'E': 17.61, 'F': 17.67, 'G': 16.82,
-            'H': 17.83, 'I': 5.94,  'J': 17.85, 'K': 17.83, 'L': 17.88, 'M': 22.36, 'N': 17.61,
-            'O': 15.67, 'P': 17.82, 'Q': 15.67, 'R': 16.81, 'S': 17.67, 'T': 17.83, 'U': 17.88,
-            'V': 17.83, 'W': 29.7,  'X': 17.83, 'Y': 17.87, 'Z': 17.83,
-            '0': 15.67, '1': 11.89, '2': 17.83, '3': 17.83, '4': 17.83, '5': 17.83, '6': 17.83,
-            '7': 17.83, '8': 17.83, '9': 17.83
-        };
+        let animationFinished = false;
 
         function skipEntryAnimation() {
-            if (overlay && overlay.style.display !== 'none') {
-                overlay.style.display = 'none';
-                headerLogo.style.opacity = 1;
-                allowInteractions = true;
-                if (hud) {
-                    hud.classList.add('visible');
-                    hud.style.transform = 'translateY(0) scale(1)';
-                }
-                initDimensions();
+            if (animationFinished) return;
+            animationFinished = true;
+            clearTimeout(safetyTimeout);
+            clearTimeout(autoFadeTimeout);
+            clearTimeout(cleanupTimeout);
+            
+            if (overlay) overlay.style.display = 'none';
+            if (headerLogo) headerLogo.style.opacity = 1;
+            allowInteractions = true;
+            if (hud) {
+                hud.classList.add('visible');
+                hud.style.transform = 'translateY(0) scale(1)';
+                hud.style.opacity = '1';
             }
+            initDimensions();
         }
 
-        if (!overlay || !logoSvgWrap || !headerLogo) {
+        if (!overlay || !headerLogo) {
             skipEntryAnimation();
             return;
         }
+
+        // Click on screen to skip instantly
+        overlay.addEventListener('click', () => {
+            overlay.style.transition = 'opacity 300ms ease';
+            overlay.style.opacity = '0';
+            headerLogo.style.transition = 'opacity 300ms ease';
+            headerLogo.style.opacity = '1';
+            setTimeout(skipEntryAnimation, 300);
+        });
 
         // Fallback safety net: if something gets stuck, skip after 8 seconds
         const safetyTimeout = setTimeout(skipEntryAnimation, 8000);
 
-        // Se siamo su mobile, possiamo saltare l'animazione complessa o renderla istantanea
-        if (window.innerWidth <= 1024) {
-            clearTimeout(safetyTimeout);
-            skipEntryAnimation();
-            return;
-        }
-
         // hide header logo while animating the overlay
         headerLogo.style.opacity = 0;
 
-        // Funzione per lo scramble SVG progressivo
-        function runIntroSvgScramble(containerEl, finalString, totalDuration = 1500, callback) {
-            containerEl.style.opacity = 1;
-            const cells = containerEl.querySelectorAll('.letter-cell');
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            const len = finalString.length;
-            const startTime = performance.now();
+        let cleanupTimeout = null;
+
+        // Wait for the CSS constriction animation to perform (4.5 seconds), then fade out
+        const autoFadeTimeout = setTimeout(() => {
+            if (animationFinished) return;
             
-            const interval = setInterval(() => {
-                const elapsed = performance.now() - startTime;
-                const progress = Math.min(elapsed / totalDuration, 1);
-                const resolvedCount = Math.floor(progress * len);
+            // Fade out overlay
+            overlay.style.transition = 'opacity 2500ms cubic-bezier(0.1, 0.8, 0.15, 1.0)';
+            overlay.style.opacity = '0';
+
+            // Contemporaneo fade in del logo dell'header
+            headerLogo.style.transition = 'opacity 2500ms cubic-bezier(0.1, 0.8, 0.15, 1.0)';
+            headerLogo.style.opacity = 1;
+
+            // Direct cleanup after transition completes (2500ms)
+            cleanupTimeout = setTimeout(() => {
+                if (animationFinished) return;
+                animationFinished = true;
+                clearTimeout(safetyTimeout);
                 
-                for (let i = 0; i < len; i++) {
-                    const cell = cells[i];
-                    const svg = cell.querySelector('svg');
-                    const use = cell.querySelector('use');
-                    if (!cell || !svg || !use) continue;
-                    
-                    let char;
-                    if (i < resolvedCount) {
-                        char = finalString[i];
-                    } else {
-                        char = chars[Math.floor(Math.random() * chars.length)];
-                    }
-                    
-                    const w = charWidths[char] || 17.8;
-                    cell.style.aspectRatio = `${w} / 8.64`;
-                    svg.setAttribute('viewBox', `0 0 ${w} 8.64`);
-                    use.setAttribute('href', `assets/icons/font_completo.svg#g-${char}`);
-                }
+                overlay.style.display = 'none';
+                allowInteractions = true;
                 
-                if (progress >= 1) {
-                    clearInterval(interval);
-                    if (callback) callback();
+                if (hud) {
+                    hud.classList.add('visible');
+                    hud.style.transition = 'opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1)';
+                    hud.style.transform = 'translateY(0) scale(1)';
+                    hud.style.opacity = '1';
                 }
-            }, 35);
-        }
-
-        // Avvia lo scramble del logo "UNDECLARED" per 1.5 secondi
-        runIntroSvgScramble(logoSvgWrap, "UNDECLARED", 0, () => {
-            // Dopo che si è composto, teniamo visualizzato per 1.2 secondi
-            setTimeout(() => {
-                // Fade out del fondale nero
-                overlay.style.transition = 'opacity 800ms ease';
-                overlay.style.opacity = '0';
-
-                // Contemporaneo fade in del logo dell'header
-                headerLogo.style.transition = 'opacity 800ms ease';
-                headerLogo.style.opacity = 1;
-
-                const cleanup = (e) => {
-                    if (e.target !== overlay) return;
-                    overlay.removeEventListener('transitionend', cleanup);
-                    clearTimeout(safetyTimeout);
-                    
-                    overlay.style.display = 'none';
-                    allowInteractions = true;
-                    
-                    if (hud) {
-                        hud.classList.add('visible');
-                        hud.style.transition = 'opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1)';
-                        hud.style.transform = 'translateY(0) scale(1)';
-                    }
-                    if (colRight) colRight.classList.remove('visible');
-                };
-
-                overlay.addEventListener('transitionend', cleanup);
-            }, 1200);
-        });
+                if (colRight) colRight.classList.remove('visible');
+                initDimensions();
+            }, 2500);
+        }, 3000);
     })();
 
     // Funzioni per calcolare l'ingombro originale del radar in coordinate fixed/viewport
@@ -3031,7 +3149,7 @@ function generateColormap() {
             image: "assets/images/hover/ujudge.jpg",
             field_it: "GIUSTIZIA", 
             field_en: "JUSTICE", 
-            team: "Leonardo Bolzoni Giorgia Nova Marta Stella Ratti Simone Re Carlo Scotti Francesca Tartaglia", 
+            team: "Leonardo Bolzoni, Giorgia Nova, Marta Stella Ratti, Simone Re, Carlo Scotti, Francesca Tartaglia", 
             whatif_it: "E se il tribunale mediatico venisse istituzionalizzato?",
             whatif_en: "What if trial by media were institutionalised?",
             desc1_it: "U-JUDGE esplora il conflitto mediatico contemporaneo e il ruolo crescente dell’opinione pubblica nella costruzione del giudizio collettivo. Partendo dall’osservazione del processo mediatico come spazio parallelo alla giustizia istituzionale, il progetto si sviluppa attorno a una domanda: e se il tribunale mediatico venisse istituzionalizzato? Ambientato in un’Italia del 2030 segnata dal collasso della fiducia nelle istituzioni, immagina un sistema di giustizia partecipata fondato sul principio della Wisdom of the Crowd, in cui opinioni, commenti e votazioni dei cittadini acquisiscono valore legale. In questo scenario, U-JUDGE si configura come una piattaforma capace di trasformare il consenso sociale in verità istituzionale, interrogando il rapporto tra partecipazione democratica, responsabilità e costruzione della verità.",
@@ -3315,9 +3433,8 @@ function generateColormap() {
             flareValue: 0 
         });
 
-        // Click listener diretto sul target node per selezione istantanea
         node.addEventListener('click', (ev) => {
-            if (!allowInteractions) return;
+            if (!allowInteractions || _isMobileCache) return;
             ev.stopPropagation(); // Evita che il click si propaghi al container
             
             const targetObj = targets.find(t => t.id === node.id);
@@ -3531,6 +3648,8 @@ function generateColormap() {
         }
     }
     
+
+    
     window.addEventListener('resize', () => {
         const radarWrapper = document.querySelector('.radar-wrapper');
         const spacer = document.getElementById('col-left-spacer');
@@ -3662,7 +3781,25 @@ function generateColormap() {
     }
     
     window.addEventListener('touchstart', function(e) {
-        if (_isMobileCache) onUserInteraction();
+        if (_isMobileCache) {
+            onUserInteraction();
+            
+            // Non interferire con bottoni, link, altri elementi interattivi e target nodes
+            const isInteractive = e.target.closest('button, a, [onclick], input, select, .target-node');
+            if (isInteractive) return;
+            
+            // Permetti normalmente se siamo in pannelli scrollabili
+            const scrollable = e.target.closest('.col-right, .col-left-body');
+            if (scrollable) return;
+            
+            cardTouchStartX = e.touches[0].clientX;
+            cardTouchStartY = e.touches[0].clientY;
+            touchTapStartX = e.touches[0].clientX;
+            touchTapStartY = e.touches[0].clientY;
+            touchTapStartTime = Date.now();
+            e.preventDefault();
+            return;
+        }
         
         // Non interferire con bottoni, link, altri elementi interattivi e target nodes
         const isInteractive = e.target.closest('button, a, [onclick], input, select, .target-node');
@@ -3671,17 +3808,6 @@ function generateColormap() {
         // Permetti normalmente se siamo in pannelli scrollabili
         const scrollable = e.target.closest('.col-right, .col-left-body');
         if (scrollable) return;
-        
-        // Tap/Swipe sulla hover card
-        const hoverCard = e.target.closest('#mobile-hover-card');
-        if (hoverCard) {
-            cardTouchStartX = e.touches[0].clientX;
-            cardTouchStartY = e.touches[0].clientY;
-            touchTapStartX = e.touches[0].clientX;
-            touchTapStartY = e.touches[0].clientY;
-            touchTapStartTime = Date.now();
-            return;
-        }
         
         if (!allowInteractions || isDetailView) return;
         if (e.touches.length === 1) {
@@ -3703,6 +3829,59 @@ function generateColormap() {
     }, { passive: false });
     
     window.addEventListener('touchend', function(e) {
+        if (_isMobileCache) {
+            if (cardTouchStartX !== null && touchTapStartY !== null && touchTapStartX !== null) {
+                const timeDiff = Date.now() - touchTapStartTime;
+                const distX = Math.abs(e.changedTouches[0].clientX - touchTapStartX);
+                const distY = Math.abs(e.changedTouches[0].clientY - touchTapStartY);
+                
+                // Tap/Click sulla hover card per aprire dettaglio
+                const hoverCard = e.target.closest('#mobile-hover-card');
+                if (hoverCard && timeDiff < 300 && distX < 15 && distY < 15) {
+                    triggerDetailView();
+                } else if (distX > SWIPE_THRESHOLD_PX || distY > SWIPE_THRESHOLD_PX) {
+                    // E' uno swipe!
+                    const isVertical = distY > distX;
+                    const diffX = e.changedTouches[0].clientX - cardTouchStartX;
+                    const diffY = e.changedTouches[0].clientY - cardTouchStartY;
+                    
+                    if (mobileRadarLocked) {
+                        if (isVertical && diffY > SWIPE_THRESHOLD_PX) {
+                            // Swipe down -> ritorna a home view (sblocca radar)
+                            unlockMobileRadar();
+                        } else {
+                            // Altri swipe -> naviga tra le card
+                            let direction = 0;
+                            if (isVertical) {
+                                direction = diffY < 0 ? 1 : -1;
+                            } else {
+                                direction = diffX < 0 ? 1 : -1;
+                            }
+                            showNextPrevProject(direction);
+                        }
+                    } else {
+                        // Siamo nel welcome screen (sbloccato) -> swipe up o swipe left entra nelle card!
+                        if ((isVertical && diffY < -SWIPE_THRESHOLD_PX) || (!isVertical && diffX < -SWIPE_THRESHOLD_PX)) {
+                            lockMobileRadar();
+                            currentSelectedTarget = targets[0];
+                            const tAngle = Math.atan2(targets[0].y - centerY, targets[0].x - centerX);
+                            mouseLineAngle = tAngle;
+                            updateMobileScannerFromAngle(tAngle);
+                        }
+                    }
+                }
+            }
+            touchStartY = null;
+            touchStartAngle = null;
+            touchTapStartY = null;
+            touchTapStartX = null;
+            touchTapStartTime = null;
+            dragTouchStartY = null;
+            cardTouchStartX = null;
+            cardTouchStartY = null;
+            return;
+        }
+
         const hoverCard = e.target.closest('#mobile-hover-card');
         if (hoverCard && touchTapStartY !== null && touchTapStartX !== null) {
             const timeDiff = Date.now() - touchTapStartTime;
@@ -3716,18 +3895,15 @@ function generateColormap() {
                 // E' uno swipe!
                 let direction = 0;
                 if (distX > distY) {
-                    // Swipe orizzontale: swipe a sinistra (diff < 0) -> next (1), swipe a destra -> prev (-1)
                     const diffX = e.changedTouches[0].clientX - cardTouchStartX;
                     direction = diffX < 0 ? 1 : -1;
                 } else {
-                    // Swipe verticale: swipe in alto (diff < 0) -> next (1), swipe in basso -> prev (-1)
                     const diffY = e.changedTouches[0].clientY - cardTouchStartY;
                     direction = diffY < 0 ? 1 : -1;
                 }
                 showNextPrevProject(direction);
             }
         } else if (dragTouchStartY !== null && mobileRadarLocked && !isDetailView) {
-            // Verifica swipe down su sfondo/radar per uscire dal focus card
             const diffY = e.changedTouches[0].clientY - dragTouchStartY;
             if (diffY > 80) { // Trascinato in basso di oltre 80px
                 unlockMobileRadar();
@@ -3745,9 +3921,16 @@ function generateColormap() {
     }, { passive: true });
     
     window.addEventListener('touchmove', function(e) {
+        if (_isMobileCache) {
+            const scrollable = e.target.closest('.col-right, .col-left-body');
+            if (!scrollable) {
+                e.preventDefault();
+            }
+            return;
+        }
+
         const hoverCard = e.target.closest('#mobile-hover-card');
         if (hoverCard) {
-            // Blocca lo scroll nativo se muoviamo il dito sulla card
             e.preventDefault();
             return;
         }
@@ -3798,6 +3981,7 @@ function generateColormap() {
         const layout = document.querySelector('.layout');
         const radarWrapper = document.querySelector('.radar-wrapper');
         if (!panel) return;
+        if (colRight) colRight.scrollTop = 0;
 
         // Nascondi hover overlay e mobile preview card
         document.getElementById('hover-overlay')?.classList.remove('visible');
@@ -3851,7 +4035,10 @@ function generateColormap() {
         const layout = document.querySelector('.layout');
 
         // Se eravamo in about mode, rimuovi per tornare alla colonna stretta
-        if (colRight) colRight.classList.remove('about-mode');
+        if (colRight) {
+            colRight.classList.remove('about-mode');
+            colRight.scrollTop = 0;
+        }
 
         // Nascondi hover overlay e mobile preview card (non servono più, apre il pannello completo)
         document.getElementById('hover-overlay')?.classList.remove('visible');
@@ -3998,21 +4185,7 @@ function generateColormap() {
 
         if (_isMobileCache) {
             ev.stopPropagation();
-            if (isDetailView) return;
-
-            if (mobileRadarLocked) {
-                // Se bloccato, toccare l'area vuota del radar esce dal focus
-                const clickedNode = ev.target.closest('.target-node');
-                if (!clickedNode) {
-                    unlockMobileRadar();
-                    return;
-                }
-            } else {
-                // Se non bloccato, toccare il radar attiva il focus e seleziona il progetto
-                lockMobileRadar();
-                updateMobileScannerFromAngle(mouseLineAngle);
-                return;
-            }
+            return;
         } else {
             triggerDetailView();
         }
@@ -4022,7 +4195,8 @@ function generateColormap() {
     const colCenter = document.getElementById('radar-zone');
     if (colCenter) {
         colCenter.addEventListener('click', (ev) => {
-            if (_isMobileCache && mobileRadarLocked && !isDetailView) {
+            if (_isMobileCache) return;
+            if (mobileRadarLocked && !isDetailView) {
                 const clickedNode = ev.target.closest('.target-node');
                 const clickedRadar = ev.target.closest('.radar-wrapper');
                 const clickedCard = ev.target.closest('#mobile-hover-card');
@@ -4051,7 +4225,13 @@ function generateColormap() {
 
             // Ripristina stato radar/layout in base al device
             if (isMobile()) {
-                unlockMobileRadar();
+                const radarWrapper = document.querySelector('.radar-wrapper');
+                if (radarWrapper) radarWrapper.classList.add('compact');
+                if (mobileHoverCard) mobileHoverCard.classList.add('visible');
+                if (currentSelectedTarget) {
+                    const tAngle = Math.atan2(currentSelectedTarget.y - centerY, currentSelectedTarget.x - centerX);
+                    updateMobileScannerFromAngle(tAngle);
+                }
             } else {
                 if (radarWrapper) restoreRadar(radarWrapper);
             }
