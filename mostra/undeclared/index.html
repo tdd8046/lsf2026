@@ -152,8 +152,7 @@
             margin: 0 6px 12px 6px;
             overflow: hidden;
             white-space: nowrap;
-            border-bottom: 0.5px solid rgba(255, 255, 255, 0.7); /* Line moved from university header */
-            box-shadow: 0 4px 12px -6px rgba(255, 255, 255, 0.15);
+            box-shadow: none;
             padding: 8px 0;
             display: flex;
             align-items: center;
@@ -426,24 +425,24 @@
             aspect-ratio: 1 / 1;
             border-radius: 50%;
             transition: all 600ms cubic-bezier(.2,.9,.2,1);
-            overflow: hidden;
+            overflow: visible;
         }
         .radar-wrapper.mini {
             box-shadow: 0 8px 40px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.15);
         }
         .radar-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: inherit; overflow: hidden; background: transparent;
+            border-radius: inherit; overflow: visible; background: transparent;
             transition: width 600ms cubic-bezier(.2,.9,.2,1);
         }
         .radar-grid {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%;
-            border: 0.5px dashed rgba(255,255,255,0.08); pointer-events: none; z-index: 5;
+            border: 1px dashed rgba(255,255,255,0.12); pointer-events: none; z-index: 5;
             transform-origin: center;
             animation: radarRotateCW 160s linear infinite;
         }
-        .radar-grid::before { content: ''; position: absolute; top: 15%; left: 15%; width: 70%; height: 70%; border-radius: 50%; border: 0.5px solid rgba(255,255,255,0.05); }
-        .radar-grid::after { content: ''; position: absolute; top: 32.5%; left: 32.5%; width: 35%; height: 35%; border-radius: 50%; border: 0.5px solid rgba(255,255,255,0.1); }
+        .radar-grid::before { content: ''; position: absolute; top: 15%; left: 15%; width: 70%; height: 70%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); }
+        .radar-grid::after { content: ''; position: absolute; top: 32.5%; left: 32.5%; width: 35%; height: 35%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); }
         .radar-hud {
             position: absolute; inset: 0; pointer-events: none; z-index: 12;
         }
@@ -500,19 +499,39 @@
             to { transform: rotate(-360deg); }
         }
         .radar-sonar-wave {
-            transform-origin: 783.56px 760.66px;
-            animation: radarSonarWave 8s cubic-bezier(0.1, 0.8, 0.2, 1) infinite both;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 1);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 11;
+            animation: radarSonarWave 12s cubic-bezier(0.2, 0.8, 0.3, 1) infinite;
         }
         @keyframes radarSonarWave {
             0% {
-                transform: scale(0);
+                width: 0;
+                height: 0;
                 opacity: 0;
             }
-            30% {
-                opacity: 0.3;
+            15% {
+                opacity: 0.55;
+            }
+            65% {
+                width: 90%;
+                height: 90%;
+                opacity: 0.35;
+            }
+            85% {
+                opacity: 0.16;
             }
             100% {
-                transform: scale(1.5);
+                width: 90%;
+                height: 90%;
                 opacity: 0;
             }
         }
@@ -645,8 +664,8 @@
          .dotted-id { border-bottom: 2px dotted #fff; padding-bottom: 2px; line-height: 1; }
  
          .info-title-box { border: none; padding: 20px 20px 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; min-height: auto; background: transparent; gap: 10px; }
-         .info-title-svg-container { width: 100%; max-height: 50px; display: flex; justify-content: flex-start; align-items: center; }
-         .info-title-svg-container img { width: auto; height: 16px; filter: brightness(0) invert(1); }
+         .info-title-svg-container { width: 100%; max-height: 80px; display: flex; justify-content: flex-start; align-items: center; }
+         .info-title-svg-container img { width: auto; height: auto; max-height: 40px; filter: brightness(0) invert(1); }
  
          .info-content-box { border: none; padding: 20px 0; font-size: 1.35rem; line-height: 1.4; flex-grow: 1; overflow-y: auto; position: relative; background: transparent; }
          
@@ -691,20 +710,54 @@
 
         .data-label { font-size: 0.95rem; opacity: 0.6; margin-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.15); }
         .data-value { font-weight: bold; text-transform: uppercase; color: #fff; font-size: 1.25rem; }
-        .team-carousel { overflow: hidden; position: relative; }
-        .team-carousel .team-scroll {
+        .team-carousel, .group-carousel { overflow: hidden; position: relative; }
+        .team-carousel .team-scroll,
+        .group-carousel .group-scroll {
             display: inline-flex;
             align-items: center;
             white-space: nowrap;
             gap: 1.4rem;
-            animation: team-scroll 22s linear infinite;
+            padding: 0.25rem 0;
             will-change: transform;
         }
-        .team-carousel .team-scroll::after {
+        .team-carousel .team-scroll {
+            animation: team-scroll 22s linear infinite;
+        }
+        .group-carousel .group-scroll {
+            animation: group-scroll 22s linear infinite;
+        }
+        .team-carousel .team-scroll::after,
+        .group-carousel .group-scroll::after {
             content: '';
             flex: 0 0 1rem;
         }
+        .group-carousel {
+            padding: 0;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            backdrop-filter: none;
+            border-radius: 0;
+        }
+        .group-carousel::before {
+            display: none;
+        }
+        .group-carousel .group-scroll {
+            animation-name: group-scroll;
+            gap: 1.1rem;
+        }
+        .group-carousel .group-scroll span {
+            color: #fff;
+            text-transform: none;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            filter: none;
+        }
         @keyframes team-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes group-scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
@@ -932,7 +985,7 @@
             .hamburger-btn {
                 display: block !important;
                 position: absolute !important;
-                right: 16px !important;
+                right: 10px !important;
                 top: 50% !important;
                 transform: translateY(-50%) !important;
                 z-index: 1300 !important;
@@ -943,12 +996,25 @@
                 padding: 8px;
             }
 
+            .ticker-wrap {
+                box-sizing: border-box !important;
+                width: 100% !important;
+                margin: 0 !important;
+                overflow: hidden !important;
+                white-space: nowrap !important;
+                box-shadow: none !important;
+                padding: 8px 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                border: none !important;
+            }
+
             .logo-reticle {
                 width: min(100%, calc(100% - 80px)) !important;
-                max-width: 260px !important;
-                min-height: 40px !important;
-                height: 40px !important;
-                padding: 0 14px !important;
+                max-width: 320px !important;
+                min-height: 56px !important;
+                height: 56px !important;
+                padding: 12px 18px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
@@ -956,9 +1022,31 @@
                 background: transparent !important;
             }
 
+            .logo-reticle::before {
+                content: '' !important;
+                position: absolute !important;
+                inset: 0 0px !important;
+                pointer-events: none !important;
+                z-index: 1 !important;
+                background:
+                    /* LEFT BRACKET */
+                    linear-gradient(white, white) left center / 0.5px 24px no-repeat,
+                    linear-gradient(white, white) left center / 8px 0.5px no-repeat,
+                    linear-gradient(white, white) 3px center / 0.5px 12px no-repeat,
+                    /* RIGHT BRACKET */
+                    linear-gradient(white, white) right center / 0.5px 24px no-repeat,
+                    linear-gradient(white, white) right center / 8px 0.5px no-repeat,
+                    linear-gradient(white, white) calc(100% - 3px) center / 0.5px 12px no-repeat !important;
+                opacity: 0.8 !important;
+            }
+
+            .logo-reticle::after {
+                display: none !important;
+            }
+
             .logo-png {
                 width: 90% !important;
-                max-width: 250px !important;
+                max-width: 300px !important;
                 height: auto !important;
                 display: block !important;
                 margin: 0 !important;
@@ -991,52 +1079,82 @@
             
              .mobile-hover-card {
                  display: flex; flex-direction: row; align-items: stretch;
-                 position: fixed; bottom: -200px; left: 12px; right: 12px;
-                 background: rgba(0, 0, 0, 0) !important;
-                 border: none !important;
-                 border-radius: 0 !important;
+                 position: fixed; bottom: -180px; left: 12px; right: 12px;
+                 background: rgba(0, 0, 0, 0.18) !important;
+                 border: 1px solid rgba(255,255,255,0.14) !important;
+                 border-radius: 20px !important;
                  padding: 0 !important;
                  z-index: 850;
-                 transition: bottom 0.4s cubic-bezier(.2,.9,.2,1);
-                 box-shadow: none !important;
+                 transition: bottom 0.4s cubic-bezier(.2,.9,.2,1), background 0.3s ease;
+                 box-shadow: 0 24px 78px rgba(0,0,0,0.50) !important;
                  cursor: pointer;
-                 min-height: 80px;
+                 min-height: 120px;
+                 height: 120px;
                  pointer-events: auto;
+                 backdrop-filter: blur(16px);
+                 -webkit-backdrop-filter: blur(16px);
              }
-             .mobile-hover-card.visible { bottom: 12px; }
+             .mobile-hover-card.visible { bottom: 14px; }
              /* LEFT: micro-logo square */
              .mob-hov-left {
                  display: flex;
                  flex-direction: column;
                  align-items: center;
                  justify-content: center;
-                 width: 80px;
-                 min-width: 80px;
-                 padding: 14px 10px;
+                 width: 110px;
+                 min-width: 110px;
+                 padding: 20px 14px;
                  gap: 0;
                  flex-shrink: 0;
-                 border-right: 0.5px solid rgba(255,255,255,0.2);
+                 border-right: 0.5px solid rgba(255,255,255,0.25);
                  box-sizing: border-box;
-                 background: rgba(0,0,0,0.55);
+                 background: rgba(0,0,0,0.75);
              }
-             /* RIGHT: title + whatif stacked */
+             /* RIGHT: title + whatif stacked — con immagine come background */
              .mob-hov-right {
                  flex: 1;
                  display: flex;
                  flex-direction: column;
                  justify-content: center;
-                 padding: 12px 14px;
+                 align-items: center;
+                 padding: 10px 16px;
                  box-sizing: border-box;
                  min-width: 0;
-                 gap: 8px;
-                 background: rgba(0,0,0,0.45);
+                 gap: 4px;
+                 background-size: 130%;
+                 background-position: center;
+                 background-repeat: no-repeat;
+                 position: relative;
+                 overflow: hidden;
+             }
+             .mob-hov-right::before {
+                 content: '';
+                 position: absolute;
+                 top: 0; left: 0; right: 0; bottom: 0;
+                 background: rgba(0, 0, 0, 0.32);
+                 pointer-events: none;
+                 border-radius: 0 20px 20px 0;
+                 z-index: 1;
+             }
+             .mob-hov-right > * {
+                 position: relative;
+                 z-index: 2;
              }
              .mob-hov-title-row {
                  display: flex;
                  align-items: center;
-                 justify-content: flex-start;
-                 min-height: 18px;
+                 justify-content: center;
+                 min-height: 28px;
                  overflow: hidden;
+             }
+             .mob-hov-title-row img {
+                 height: 20px;
+             }
+             .mob-hov-image {
+                 display: none;
+             }
+             .mob-hov-image img {
+                 display: none;
              }
              .mob-hov-title-row img {
                  height: 14px;
@@ -1092,8 +1210,8 @@
                 width: 100% !important;
                 margin: 0 !important;
                 padding: 6px 0 !important;
-                border-bottom: 1.5px solid rgba(255, 255, 255, 0.7) !important;
-                border-top: 1px solid #111 !important;
+                border-bottom: none !important;
+                border-top: none !important;
                 box-sizing: border-box !important;
             }
             .nav-links {
@@ -1136,14 +1254,21 @@
                 height: var(--radar-size) !important;
                 position: absolute !important;
                 left: 50% !important;
-                top: 50% !important;
-                transform: translate3d(-50%, -50%, 0) !important;
+                top: 12vh !important;
+                transform: translate3d(-50%, 0, 0) !important;
                 will-change: transform;
                 margin: 0 !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
                 z-index: 10 !important;
+            }
+            .radar-wrapper.compact {
+                top: 8vh !important;
+                transform: translate3d(-50%, 0, 0) !important;
+                width: min(74vw, 300px) !important;
+                height: auto !important;
+                aspect-ratio: 1 / 1 !important;
             }
             .layout.detail-open .radar-wrapper,
             .layout.detail-open .target-node {
@@ -1340,7 +1465,7 @@
          .hover-overlay {
              position: absolute;
              top: 50%;
-             right: 16px;
+             right: clamp(32px, 6vw, 60px);
              transform: translateY(-50%) translateX(calc(100% + 20px));
              width: var(--hover-overlay-width);
              background: transparent;
@@ -1360,9 +1485,32 @@
             justify-content: center;
             text-align: center;
             width: 100%;
-            height: 100%;
-            padding: 36px 24px;
-            background: transparent;
+            height: 400px;
+            padding: 24px 24px;
+            background: rgba(0, 0, 0, 0.22);
+            backdrop-filter: blur(14px);
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: inset 0 0 32px rgba(0,0,0,0.4);
+        }
+        .hover-overlay-body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.32);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .hover-overlay-body > * {
+            position: relative;
+            z-index: 2;
+        }
+        .hover-card-image {
+            display: none;
+        }
+        .hover-card-image img {
+            display: none;
         }
         .hover-overlay.visible {
             transform: translateY(-50%) translateX(0);
@@ -1379,12 +1527,12 @@
         .logo-reticle {
             position: relative;
             background: #000;
-            padding: 8px 14px;
-            margin: 0 0 4px 0; /* Minimo bilanciato per allineamento */
+            padding: 16px 24px;
+            margin: 0 0 12px 0; /* Increased spacing for better separation */
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 44px;
+            min-height: 60px;
             z-index: 1000;
             cursor: pointer;
         }
@@ -1396,20 +1544,20 @@
             z-index: 1;
             background:
                 /* LEFT BRACKET */
-                linear-gradient(white, white) left center / 0.5px 32px no-repeat,
-                linear-gradient(white, white) left center / 10px 0.5px no-repeat,
-                linear-gradient(white, white) 4px center / 0.5px 16px no-repeat,
+                linear-gradient(white, white) left center / 1px 32px no-repeat,
+                linear-gradient(white, white) left center / 10px 1px no-repeat,
+                linear-gradient(white, white) 4px center / 1px 16px no-repeat,
                 /* RIGHT BRACKET */
-                linear-gradient(white, white) right center / 0.5px 32px no-repeat,
-                linear-gradient(white, white) right center / 10px 0.5px no-repeat,
-                linear-gradient(white, white) calc(100% - 4px) center / 0.5px 16px no-repeat;
-            opacity: 0.8;
+                linear-gradient(white, white) right center / 1px 32px no-repeat,
+                linear-gradient(white, white) right center / 10px 1px no-repeat,
+                linear-gradient(white, white) calc(100% - 4px) center / 1px 16px no-repeat;
+            opacity: 0.9;
         }
         .logo-reticle::after {
             display: none;
         }
         .logo-reticle .logo-png {
-            width: 90%; max-width: 250px; height: auto; margin-bottom: 0;
+            width: 90%; max-width: 320px; height: auto; margin-bottom: 0;
         }
 
         /* STILE TARGETING COMUNE PER HOVER E DETAIL: brackets esterni e ticks top/bottom */
@@ -1490,7 +1638,8 @@
         }
         .info-title-svg-container img {
             width: auto !important;
-            height: 16px !important;
+            height: auto !important;
+            max-height: 40px !important;
             filter: brightness(0) invert(1);
         }
         /* Su mobile il tap va diretto sul nodo, overlay non serve */
@@ -1619,6 +1768,20 @@
         
         .indicator {
             color: #fff;
+        }
+        .indicator.icon-indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+        }
+        .indicator.icon-indicator img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: invert(1) drop-shadow(0 0 0.5px rgba(255,255,255,0.6));
         }
 
         .thermal-lang-row {
@@ -1788,12 +1951,12 @@
                 <div class="thermal-meta-block">
                     <div class="thermal-meta-item">
                         <a href="https://maps.google.com/?q=dotdotdot+via+tertulliano+68+Milano" target="_blank" class="thermal-link">
-                            <span class="indicator">></span> <span class="label" id="lang-loc-address">DOTDOTDOT 
+                            <span class="indicator icon-indicator"><img src="assets/icons/poi.svg" alt="Location"></span> <span class="label" id="lang-loc-address">DOTDOTDOT 
                                  VIA TERTULLIANO 68, MI</span>
                         </a>
                     </div>
                     <div class="thermal-meta-item">
-                        <span class="indicator">></span> <span class="label" id="lang-loc-datetime">11.07.2026 — 11:00 - 19:00</span>
+                        <span class="indicator icon-indicator"><img src="assets/icons/calendario.svg" alt="Calendar"></span> <span class="label" id="lang-loc-datetime">11.07.2026 — 11:00 - 19:00</span>
                     </div>
                 </div>
 
@@ -1810,21 +1973,22 @@
                 <div class="radar-container" id="radar-container">
                     <canvas id="display-canvas" style="position: absolute; top:0; left:0; width:100%; height:100%; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(closest-side, black 90%, transparent 93%); mask-image: radial-gradient(closest-side, black 90%, transparent 93%);"></canvas>
                     <div class="radar-hud">
+                        <div class="radar-sonar-wave"></div>
                         <svg id="Livello_2" data-name="Livello 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1567.11 1521.33" width="100%" height="100%" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
                           <defs>
                             <style>
                               .cls-1, .cls-2 {
                                 fill: none;
-                                stroke: rgba(255,255,255,0.9);
+                                stroke: rgba(255,255,255,0.95);
                                 stroke-miterlimit: 10;
-                                stroke-width: 1px;
+                                stroke-width: 1.5px;
                               }
-                        
+
                               .cls-2 {
                                 stroke-dasharray: 9.52;
                               }
                               .cls-outer {
-                                stroke-width: 1.5px;
+                                stroke-width: 2px;
                                 stroke: rgba(255,255,255,1);
                               }
                             </style>
@@ -1963,7 +2127,9 @@
                                 <!-- Group Area -->
                                 <div class="detail-group">
                                     <div class="data-label" id="lang-detail-group-label">GRUPPO:</div>
-                                    <div class="data-value scramble-target" id="info-group-val" style="font-weight: 1000; font-size: 1.15rem; color: #fff; margin-top: 4px; text-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 15px rgba(255, 255, 255, 0.45);"></div>
+                                    <div class="data-value group-carousel" id="info-group-val">
+                                        <div class="group-scroll" id="info-group-scroll"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2041,9 +2207,9 @@
                             <div class="about-prev-projects" style="text-align: center; padding-bottom: 60px; position: relative; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center;">
                                 <div style="font-size: 1.05rem; color: rgba(255,255,255,0.5); margin-bottom: 24px; letter-spacing: 0.1em;">PROGETTI PRECEDENTI</div>
                                 <div style="display: flex; flex-direction: column; gap: 14px;">
-                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">> BELIEVE IT OR NOT <</a>
-                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">> RAW SCENARIOS <</a>
-                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">> ANTHROPOGENIC NARRATIVES <</a>
+                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; BELIEVE IT OR NOT &lt;</a>
+                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; RAW SCENARIOS &lt;</a>
+                                    <a href="#" style="color: #fff; text-decoration: none; font-size: 1.1rem; letter-spacing: 0.15em; transition: opacity 0.2s;" class="hover-opacity-link">&gt; ANTHROPOGENIC NARRATIVES &lt;</a>
                                 </div>
                             </div>
                         </div>
@@ -2056,18 +2222,20 @@
     <!-- HOVER OVERLAY: flottante, non influenza il flex layout — il radar non si sposta mai -->
     <div class="hover-overlay" id="hover-overlay" aria-live="polite">
         <div class="hover-overlay-body">
+            <!-- Immagine background -->
+            <img id="hov-bg-img" src="" alt="" style="position: absolute; top: -15%; left: -15%; width: 130%; height: 130%; object-fit: cover; border-radius: 16px; z-index: 0; display: none; opacity: 0; transition: opacity 260ms ease; will-change: opacity, transform;">
             
-            <div class="hover-logo-micro" style="margin-bottom: 24px; min-height: 48px; width: 100%; display: flex; justify-content: center;">
-                <img id="hov-micro-img" src="" alt="Micro Logo" style="max-width: 100%; display:none;">
+            <div class="hover-logo-micro" style="position: relative; margin-bottom: 6px; min-height: 56px; width: 100%; display: flex; justify-content: center; align-items: center; z-index: 2;">
+                <img id="hov-micro-img" src="" alt="Micro Logo" style="max-width: 80%; display:none;">
             </div>
 
             <!-- TITLE SVG -->
-            <div class="hover-title-main" style="display:flex; align-items:center; justify-content: center; gap: 14px; margin-bottom: 24px; width: 100%;">
+            <div class="hover-title-main" style="position: relative; display:flex; align-items:center; justify-content:center; gap: 14px; width: 100%; margin-bottom: 4px; z-index: 2;">
                 <div id="hov-title-wrapper" style="height: 28px; display:flex; align-items:center; justify-content:center; flex-grow: 1; min-width: 0;"></div>
             </div>
 
-            <!-- WHATIF TEXT -->
-            <div class="hover-whatif-text scramble-target glowing-text-strong" id="hov-whatif" style="font-size: 0.85rem; font-weight: 1000; letter-spacing: 0.1em; line-height: 1.6; color: rgba(255,255,255,0.85); width: 100%; max-width: 260px; min-height: 100px; height: auto; display: flex; align-items: center; justify-content: center; text-transform: uppercase;">
+            <!-- WHATIF TEXT — sovrapposto all'immagine -->
+            <div class="hover-whatif-text scramble-target glowing-text-strong" id="hov-whatif" style="font-size: 0.85rem; font-weight: 1000; letter-spacing: 0.1em; line-height: 1.6; color: rgba(255,255,255,0.95); width: 90%; max-width: 320px; min-height: auto; height: auto; display: flex; align-items: center; justify-content: center; text-transform: uppercase; position: relative; z-index: 2; margin: 0 auto;">
             </div>
         </div>
     </div>
@@ -2084,6 +2252,9 @@
             <div class="hover-whatif-text scramble-target glowing-text-strong" id="mob-hov-whatif"
                  style="font-size: 0.72rem; font-weight: 1000; letter-spacing: 0.06em; line-height: 1.45;
                         color: rgba(255,255,255,0.85); text-transform: uppercase; word-break: break-word;">
+            </div>
+            <div class="mob-hov-image">
+                <img id="mob-hov-img" src="" alt="Preview" style="display:none; width: 100%; height: auto; object-fit: cover; border-radius: 16px;" />
             </div>
         </div>
     </div>
@@ -2211,7 +2382,7 @@
                 if (desc2El) desc2El.textContent = lang === 'it' ? (dataNode.desc2_it || dataNode.desc2_en) : (dataNode.desc2_en || dataNode.desc2_it);
                 
                 const groupEl = document.getElementById('info-group-val');
-                if (groupEl) groupEl.textContent = dataNode.team || "N/A";
+                if (groupEl) updateGroupCarousel(dataNode.team || "N/A");
                 updateTeamCarousel(dataNode.team || "N/A");
             }
         } else if (isDetailView && !currentSelectedTarget) {
@@ -2293,6 +2464,23 @@
         const repeated = `${label}${separator}${label}${separator}`;
 
         scrollEl.textContent = repeated;
+        const duration = Math.max(18, Math.min(32, Math.ceil(label.length / 3) + 14));
+        scrollEl.style.animationDuration = `${duration}s`;
+    }
+
+    function updateGroupCarousel(groupString) {
+        const scrollEl = document.getElementById('info-group-scroll');
+        if (!scrollEl) return;
+
+        const label = (groupString || "N/A").trim();
+        const separator = " • ";
+        const repeated = `${label}${separator}`.repeat(4).slice(0, -separator.length);
+        const chunks = repeated.split(separator);
+
+        scrollEl.innerHTML = chunks.map((item, index) => {
+            return `<span>${item}</span>${index < chunks.length - 1 ? `<span class="group-sep">${separator}</span>` : ''}`;
+        }).join('');
+
         const duration = Math.max(18, Math.min(32, Math.ceil(label.length / 3) + 14));
         scrollEl.style.animationDuration = `${duration}s`;
     }
@@ -2679,6 +2867,7 @@ function generateColormap() {
             idNum: "01", 
             titleSvg: "assets/projects/t1/title.svg", 
             microName: "ujdge",
+            image: "assets/images/hover/ujudge.jpg",
             field_it: "GIUSTIZIA", 
             field_en: "JUSTICE", 
             team: "Leonardo Bolzoni Giorgia Nova Marta Stella Ratti Simone Re Carlo Scotti Francesca Tartaglia", 
@@ -2693,6 +2882,7 @@ function generateColormap() {
             idNum: "02", 
             titleSvg: "assets/projects/t2/title.svg", 
             microName: "alua",
+            image: "assets/images/hover/alua.jpg",
             field_it: "BUROCRAZIA", 
             field_en: "BUREAUCRACY", 
             team: "Davide Benetton, Camilla Costato, Alice D'Andrea, Sofia Splendore, Camilla Vicario, Francesco Zanchetta", 
@@ -2707,6 +2897,7 @@ function generateColormap() {
             idNum: "03", 
             titleSvg: "assets/projects/t3/title.svg", 
             microName: "fragma",
+            image: "assets/images/hover/fragma.jpg",
             field_it: "LINGUAGGIO", 
             field_en: "LANGUAGE", 
             team: "Jonathan Allen, Alessandro Bacci, Mattia Micucci, Alessandro Salvi, Carlotta Schiavi, Eleonora Villa", 
@@ -2721,6 +2912,7 @@ function generateColormap() {
             idNum: "04", 
             titleSvg: "assets/projects/t4/title.svg", 
             microName: "icon",
+            image: "assets/images/hover/icon.jpg",
             field_it: "SIMBOLO", 
             field_en: "SYMBOL", 
             team: "Zaira Aiello, Gaia Cherubini, Martina Dolci, Silvia Panzeri, Martina Piccolo", 
@@ -2735,6 +2927,7 @@ function generateColormap() {
             idNum: "05", 
             titleSvg: "assets/projects/t5/title.svg", 
             microName: "treeal",
+            image: "assets/images/hover/treaal.jpg",
             field_it: "AMBIENTALE", 
             field_en: "ENVIRONMENTAL", 
             team: "Silvia Andreoletti, Aurelia La Carrubba, Simone Ma, Rebecca Porta, Martina Santolini, Luca Vidale", 
@@ -2749,6 +2942,7 @@ function generateColormap() {
             idNum: "06", 
             titleSvg: "assets/projects/t6/title.svg", 
             microName: "eden",
+            image: "assets/images/hover/eden.jpg",
             field_it: "xxxx", 
             field_en: "xxxx", 
             team: "Gloria Cattaneo, Chiara Cucchetti, Sofia Gelleni, Sofia Panciera, Sofia Piccinelli, Federica Porrini", 
@@ -2763,6 +2957,7 @@ function generateColormap() {
             idNum: "07", 
             titleSvg: "assets/projects/t7/title.svg", 
             microName: "rheal",
+            image: "assets/images/hover/rheal.jpg",
             field_it: "xxxx", 
             field_en: "xxxx", 
             team: "Laura Barelli, Emanuele Cazzaniga, Rebecca Mazza, Miriam Lopez, Katia Passigato", 
@@ -2777,6 +2972,7 @@ function generateColormap() {
             idNum: "08", 
             titleSvg: "assets/projects/t8/title.svg", 
             microName: "soema",
+            image: "assets/images/hover/soema.jpg",
             field_it: "INFRASTRUTTURA", 
             field_en: "INFRASTRUCTURE", 
             team: "Rafael Frick, Martina Ghezzi, Simone Menoni, Alice Miyake, Giacomo Piganzoli, Marie Samba", 
@@ -2790,7 +2986,8 @@ function generateColormap() {
         't9': { 
             idNum: "09", 
             titleSvg: "assets/projects/t9/title.svg", 
-            microName: "risorsa_3",
+            microName: "synchro",
+            image: "assets/images/hover/synchro.jpg",
             field_it: "xxxx", 
             field_en: "xxxx", 
             team: "Federica Casartelli, Sofia Rainone, Davide Rebizzi, Chiara Redaelli, Emma Troni", 
@@ -2805,6 +3002,7 @@ function generateColormap() {
             idNum: "10", 
             titleSvg: "assets/projects/t10/title.svg", 
             microName: "reclaim",
+            image: "assets/images/hover/Reclaim x.jpg",
             field_it: "xxxx", 
             field_en: "xxxx", 
             team: "Gaia Becchi, Chiara Bonzi, Cesare Donelli, Giacomo Galli, Christian Giannarelli, Alez Longo", 
@@ -2819,6 +3017,7 @@ function generateColormap() {
             idNum: "11", 
             titleSvg: "assets/projects/t11/title.svg", 
             microName: "unec",
+            image: "assets/images/hover/unec.jpg",
             field_it: "xxxx", 
             field_en: "xxxx", 
             team: "Arianna Ambrosi, Sveva Bicego, Gaia Manera, Sofia Manicardi, Marta Mazzoleni", 
@@ -2830,6 +3029,96 @@ function generateColormap() {
             desc2_en: "The project takes shape through Cryocare, an interactive device that engages the public in the Adopt a Cultureprogramme. Through a physical and digital experience, users become temporary custodians of an endangered culture, caring for the symbolic and material needs of a cryopreserved cultural guardian. As the interaction unfolds, fragments of intangible heritage are progressively unlocked, while a dedicated digital platform records the user's journey. Through this ecosystem, UNEC encourages critical reflection on the limits of contemporary preservation strategies and on the relationship between cultural protection, musealisation and new forms of control exercised in the name of conservation."
        }
     };
+
+    const projectImageCache = new Map();
+
+    function preloadProjectImage(src) {
+        if (!src || projectImageCache.has(src)) return;
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = src;
+        projectImageCache.set(src, img);
+        img.onload = () => projectImageCache.set(src, img);
+        img.onerror = () => projectImageCache.set(src, null);
+    }
+
+    function preloadAllProjectImages() {
+        Object.values(projectData).forEach(data => {
+            preloadProjectImage(data.image);
+            preloadProjectImage(data.titleSvg);
+        });
+    }
+
+    function applyHoverBackgroundImage(imgElement, src) {
+        if (!imgElement) return;
+        if (!src) {
+            imgElement.style.opacity = '0';
+            imgElement.style.display = 'none';
+            imgElement.removeAttribute('data-pending-src');
+            return;
+        }
+        imgElement.dataset.pendingSrc = src;
+        imgElement.style.display = 'block';
+        imgElement.style.opacity = '0';
+        imgElement.style.transition = 'opacity 260ms ease';
+
+        const cached = projectImageCache.get(src);
+        if (cached instanceof HTMLImageElement && cached.complete && cached.naturalWidth > 0) {
+            imgElement.src = src;
+            requestAnimationFrame(() => {
+                if (imgElement.dataset.pendingSrc === src) imgElement.style.opacity = '1';
+            });
+            return;
+        }
+
+        const loader = new Image();
+        loader.decoding = 'async';
+        loader.src = src;
+        projectImageCache.set(src, loader);
+        loader.onload = () => {
+            projectImageCache.set(src, loader);
+            if (imgElement.dataset.pendingSrc !== src) return;
+            imgElement.src = src;
+            requestAnimationFrame(() => {
+                if (imgElement.dataset.pendingSrc === src) imgElement.style.opacity = '1';
+            });
+        };
+        loader.onerror = () => {
+            if (imgElement.dataset.pendingSrc === src) {
+                imgElement.style.opacity = '0';
+                imgElement.style.display = 'none';
+            }
+        };
+    }
+
+    function applyMobileHoverBackground(element, src) {
+        if (!element) return;
+        if (!src) {
+            element.style.backgroundImage = 'none';
+            element.removeAttribute('data-bg-src');
+            return;
+        }
+        element.dataset.bgSrc = src;
+        const cached = projectImageCache.get(src);
+        if (cached instanceof HTMLImageElement && cached.complete && cached.naturalWidth > 0) {
+            element.style.backgroundImage = `url('${src}')`;
+            return;
+        }
+        element.style.backgroundImage = 'none';
+        const loader = new Image();
+        loader.decoding = 'async';
+        loader.src = src;
+        projectImageCache.set(src, loader);
+        loader.onload = () => {
+            if (element.dataset.bgSrc !== src) return;
+            element.style.backgroundImage = `url('${src}')`;
+        };
+        loader.onerror = () => {
+            if (element.dataset.bgSrc === src) element.style.backgroundImage = 'none';
+        };
+    }
+
+    preloadAllProjectImages();
 
     const domNodes = document.querySelectorAll('.target-node');
     // targets is declared at the top of the script
@@ -2915,7 +3204,18 @@ function generateColormap() {
     // L'idle gira solo finche' l'utente non tocca lo schermo la prima volta.
     // Poi si ferma per sempre — nessun restart automatico.
     let isIdle = true;
+    let mobileRadarLocked = false;
     
+    function lockMobileRadar() {
+        if (mobileRadarLocked) return;
+        mobileRadarLocked = true;
+        const radarWrapper = document.querySelector('.radar-wrapper');
+        if (radarWrapper) {
+            radarWrapper.classList.add('compact');
+            requestAnimationFrame(initDimensions);
+        }
+    }
+
     function onUserInteraction() {
         isIdle = false; // si ferma una volta sola, non riparte mai
     }
@@ -2992,6 +3292,23 @@ function generateColormap() {
                 }
             }
             lastMobileHoveredId = hovered.id;
+
+            // Setta l'immagine di background su desktop
+            const hovBgImg = document.getElementById('hov-bg-img');
+            applyHoverBackgroundImage(hovBgImg, data.image || '');
+            
+            // Setta l'immagine di background su mobile
+            const mobHovRight = document.querySelector('.mob-hov-right');
+            applyMobileHoverBackground(mobHovRight, data.image || '');
+
+            if (_isMobileCache && hovered) {
+                const tAngle = Math.atan2(hovered.y - centerY, hovered.x - centerX);
+                const magnetDiff = angleDiff(angle, tAngle);
+                const magnetRange = 0.28;
+                if (Math.abs(magnetDiff) < magnetRange) {
+                    mouseLineAngle = angle + magnetDiff * 0.45;
+                }
+            }
             
             if (mobileHoverCard) mobileHoverCard.classList.add('visible');
         } else {
@@ -3035,6 +3352,10 @@ function generateColormap() {
             }
         } else {
             if (mobileHoverCard) mobileHoverCard.classList.remove('visible');
+            if (radarWrapper && radarWrapper.classList.contains('compact')) {
+                radarWrapper.classList.remove('compact');
+                mobileRadarLocked = false;
+            }
             
             // Se siamo su desktop, in detail view, e il radar NON è miniaturizzato, allora miniaturizzalo!
             if (isDetailView && radarWrapper && !radarWrapper.classList.contains('mini')) {
@@ -3160,6 +3481,7 @@ function generateColormap() {
         
         if (e.touches.length === 1 && touchStartY !== null) {
             onUserInteraction(); // segnala interazione attiva
+            if (_isMobileCache && !mobileRadarLocked) lockMobileRadar();
             const touch = e.touches[0];
             const rect = container.getBoundingClientRect();
             const absCenterX = rect.left + centerX;
@@ -3348,7 +3670,7 @@ function generateColormap() {
         if (desc2El) desc2El.textContent = currentLang === 'it' ? (data.desc2_it || data.desc2_en) : (data.desc2_en || data.desc2_it);
 
         const groupEl = document.getElementById('info-group-val');
-        if (groupEl) groupEl.textContent = data.team || "N/A";
+        if (groupEl) updateGroupCarousel(data.team || "N/A");
  
         // In detail view, highlight INDEX_VIEW
         document.getElementById('toggle-radar')?.classList.remove('active');
@@ -3684,10 +4006,15 @@ function generateColormap() {
                         runScramble(hovWhatif, whatifText || "", 20);
                     }
 
+                    const hovBgImg = document.getElementById('hov-bg-img');
+                    applyHoverBackgroundImage(hovBgImg, proj.image || '');
+
                     if (hoverOverlay) hoverOverlay.classList.add('visible');
                 } else if (!isDetailView) {
                     // Nessun target puntato e non siamo in detail view: nascondi overlay
                     if (hoverOverlay) hoverOverlay.classList.remove('visible');
+                    const hovBgImg = document.getElementById('hov-bg-img');
+                    applyHoverBackgroundImage(hovBgImg, '');
                 }
                 lastHoveredTarget = currentSelectedTarget;
             }

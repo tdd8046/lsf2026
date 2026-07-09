@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Livello_2" data-name="Livello 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.83 61.22">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #010101;
+      }
+    </style>
+  </defs>
+  <g id="Livello_1-2" data-name="Livello 1">
+    <g>
+      <rect class="cls-1" x="10.28" width="15.26" height="3.9"/>
+      <rect class="cls-1" x="4.91" y="7.17" width="4.87" height="3.9"/>
+      <rect class="cls-1" y="14.33" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="11.68" y="14.58" width="12.47" height="3.9"/>
+      <rect class="cls-1" x="11.68" y="21.25" width="12.47" height="3.9"/>
+      <rect class="cls-1" x="30.95" y="14.58" width="4.87" height="3.9"/>
+      <rect class="cls-1" y="21.25" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="2.44" y="28.54" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="27.66" y="28.54" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="5.16" y="35.83" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="7.85" y="43.24" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="10.32" y="50.41" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="20.35" y="50.41" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="15.48" y="57.32" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="22.79" y="43.24" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="25.79" y="35.83" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="30.95" y="21.5" width="4.87" height="3.9"/>
+      <rect class="cls-1" x="25.79" y="7.17" width="4.87" height="3.9"/>
+    </g>
+  </g>
+</svg>
