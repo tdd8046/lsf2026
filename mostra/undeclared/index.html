@@ -939,7 +939,7 @@
 
 
         .hamburger-btn { display: none; background: transparent; border: none; color: #fff; cursor: pointer; padding: 8px; z-index: 1000; }
-        .mobile-hover-card, .mobile-exhibition-info, .mobile-welcome-cta { display: none; }
+        .mobile-hover-card, .mobile-exhibition-info, .mobile-welcome-cta, .mobile-swipe-hint { display: none; }
 
         /* =========================================
            RESPONSIVE — MOBILE
@@ -1097,6 +1097,12 @@
                  text-shadow: 0 0 4px rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.95);
                  text-transform: uppercase;
                  text-align: center;
+                 transition: opacity 0.4s ease, transform 0.4s ease;
+             }
+             .mobile-exhibition-info.hidden {
+                 opacity: 0 !important;
+                 transform: translateY(-10px) !important;
+                 pointer-events: none;
              }
 
              .mobile-welcome-cta {
@@ -1132,18 +1138,34 @@
              }
 
              .mobile-swipe-hint {
-                 font-size: 0.55rem !important;
-                 font-weight: normal !important;
-                 letter-spacing: 0.15em !important;
-                 color: rgba(255, 255, 255, 0.5) !important;
-                 text-transform: uppercase !important;
-                 margin-top: 8px;
+                 display: flex !important;
+                 justify-content: center;
+                 align-items: center;
+                 position: fixed;
+                 bottom: -80px;
+                 left: 50%;
+                 transform: translateX(-50%);
+                 z-index: 840;
+                 font-family: 'Mostra Regular', monospace;
+                 font-size: 0.58rem;
+                 font-weight: normal;
+                 letter-spacing: 0.15em;
+                 color: rgba(255, 255, 255, 0.6);
+                 text-transform: uppercase;
                  border: 0.5px solid rgba(255, 255, 255, 0.2);
-                 padding: 3px 10px;
-                 border-radius: 10px;
-                 background: rgba(0, 0, 0, 0.4);
+                 padding: 4px 14px;
+                 border-radius: 12px;
+                 background: rgba(0, 0, 0, 0.65);
+                 backdrop-filter: blur(4px);
+                 -webkit-backdrop-filter: blur(4px);
+                 transition: bottom 0.4s cubic-bezier(.2,.9,.2,1);
+                 pointer-events: none;
                  text-align: center;
                  width: auto;
+                 white-space: nowrap;
+             }
+             .mobile-swipe-hint.visible {
+                 bottom: 248px;
              }
 
              .mobile-hover-card {
@@ -2334,6 +2356,9 @@
         </div>
     </div>
 
+    <!-- SWIPE HINT: outside card, between radar and card -->
+    <div class="mobile-swipe-hint" id="mobile-swipe-hint">&larr; SWIPE TO BROWSE &rarr;</div>
+
     <!-- MOBILE HOVER CARD (Bottom Sheet) -->
     <div class="mobile-hover-card" id="mobile-hover-card">
         <!-- LEFT: micro-logo only, large and centered -->
@@ -2347,7 +2372,6 @@
                      style="font-size: 0.72rem; font-weight: 1000; letter-spacing: 0.06em; line-height: 1.45;
                             color: rgba(255,255,255,0.85); text-transform: uppercase; word-break: break-word;">
                 </div>
-                <div class="mobile-swipe-hint" id="mobile-swipe-hint">&larr; SWIPE TO BROWSE &rarr;</div>
                 <div class="mob-hov-image">
                     <img id="mob-hov-img" src="" alt="Preview" style="display:none; width: 100%; height: auto; object-fit: cover; border-radius: 16px;" />
                 </div>
@@ -3329,6 +3353,10 @@ function generateColormap() {
         if (welcomeCta) {
             welcomeCta.classList.add('hidden');
         }
+        const exhInfo = document.getElementById('mobile-exhibition-info');
+        if (exhInfo) {
+            exhInfo.classList.add('hidden');
+        }
     }
 
     function unlockMobileRadar() {
@@ -3342,9 +3370,17 @@ function generateColormap() {
         if (mobileHoverCard) {
             mobileHoverCard.classList.remove('visible');
         }
+        const swipeHint = document.getElementById('mobile-swipe-hint');
+        if (swipeHint) {
+            swipeHint.classList.remove('visible');
+        }
         const welcomeCta = document.getElementById('mobile-welcome-cta');
         if (welcomeCta) {
             welcomeCta.classList.remove('hidden');
+        }
+        const exhInfo = document.getElementById('mobile-exhibition-info');
+        if (exhInfo) {
+            exhInfo.classList.remove('hidden');
         }
         currentSelectedTarget = null;
         lastMobileHoveredId = null;
@@ -3458,8 +3494,12 @@ function generateColormap() {
             }
             
             if (mobileHoverCard) mobileHoverCard.classList.add('visible');
+            const swipeHint = document.getElementById('mobile-swipe-hint');
+            if (swipeHint) swipeHint.classList.add('visible');
         } else {
             if (mobileHoverCard) mobileHoverCard.classList.remove('visible');
+            const swipeHint = document.getElementById('mobile-swipe-hint');
+            if (swipeHint) swipeHint.classList.remove('visible');
             currentSelectedTarget = null;
             lastMobileHoveredId = null;
         }
@@ -3736,6 +3776,7 @@ function generateColormap() {
         // Nascondi hover overlay e mobile preview card
         document.getElementById('hover-overlay')?.classList.remove('visible');
         document.getElementById('mobile-hover-card')?.classList.remove('visible');
+        document.getElementById('mobile-swipe-hint')?.classList.remove('visible');
 
         // Popola i testi di About in base alla lingua corrente
         const txt1 = currentLang === 'it' ? locales.it.aboutText1 : locales.en.aboutText1;
@@ -3789,6 +3830,7 @@ function generateColormap() {
         // Nascondi hover overlay e mobile preview card (non servono più, apre il pannello completo)
         document.getElementById('hover-overlay')?.classList.remove('visible');
         document.getElementById('mobile-hover-card')?.classList.remove('visible');
+        document.getElementById('mobile-swipe-hint')?.classList.remove('visible');
 
         // Popola i campi informativi del pannello col-right
         const infoIdEl = document.getElementById('info-id');
