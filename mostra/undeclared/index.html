@@ -939,7 +939,7 @@
 
 
         .hamburger-btn { display: none; background: transparent; border: none; color: #fff; cursor: pointer; padding: 8px; z-index: 1000; }
-        .mobile-hover-card { display: none; }
+        .mobile-hover-card, .mobile-exhibition-info { display: none; }
 
         /* =========================================
            RESPONSIVE — MOBILE
@@ -1077,9 +1077,29 @@
             }
             .col-left-body.menu-open { display: flex !important; }
             
+             .mobile-exhibition-info {
+                 display: flex !important;
+                 flex-direction: column;
+                 align-items: center;
+                 justify-content: center;
+                 gap: 4px;
+                 position: absolute;
+                 top: 15px;
+                 left: 0;
+                 right: 0;
+                 z-index: 50;
+                 pointer-events: none;
+                 font-family: 'Mostra Regular', monospace;
+                 font-size: 0.65rem;
+                 letter-spacing: 0.08em;
+                 color: rgba(255, 255, 255, 0.45);
+                 text-transform: uppercase;
+                 text-align: center;
+             }
+
              .mobile-hover-card {
                  display: flex; flex-direction: row; align-items: stretch;
-                 position: fixed; bottom: -180px; left: 12px; right: 12px;
+                 position: fixed; bottom: -280px; left: 12px; right: 12px;
                  background: rgba(0, 0, 0, 0.18) !important;
                  border: 1px solid rgba(255,255,255,0.14) !important;
                  border-radius: 20px !important;
@@ -1088,8 +1108,8 @@
                  transition: bottom 0.4s cubic-bezier(.2,.9,.2,1), background 0.3s ease;
                  box-shadow: 0 24px 78px rgba(0,0,0,0.50) !important;
                  cursor: pointer;
-                 min-height: 120px;
-                 height: 120px;
+                 min-height: 220px;
+                 height: 220px;
                  pointer-events: auto;
                  backdrop-filter: blur(16px);
                  -webkit-backdrop-filter: blur(16px);
@@ -1101,14 +1121,19 @@
                  flex-direction: column;
                  align-items: center;
                  justify-content: center;
-                 width: 110px;
-                 min-width: 110px;
+                 width: 120px;
+                 min-width: 120px;
                  padding: 20px 14px;
                  gap: 0;
                  flex-shrink: 0;
                  border-right: 0.5px solid rgba(255,255,255,0.25);
                  box-sizing: border-box;
                  background: rgba(0,0,0,0.75);
+             }
+             #mob-hov-micro-img {
+                 height: 70px !important;
+                 width: 70px !important;
+                 object-fit: contain;
              }
              /* RIGHT: title + whatif stacked — con immagine come background */
              .mob-hov-right {
@@ -1117,11 +1142,11 @@
                  flex-direction: column;
                  justify-content: center;
                  align-items: center;
-                 padding: 10px 16px;
+                 padding: 20px 24px;
                  box-sizing: border-box;
                  min-width: 0;
-                 gap: 4px;
-                 background-size: 130%;
+                 gap: 12px;
+                 background-size: cover;
                  background-position: center;
                  background-repeat: no-repeat;
                  position: relative;
@@ -1131,7 +1156,7 @@
                  content: '';
                  position: absolute;
                  top: 0; left: 0; right: 0; bottom: 0;
-                 background: rgba(0, 0, 0, 0.32);
+                 background: rgba(0, 0, 0, 0.45);
                  pointer-events: none;
                  border-radius: 0 20px 20px 0;
                  z-index: 1;
@@ -1144,24 +1169,31 @@
                  display: flex;
                  align-items: center;
                  justify-content: center;
-                 min-height: 28px;
+                 min-height: 36px;
+                 width: 100%;
                  overflow: hidden;
+                 margin-bottom: 4px;
              }
              .mob-hov-title-row img {
-                 height: 20px;
+                 height: 24px !important;
+                 width: auto;
+                 max-width: 100%;
+                 object-fit: contain;
+                 filter: brightness(0) invert(1);
+             }
+             #mob-hov-whatif {
+                 font-size: 0.85rem !important;
+                 font-weight: 800 !important;
+                 letter-spacing: 0.06em !important;
+                 line-height: 1.45 !important;
+                 color: rgba(255,255,255,0.95) !important;
+                 text-align: center !important;
              }
              .mob-hov-image {
                  display: none;
              }
              .mob-hov-image img {
                  display: none;
-             }
-             .mob-hov-title-row img {
-                 height: 14px;
-                 width: auto;
-                 max-width: 100%;
-                 object-fit: contain;
-                 filter: brightness(0) invert(1);
              }
             .mobile-hover-indicator { font-size: 0.65rem; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; margin-top: 8px; text-align: right; }
 
@@ -1967,6 +1999,12 @@
         </aside>
 
         <main class="col-center" id="radar-zone">
+            <!-- MOBILE ONLY EXHIBITION INFO -->
+            <div class="mobile-exhibition-info" id="mobile-exhibition-info">
+                <span id="mobile-exh-address">DOTDOTDOT / VIA TERTULLIANO 68, MI</span>
+                <span id="mobile-exh-datetime">11.07.2026 — 11:00 - 19:00</span>
+            </div>
+
             <img src="assets/sfondo.svg?v=2" id="bg-grid-img" alt="Grid Background" />
             
             <div class="radar-wrapper" id="radar-wrapper">
@@ -2367,6 +2405,12 @@
 
         const datetimeEl = document.getElementById('lang-loc-datetime');
         if (datetimeEl) runScramble(datetimeEl, data.datetime, 20);
+
+        const mobAddressEl = document.getElementById('mobile-exh-address');
+        if (mobAddressEl) runScramble(mobAddressEl, data.address, 20);
+
+        const mobDatetimeEl = document.getElementById('mobile-exh-datetime');
+        if (mobDatetimeEl) runScramble(mobDatetimeEl, data.datetime, 20);
 
         // Se la detail view è aperta, aggiorna anche le scritte e i dettagli del nodo
         if (isDetailView && currentSelectedTarget) {
@@ -3216,6 +3260,22 @@ function generateColormap() {
         }
     }
 
+    function unlockMobileRadar() {
+        if (!mobileRadarLocked) return;
+        mobileRadarLocked = false;
+        const radarWrapper = document.querySelector('.radar-wrapper');
+        if (radarWrapper) {
+            radarWrapper.classList.remove('compact');
+            requestAnimationFrame(initDimensions);
+        }
+        if (mobileHoverCard) {
+            mobileHoverCard.classList.remove('visible');
+        }
+        currentSelectedTarget = null;
+        lastMobileHoveredId = null;
+        isIdle = true;
+    }
+
     function onUserInteraction() {
         isIdle = false; // si ferma una volta sola, non riparte mai
     }
@@ -3249,7 +3309,7 @@ function generateColormap() {
         }
         
         let hovered = null;
-        let minDiff = 0.22; // tolleranza in radianti (circa 12.6 gradi)
+        let minDiff = 0.28; // tolleranza in radianti (circa 16 gradi)
         
         for (let target of targets) {
             const tAngle = Math.atan2(target.y - centerY, target.x - centerX);
@@ -3260,7 +3320,15 @@ function generateColormap() {
             }
         }
         
+        // MAGNETIC ON LAST: if we didn't find any node at this angle, but we already have a selected target, keep it!
+        if (!hovered && currentSelectedTarget) {
+            hovered = currentSelectedTarget;
+        }
+        
         if (hovered) {
+            if (!mobileRadarLocked) {
+                lockMobileRadar();
+            }
             currentSelectedTarget = hovered;
             const data = projectData[hovered.id] || { desc_it: "Dati criptati.", desc_en: "Encrypted data." };
             
@@ -3417,26 +3485,54 @@ function generateColormap() {
     let touchStartY = null;
     let touchStartAngle = null;
     let touchTapStartY = null;
+    let touchTapStartX = null;
     let touchTapStartTime = null;
+    let dragTouchStartY = null;
+    
+    let cardTouchStartX = null;
+    let cardTouchStartY = null;
+    const SWIPE_THRESHOLD_PX = 40;
     const SCROLL_SENSITIVITY = 0.006; // radianti per pixel swipato
-    const TAP_THRESHOLD_PX = 10;      // px di movimento massimo per considerarlo un tap
-    const TAP_THRESHOLD_MS = 250;     // ms massimi per un tap
+    
+    function showNextPrevProject(direction) {
+        if (!targets || targets.length === 0) return;
+        
+        let currentIndex = 0;
+        if (currentSelectedTarget) {
+            currentIndex = targets.findIndex(t => t.id === currentSelectedTarget.id);
+            if (currentIndex === -1) currentIndex = 0;
+        }
+        
+        const newIndex = (currentIndex + direction + targets.length) % targets.length;
+        const nextTarget = targets[newIndex];
+        
+        currentSelectedTarget = nextTarget;
+        
+        // Calculate its angle to center and snap the radar line sweep
+        const tAngle = Math.atan2(nextTarget.y - centerY, nextTarget.x - centerX);
+        mouseLineAngle = tAngle;
+        
+        // Update scanner card details
+        updateMobileScannerFromAngle(tAngle);
+    }
     
     window.addEventListener('touchstart', function(e) {
-        // Ferma l'idle IMMEDIATAMENTE al primo tocco — ovunque sullo schermo
         if (_isMobileCache) onUserInteraction();
         
-        // Non interferire con bottoni, link e altri elementi interattivi nativi
-        const isInteractive = e.target.closest('button, a, [onclick], input, select');
+        // Non interferire con bottoni, link, altri elementi interattivi e target nodes
+        const isInteractive = e.target.closest('button, a, [onclick], input, select, .target-node');
         if (isInteractive) return;
         
         // Permetti normalmente se siamo in pannelli scrollabili
         const scrollable = e.target.closest('.col-right, .col-left-body');
         if (scrollable) return;
         
-        // Tap sulla hover card = apri dettaglio
+        // Tap/Swipe sulla hover card
         const hoverCard = e.target.closest('#mobile-hover-card');
         if (hoverCard) {
+            cardTouchStartX = e.touches[0].clientX;
+            cardTouchStartY = e.touches[0].clientY;
+            touchTapStartX = e.touches[0].clientX;
             touchTapStartY = e.touches[0].clientY;
             touchTapStartTime = Date.now();
             return;
@@ -3454,23 +3550,63 @@ function generateColormap() {
             updateMobileScannerFromAngle(mouseLineAngle);
             
             touchStartY = touch.clientY;
+            dragTouchStartY = touch.clientY;
             touchTapStartY = touch.clientY;
+            touchTapStartX = touch.clientX;
             touchTapStartTime = Date.now();
         }
     }, { passive: false });
     
     window.addEventListener('touchend', function(e) {
         const hoverCard = e.target.closest('#mobile-hover-card');
-        if (hoverCard && touchTapStartY !== null) {
-            triggerDetailView();
+        if (hoverCard && touchTapStartY !== null && touchTapStartX !== null) {
+            const timeDiff = Date.now() - touchTapStartTime;
+            const distX = Math.abs(e.changedTouches[0].clientX - touchTapStartX);
+            const distY = Math.abs(e.changedTouches[0].clientY - touchTapStartY);
+            
+            if (timeDiff < 300 && distX < 10 && distY < 10) {
+                // E' un tap normale -> apri dettaglio
+                triggerDetailView();
+            } else if (distX > SWIPE_THRESHOLD_PX || distY > SWIPE_THRESHOLD_PX) {
+                // E' uno swipe!
+                let direction = 0;
+                if (distX > distY) {
+                    // Swipe orizzontale: swipe a sinistra (diff < 0) -> next (1), swipe a destra -> prev (-1)
+                    const diffX = e.changedTouches[0].clientX - cardTouchStartX;
+                    direction = diffX < 0 ? 1 : -1;
+                } else {
+                    // Swipe verticale: swipe in alto (diff < 0) -> next (1), swipe in basso -> prev (-1)
+                    const diffY = e.changedTouches[0].clientY - cardTouchStartY;
+                    direction = diffY < 0 ? 1 : -1;
+                }
+                showNextPrevProject(direction);
+            }
+        } else if (dragTouchStartY !== null && mobileRadarLocked && !isDetailView) {
+            // Verifica swipe down su sfondo/radar per uscire dal focus card
+            const diffY = e.changedTouches[0].clientY - dragTouchStartY;
+            if (diffY > 80) { // Trascinato in basso di oltre 80px
+                unlockMobileRadar();
+            }
         }
+        
         touchStartY = null;
         touchStartAngle = null;
         touchTapStartY = null;
+        touchTapStartX = null;
         touchTapStartTime = null;
+        dragTouchStartY = null;
+        cardTouchStartX = null;
+        cardTouchStartY = null;
     }, { passive: true });
     
     window.addEventListener('touchmove', function(e) {
+        const hoverCard = e.target.closest('#mobile-hover-card');
+        if (hoverCard) {
+            // Blocca lo scroll nativo se muoviamo il dito sulla card
+            e.preventDefault();
+            return;
+        }
+        
         const scrollable = e.target.closest('.col-right, .col-left-body');
         if (scrollable) return;
         e.preventDefault();
@@ -3714,6 +3850,20 @@ function generateColormap() {
         }
         triggerDetailView();
     });
+
+    // Click outside radar wrapper to exit focus on mobile
+    const colCenter = document.getElementById('radar-zone');
+    if (colCenter) {
+        colCenter.addEventListener('click', (ev) => {
+            if (_isMobileCache && mobileRadarLocked && !isDetailView) {
+                const clickedRadar = ev.target.closest('.radar-wrapper');
+                const clickedCard = ev.target.closest('#mobile-hover-card');
+                if (!clickedRadar && !clickedCard) {
+                    unlockMobileRadar();
+                }
+            }
+        });
+    }
 
     // Evita che i clic dentro il pannello informativo risalgano al container
     const infoPanel = document.getElementById('info-panel');
@@ -3967,13 +4117,35 @@ function generateColormap() {
                 mouseLineAngle = tAngle;
             } else {
                 // --- NORMAL HOVER MODE ---
-                targets.forEach(t => { t.node.classList.remove('hovered'); t.node.classList.remove('selected'); });
-                currentSelectedTarget = null;
+                if (_isMobileCache) {
+                    // Su mobile manteniamo il magnetismo visivo sull'ultimo target selezionato
+                    if (intersectedTargets.length > 0) {
+                        intersectedTargets.sort((a, b) => {
+                            let distA = Math.abs(Math.hypot(a.x - centerX, a.y - centerY) - mouseDistFromCenter);
+                            let distB = Math.abs(Math.hypot(b.x - centerX, b.y - centerY) - mouseDistFromCenter);
+                            return distA - distB;
+                        });
+                        currentSelectedTarget = intersectedTargets[0];
+                    }
+                    if (currentSelectedTarget) {
+                        targets.forEach(t => {
+                            if (t === currentSelectedTarget) {
+                                t.node.classList.add('hovered');
+                            } else {
+                                t.node.classList.remove('hovered');
+                            }
+                            t.node.classList.remove('selected');
+                        });
+                    }
+                } else {
+                    targets.forEach(t => { t.node.classList.remove('hovered'); t.node.classList.remove('selected'); });
+                    currentSelectedTarget = null;
 
-                if (intersectedTargets.length > 0) {
-                    intersectedTargets.sort((a, b) => { let distA = Math.abs(Math.hypot(a.x - centerX, a.y - centerY) - mouseDistFromCenter); let distB = Math.abs(Math.hypot(b.x - centerX, b.y - centerY) - mouseDistFromCenter); return distA - distB; });
-                    currentSelectedTarget = intersectedTargets[0]; 
-                    currentSelectedTarget.node.classList.add('hovered');
+                    if (intersectedTargets.length > 0) {
+                        intersectedTargets.sort((a, b) => { let distA = Math.abs(Math.hypot(a.x - centerX, a.y - centerY) - mouseDistFromCenter); let distB = Math.abs(Math.hypot(b.x - centerX, b.y - centerY) - mouseDistFromCenter); return distA - distB; });
+                        currentSelectedTarget = intersectedTargets[0]; 
+                        currentSelectedTarget.node.classList.add('hovered');
+                    }
                 }
             } // Chiude else NORMAL HOVER MODE
 
