@@ -1122,9 +1122,8 @@
                  font-family: 'Mostra Regular', monospace;
                  font-size: 0.72rem;
                  letter-spacing: 0.08em;
-                 color: rgba(255, 255, 255, 0.75);
+                 color: #ffffff !important;
                  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
-                 animation: ctaPulse 1.8s infinite alternate ease-in-out;
                  transition: opacity 0.4s ease, transform 0.4s ease;
              }
              .mobile-welcome-cta.hidden {
@@ -1132,37 +1131,27 @@
                  transform: translate(-50%, 20px) !important;
                  pointer-events: none;
              }
-             @keyframes ctaPulse {
-                 0% { transform: translate(-50%, 0) scale(0.96); opacity: 0.55; }
-                 100% { transform: translate(-50%, -6px) scale(1.02); opacity: 0.95; }
-             }
 
              .mobile-swipe-hint {
                  display: flex !important;
-                 justify-content: center;
+                 flex-direction: column;
                  align-items: center;
+                 justify-content: center;
+                 gap: 8px;
                  position: fixed;
                  bottom: -80px;
                  left: 50%;
                  transform: translateX(-50%);
+                 width: 90%;
+                 max-width: 320px;
                  z-index: 840;
-                 font-family: 'Mostra Regular', monospace;
-                 font-size: 0.58rem;
-                 font-weight: normal;
-                 letter-spacing: 0.15em;
-                 color: rgba(255, 255, 255, 0.6);
-                 text-transform: uppercase;
-                 border: 0.5px solid rgba(255, 255, 255, 0.2);
-                 padding: 4px 14px;
-                 border-radius: 12px;
-                 background: rgba(0, 0, 0, 0.65);
-                 backdrop-filter: blur(4px);
-                 -webkit-backdrop-filter: blur(4px);
-                 transition: bottom 0.4s cubic-bezier(.2,.9,.2,1);
                  pointer-events: none;
-                 text-align: center;
-                 width: auto;
-                 white-space: nowrap;
+                 font-family: 'Mostra Regular', monospace;
+                 font-size: 0.72rem;
+                 letter-spacing: 0.08em;
+                 color: #ffffff !important;
+                 text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
+                 transition: bottom 0.4s cubic-bezier(.2,.9,.2,1), opacity 0.4s ease;
              }
              .mobile-swipe-hint.visible {
                  bottom: 248px;
@@ -1367,9 +1356,9 @@
                 z-index: 10 !important;
             }
             .radar-wrapper.compact {
-                top: 8vh !important;
+                top: 4vh !important;
                 transform: translate3d(-50%, 0, 0) !important;
-                width: min(74vw, 300px) !important;
+                width: min(72vw, 270px) !important;
                 height: auto !important;
                 aspect-ratio: 1 / 1 !important;
             }
@@ -1386,12 +1375,12 @@
                  width: 100% !important;
                  flex: none !important;
                  max-height: 0;
-                 height: auto;
+                 height: 0;
                  border-left: none !important;
                  border-top: none !important;
                  padding: 0 !important;
                  transform: none !important;
-                 transition: max-height 520ms cubic-bezier(.2,.9,.2,1), padding 420ms ease !important;
+                 transition: max-height 520ms cubic-bezier(.2,.9,.2,1), height 520ms cubic-bezier(.2,.9,.2,1), padding 420ms ease !important;
                  background: rgba(0, 0, 0, 0.4) !important;
                  backdrop-filter: blur(8px) !important;
                  -webkit-backdrop-filter: blur(8px) !important;
@@ -1414,7 +1403,8 @@
                  overflow: visible !important;
              }
              .layout.detail-open .col-right {
-                  max-height: 88dvh;
+                  height: 92dvh !important;
+                  max-height: 92dvh !important;
                   flex: none !important;
                   width: 100% !important;
                   border-radius: 0 !important; /* Completamente piatto */
@@ -1428,10 +1418,14 @@
                   backdrop-filter: none !important;
                   -webkit-backdrop-filter: none !important;
               }
+              .detail-grid {
+                  height: auto !important;
+              }
               .info-panel {
                    background: #000000 !important;
                    margin: 20px 16px 0 16px !important;
                    min-height: auto !important;
+                   height: auto !important;
                    padding: 24px 20px 100px 20px !important;
                }
               .info-panel-body {
@@ -4415,6 +4409,24 @@ function generateColormap() {
             customCursor.classList.remove('cursor-mini-radar');
             customCursor.style.removeProperty('--cursor-mini-size');
         };
+    })();
+
+    // --- SCRAMBLE PERIODICO SULLE CALL TO ACTION MOBILE ---
+    (function() {
+        setInterval(() => {
+            if (!_isMobileCache || isDetailView) return;
+            if (!mobileRadarLocked) {
+                const welcomeCta = document.getElementById('lang-welcome-cta');
+                if (welcomeCta && locales[currentLang]) {
+                    runScramble(welcomeCta, locales[currentLang].welcomeCta, 20);
+                }
+            } else {
+                const swipeHint = document.getElementById('mobile-swipe-hint');
+                if (swipeHint && locales[currentLang]) {
+                    runScramble(swipeHint, locales[currentLang].swipeHint, 20);
+                }
+            }
+        }, 4000);
     })();
 
     // Rendi il logo header cliccabile per ritornare all'inizio (chiude menu mobile e viste dettaglio/about)
