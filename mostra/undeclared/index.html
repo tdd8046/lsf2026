@@ -3890,15 +3890,15 @@ function generateColormap() {
                             direction = diffX < 0 ? 1 : -1;
                         }
                         showNextPrevProject(direction);
-                    }
-                } else {
-                    // Siamo nel welcome screen (sbloccato) -> swipe up o swipe left entra nelle card!
-                    if ((isVertical && diffY < -SWIPE_THRESHOLD_PX) || (!isVertical && diffX < -SWIPE_THRESHOLD_PX)) {
-                        lockMobileRadar();
-                        currentSelectedTarget = targets[0];
-                        const tAngle = Math.atan2(targets[0].y - centerY, targets[0].x - centerX);
-                        mouseLineAngle = tAngle;
-                        updateMobileScannerFromAngle(tAngle);
+                    } else {
+                        // Siamo nel welcome screen (sbloccato) -> swipe up o swipe left entra nelle card!
+                        if ((isVertical && diffY < -SWIPE_THRESHOLD_PX) || (!isVertical && diffX < -SWIPE_THRESHOLD_PX)) {
+                            lockMobileRadar();
+                            currentSelectedTarget = targets[0];
+                            const tAngle = Math.atan2(targets[0].y - centerY, targets[0].x - centerX);
+                            mouseLineAngle = tAngle;
+                            updateMobileScannerFromAngle(tAngle);
+                        }
                     }
                 }
             }
@@ -3906,7 +3906,7 @@ function generateColormap() {
             touchStartAngle = null;
             touchTapStartY = null;
             touchTapStartX = null;
-            touchTapStartTime = Date.now();
+            touchTapStartTime = null;
             dragTouchStartY = null;
             cardTouchStartX = null;
             cardTouchStartY = null;
