@@ -3882,14 +3882,19 @@ function generateColormap() {
                     const diffY = e.changedTouches[0].clientY - cardTouchStartY;
                     
                     if (mobileRadarLocked) {
-                        // Qualsiasi swipe naviga tra le card (nessun sblocco radar)
-                        let direction = 0;
-                        if (isVertical) {
-                            direction = diffY < 0 ? 1 : -1;
+                        if (isVertical && diffY > SWIPE_THRESHOLD_PX) {
+                            // Swipe down -> sblocca radar (ritorna alla visualizzazione di partenza)
+                            unlockMobileRadar();
                         } else {
-                            direction = diffX < 0 ? 1 : -1;
+                            // Altri swipe -> naviga tra le card
+                            let direction = 0;
+                            if (isVertical) {
+                                direction = diffY < 0 ? 1 : -1;
+                            } else {
+                                direction = diffX < 0 ? 1 : -1;
+                            }
+                            showNextPrevProject(direction);
                         }
-                        showNextPrevProject(direction);
                     } else {
                         // Siamo nel welcome screen (sbloccato) -> swipe up o swipe left entra nelle card!
                         if ((isVertical && diffY < -SWIPE_THRESHOLD_PX) || (!isVertical && diffX < -SWIPE_THRESHOLD_PX)) {
@@ -4242,6 +4247,7 @@ function generateColormap() {
     if (closeBtn) {
         closeBtn.addEventListener('click', (ev) => {
             ev.stopPropagation();
+            isDetailView = false; // Set early so updateMobileScannerFromAngle doesn't return early
             if (window.resetCursorMiniRadarState) window.resetCursorMiniRadarState();
             const radarWrapper = document.querySelector('.radar-wrapper');
             const colRight = document.querySelector('.col-right');
@@ -4272,10 +4278,11 @@ function generateColormap() {
                 if (titleBox) titleBox.style.display = 'flex';
             }
             // Reset stato completo
-            isDetailView = false;
             isRadarTransitioning = false; // Forza il ripristino dell'interazione in ogni caso
             lastHoveredTarget = null;
-            currentSelectedTarget = null;
+            if (!isMobile()) {
+                currentSelectedTarget = null;
+            }
             closeBtn.style.display = 'none';
             // Ripristina gli stati di visualizzazione
             document.getElementById('about-state')?.classList.remove('active');
