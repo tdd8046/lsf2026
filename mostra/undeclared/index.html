@@ -660,8 +660,8 @@
          .info-badge svg { width: 24px; height: 24px; stroke: #fff; fill: none; }
          .dotted-id { border-bottom: 2px dotted #fff; padding-bottom: 2px; line-height: 1; }
  
-         .info-title-box { border: none; padding: 20px 0 0 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; min-height: auto; background: transparent; gap: 10px; }
-         .info-title-svg-container { width: 100%; height: 40px !important; display: flex; justify-content: flex-start; align-items: center; }
+         .info-title-box { border: none; padding: 0 0 0 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; min-height: auto; background: transparent; gap: 0px; }
+         .info-title-svg-container { width: 100%; height: 40px !important; display: flex; justify-content: flex-start; align-items: center; margin-left: 0 !important; padding-left: 0 !important; }
          .info-title-svg-container img { width: auto !important; height: 40px !important; max-width: 100% !important; display: block !important; margin: 0 !important; padding: 0 !important; filter: brightness(0) invert(1); }
  
          .info-content-box { border: none; padding: 20px 0; font-size: 1.35rem; line-height: 1.4; flex-grow: 1; overflow-y: auto; position: relative; background: transparent; }
@@ -1520,7 +1520,7 @@
                   overflow: visible !important;
               }
               .info-title-box {
-                  padding: 0 0 12px 0 !important;
+                  padding: 0 0 0 0 !important;
               }
               .info-title-svg-container img {
                   display: block !important;
@@ -1529,6 +1529,7 @@
                   width: auto !important;
                   height: auto !important;
                   margin: 0 !important;
+                  margin-left: 0 !important;
                   padding: 0 !important;
               }
               .info-content-box {
