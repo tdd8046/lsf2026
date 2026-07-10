@@ -3820,8 +3820,8 @@ function generateColormap() {
         if (_isMobileCache) {
             onUserInteraction();
             
-            // Non interferire con bottoni, link, altri elementi interattivi e target nodes
-            const isInteractive = e.target.closest('button, a, [onclick], input, select, .target-node');
+            // Su mobile permetti clic su bottoni/link, ma blocca completamente il radar (compresi i target-nodes)
+            const isInteractive = e.target.closest('button, a, [onclick], input, select');
             if (isInteractive) return;
             
             // Permetti normalmente se siamo in pannelli scrollabili
