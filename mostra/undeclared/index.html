@@ -2,7 +2,8 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
     <title>UNDECLARED</title>
     <link rel="icon" href="assets/icons/target.svg" type="image/x-icon">
     <style>
@@ -29,7 +30,7 @@
         }
 
         body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
+            margin: 0; padding: 0; width: 100%; height: 100%; height: 100dvh; height: -webkit-fill-available;
             background-color: #000; color: #fff;
             font-family: 'Mostra Regular', monospace;
             font-variation-settings: "slnt" 0, "ital" 0;
@@ -101,6 +102,7 @@
             width: 100vw;
             height: 100vh;
             height: 100dvh;
+            height: -webkit-fill-available;
             background-color: #020202;
             overflow: hidden;
             box-shadow: inset 0 0 90px rgba(0,0,0,0.85);
@@ -1199,24 +1201,72 @@
                  pointer-events: none;
              }
 
-             .mobile-hover-card {
-                 display: flex; flex-direction: row; align-items: stretch;
-                 position: fixed; bottom: -320px; left: 16px; right: 16px;
-                 background: rgba(0, 0, 0, 0.22) !important;
-                 border: none !important;
-                 border-radius: 0 !important;
-                 padding: 0 !important;
-                 z-index: 850;
-                 transition: bottom 0.4s cubic-bezier(.2,.9,.2,1), background 0.3s ease;
-                 box-shadow: 0 32px 80px rgba(0,0,0,0.70) !important;
-                 cursor: pointer;
-                 min-height: 220px;
-                 height: 220px;
-                 pointer-events: auto;
-                 backdrop-filter: blur(16px);
-                 -webkit-backdrop-filter: blur(16px);
-             }
-             .mobile-hover-card.visible { bottom: 28px; }
+             .mobile-card-stack-wrapper {
+                  position: fixed;
+                  bottom: -320px;
+                  left: 16px;
+                  right: 16px;
+                  z-index: 850;
+                  height: 220px;
+                  transition: bottom 0.4s cubic-bezier(.2,.9,.2,1);
+                  pointer-events: none;
+                  transform-style: preserve-3d;
+                  perspective: 800px;
+              }
+              .mobile-card-stack-wrapper:has(#mobile-hover-card.visible) {
+                  bottom: 28px;
+              }
+              
+              .mobile-hover-card-mock {
+                  position: absolute;
+                  top: 0; left: 0; right: 0; bottom: 0;
+                  box-sizing: border-box;
+                  pointer-events: none;
+                  border-radius: 0 !important;
+                  transition: transform 0.4s cubic-bezier(.2,.9,.2,1), opacity 0.4s ease;
+              }
+              
+              .mobile-hover-card-mock::before,
+              .mobile-hover-card-mock::after {
+                  opacity: 0.15 !important; /* faded crop marks on background mock blueprints */
+              }
+              
+              /* Middle wireframe card just behind front card */
+              .mobile-card-stack-wrapper .mock-mid {
+                  background: rgba(0, 0, 0, 0.12) !important;
+                  border: 1px dashed rgba(255, 255, 255, 0.18) !important;
+                  z-index: 840;
+                  transform: translate3d(0, -12px, -30px);
+                  opacity: 0.65;
+              }
+              
+              /* Back wireframe card furthest back */
+              .mobile-card-stack-wrapper .mock-back {
+                  background: rgba(0, 0, 0, 0.05) !important;
+                  border: 1px dashed rgba(255, 255, 255, 0.08) !important;
+                  z-index: 830;
+                  transform: translate3d(0, -22px, -60px);
+                  opacity: 0.35;
+              }
+
+              .mobile-hover-card {
+                  display: flex; flex-direction: row; align-items: stretch;
+                  position: relative;
+                  width: 100%;
+                  height: 100%;
+                  background: rgba(0, 0, 0, 0.22) !important;
+                  border: none !important;
+                  border-radius: 0 !important;
+                  padding: 0 !important;
+                  z-index: 850;
+                  box-shadow: 0 32px 80px rgba(0,0,0,0.70) !important;
+                  cursor: pointer;
+                  min-height: 220px;
+                  height: 220px;
+                  pointer-events: auto;
+                  backdrop-filter: blur(16px);
+                  -webkit-backdrop-filter: blur(16px);
+              }
              /* LEFT: micro-logo square */
              .mob-hov-left {
                  display: flex;
@@ -1728,7 +1778,7 @@
         }
 
         /* STILE TARGETING COMUNE PER HOVER E DETAIL: brackets esterni e ticks top/bottom */
-         .hover-overlay::before, .info-panel::before, .mobile-hover-card::before {
+         .hover-overlay::before, .info-panel::before, .mobile-hover-card::before, .mobile-hover-card-mock::before {
              content: '';
              position: absolute;
              top: -7px; left: -7px; right: -7px; bottom: -7px;
@@ -1745,7 +1795,7 @@
                  linear-gradient(white, white) bottom right / 0.5px 15px no-repeat;
              opacity: 0.95;
          }
-         .hover-overlay::after, .info-panel::after, .mobile-hover-card::after {
+         .hover-overlay::after, .info-panel::after, .mobile-hover-card::after, .mobile-hover-card-mock::after {
              content: '';
              position: absolute;
              top: -7px; left: -7px; right: -7px; bottom: -7px;
@@ -2075,7 +2125,7 @@
                 </div>
 
                 <button class="hamburger-btn" aria-label="Toggle Menu" onclick="toggleMobileMenu()">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.2">
                         <line x1="3" y1="12" x2="21" y2="12"></line>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -2524,13 +2574,20 @@
     <!-- SWIPE HINT: outside card, between radar and card -->
     <div class="mobile-swipe-hint" id="mobile-swipe-hint">&larr; SWIPE TO BROWSE &rarr;</div>
 
-    <!-- MOBILE HOVER CARD (Bottom Sheet) -->
-    <div class="mobile-hover-card" id="mobile-hover-card">
-        <!-- LEFT: micro-logo only, large and centered -->
-        <div class="mob-hov-left">
-            <img id="mob-hov-micro-img" src="" alt="" style="height: 44px; width: 44px; object-fit: contain; display:none; flex-shrink:0;">
-        </div>
-        <!-- RIGHT: project title SVG (top) + whatif text (bottom) -->
+    <!-- MOBILE CARD STACK CONTAINER -->
+    <div class="mobile-card-stack-wrapper" id="mobile-card-stack-wrapper">
+        <!-- Mock Card 2 (Furthest back in perspective) -->
+        <div class="mobile-hover-card-mock mock-back"></div>
+        <!-- Mock Card 1 (Middle in perspective) -->
+        <div class="mobile-hover-card-mock mock-mid"></div>
+
+        <!-- MOBILE HOVER CARD (Bottom Sheet) -->
+        <div class="mobile-hover-card" id="mobile-hover-card">
+            <!-- LEFT: micro-logo only, large and centered -->
+            <div class="mob-hov-left">
+                <img id="mob-hov-micro-img" src="" alt="" style="height: 44px; width: 44px; object-fit: contain; display:none; flex-shrink:0;">
+            </div>
+            <!-- RIGHT: project title SVG (top) + whatif text (bottom) -->
             <div class="mob-hov-right">
                 <div class="mob-hov-title-row" id="mob-hov-title-wrapper"></div>
                 <div class="hover-whatif-text scramble-target glowing-text-strong" id="mob-hov-whatif"
@@ -2541,6 +2598,7 @@
                     <img id="mob-hov-img" src="" alt="Preview" style="display:none; width: 100%; height: auto; object-fit: cover; border-radius: 0;" />
                 </div>
             </div>
+        </div>
     </div>
 </div>
 
@@ -2574,8 +2632,8 @@
             tr2: "> SCUOLA DEL DESIGN <",
             bl1: "> DESIGN DELLA COMUNICAZIONE <",
             bl2: "> LABORATORIO DI SINTESI FINALE C1 <",
-            welcomeCta: "[ TRASCINA PER ESPLORARE ]",
-            swipeHint: " < SCORRI LA CARD PER NAVIGARE >",
+            welcomeCta: "[ SCROLLA O SWIPA PER ESPLORARE ]",
+            swipeHint: " < SCROLLA PER NAVIGARE >",
             downloadPoster: "[ SCARICA IL POSTER ]",
             prevProjects: "PROGETTI PRECEDENTI"
         },
@@ -2596,8 +2654,8 @@
             tr2: "> SCHOOL OF DESIGN <",
             bl1: "> COMMUNICATION DESIGN <",
             bl2: "> FINAL SYNTHESIS STUDIO C1 <",
-            welcomeCta: "[ SWIPE DOWN OR DRAG TO EXPLORE ]",
-            swipeHint: "← SWIPE CARD TO BROWSE →",
+            welcomeCta: "[ SCROLL OR SWIPE TO EXPLORE ]",
+            swipeHint: " < SCROLL TO BROWSE >",
             downloadPoster: "[ DOWNLOAD THE POSTER ]",
             prevProjects: "PREVIOUS PROJECTS"
         }
@@ -3784,25 +3842,7 @@ function generateColormap() {
     }
     
     window.addEventListener('touchstart', function(e) {
-        if (_isMobileCache) {
-            onUserInteraction();
-            
-            // Non interferire con bottoni, link, altri elementi interattivi e target nodes
-            const isInteractive = e.target.closest('button, a, [onclick], input, select, .target-node');
-            if (isInteractive) return;
-            
-            // Permetti normalmente se siamo in pannelli scrollabili
-            const scrollable = e.target.closest('.col-right, .col-left-body');
-            if (scrollable) return;
-            
-            cardTouchStartX = e.touches[0].clientX;
-            cardTouchStartY = e.touches[0].clientY;
-            touchTapStartX = e.touches[0].clientX;
-            touchTapStartY = e.touches[0].clientY;
-            touchTapStartTime = Date.now();
-            e.preventDefault();
-            return;
-        }
+        onUserInteraction();
         
         // Non interferire con bottoni, link, altri elementi interattivi e target nodes
         const isInteractive = e.target.closest('button, a, [onclick], input, select, .target-node');
@@ -3812,104 +3852,36 @@ function generateColormap() {
         const scrollable = e.target.closest('.col-right, .col-left-body');
         if (scrollable) return;
         
-        if (!allowInteractions || isDetailView) return;
-        if (e.touches.length === 1) {
+        cardTouchStartX = e.touches[0].clientX;
+        cardTouchStartY = e.touches[0].clientY;
+        touchTapStartX = e.touches[0].clientX;
+        touchTapStartY = e.touches[0].clientY;
+        touchTapStartTime = Date.now();
+        
+        touchStartY = e.touches[0].clientY; // capture initial touch Y for delta scroll
+        
+        if (_isMobileCache) {
             e.preventDefault();
-            const touch = e.touches[0];
-            const rect = container.getBoundingClientRect();
-            const absCenterX = rect.left + centerX;
-            const absCenterY = rect.top + centerY;
-            
-            mouseLineAngle = Math.atan2(touch.clientY - absCenterY, touch.clientX - absCenterX);
-            updateMobileScannerFromAngle(mouseLineAngle);
-            
-            touchStartY = touch.clientY;
-            dragTouchStartY = touch.clientY;
-            touchTapStartY = touch.clientY;
-            touchTapStartX = touch.clientX;
-            touchTapStartTime = Date.now();
         }
     }, { passive: false });
     
     window.addEventListener('touchend', function(e) {
-        if (_isMobileCache) {
-            if (cardTouchStartX !== null && touchTapStartY !== null && touchTapStartX !== null) {
-                const timeDiff = Date.now() - touchTapStartTime;
-                const distX = Math.abs(e.changedTouches[0].clientX - touchTapStartX);
-                const distY = Math.abs(e.changedTouches[0].clientY - touchTapStartY);
-                
-                // Tap/Click sulla hover card per aprire dettaglio
-                const hoverCard = e.target.closest('#mobile-hover-card');
-                if (hoverCard && timeDiff < 300 && distX < 15 && distY < 15) {
-                    triggerDetailView();
-                } else if (distX > SWIPE_THRESHOLD_PX || distY > SWIPE_THRESHOLD_PX) {
-                    // E' uno swipe!
-                    const isVertical = distY > distX;
-                    const diffX = e.changedTouches[0].clientX - cardTouchStartX;
-                    const diffY = e.changedTouches[0].clientY - cardTouchStartY;
-                    
-                    if (mobileRadarLocked) {
-                        if (isVertical && diffY > SWIPE_THRESHOLD_PX) {
-                            // Swipe down -> ritorna a home view (sblocca radar)
-                            unlockMobileRadar();
-                        } else {
-                            // Altri swipe -> naviga tra le card
-                            let direction = 0;
-                            if (isVertical) {
-                                direction = diffY < 0 ? 1 : -1;
-                            } else {
-                                direction = diffX < 0 ? 1 : -1;
-                            }
-                            showNextPrevProject(direction);
-                        }
-                    } else {
-                        // Siamo nel welcome screen (sbloccato) -> swipe up o swipe left entra nelle card!
-                        if ((isVertical && diffY < -SWIPE_THRESHOLD_PX) || (!isVertical && diffX < -SWIPE_THRESHOLD_PX)) {
-                            lockMobileRadar();
-                            currentSelectedTarget = targets[0];
-                            const tAngle = Math.atan2(targets[0].y - centerY, targets[0].x - centerX);
-                            mouseLineAngle = tAngle;
-                            updateMobileScannerFromAngle(tAngle);
-                        }
-                    }
-                }
-            }
-            touchStartY = null;
-            touchStartAngle = null;
-            touchTapStartY = null;
-            touchTapStartX = null;
-            touchTapStartTime = null;
-            dragTouchStartY = null;
-            cardTouchStartX = null;
-            cardTouchStartY = null;
-            return;
-        }
-
-        const hoverCard = e.target.closest('#mobile-hover-card');
-        if (hoverCard && touchTapStartY !== null && touchTapStartX !== null) {
+        if (cardTouchStartX !== null && touchTapStartY !== null && touchTapStartX !== null) {
             const timeDiff = Date.now() - touchTapStartTime;
             const distX = Math.abs(e.changedTouches[0].clientX - touchTapStartX);
             const distY = Math.abs(e.changedTouches[0].clientY - touchTapStartY);
             
-            if (timeDiff < 300 && distX < 10 && distY < 10) {
-                // E' un tap normale -> apri dettaglio
+            // Tap/Click sulla hover card per aprire dettaglio
+            const hoverCard = e.target.closest('#mobile-hover-card');
+            if (hoverCard && timeDiff < 300 && distX < 15 && distY < 15) {
                 triggerDetailView();
-            } else if (distX > SWIPE_THRESHOLD_PX || distY > SWIPE_THRESHOLD_PX) {
-                // E' uno swipe!
-                let direction = 0;
-                if (distX > distY) {
-                    const diffX = e.changedTouches[0].clientX - cardTouchStartX;
-                    direction = diffX < 0 ? 1 : -1;
-                } else {
-                    const diffY = e.changedTouches[0].clientY - cardTouchStartY;
-                    direction = diffY < 0 ? 1 : -1;
+            } else {
+                // Snap magnetico sul target selezionato quando l'utente alza il dito
+                if (_isMobileCache && currentSelectedTarget) {
+                    const tAngle = Math.atan2(currentSelectedTarget.y - centerY, currentSelectedTarget.x - centerX);
+                    mouseLineAngle = tAngle;
+                    updateMobileScannerFromAngle(tAngle);
                 }
-                showNextPrevProject(direction);
-            }
-        } else if (dragTouchStartY !== null && mobileRadarLocked && !isDetailView) {
-            const diffY = e.changedTouches[0].clientY - dragTouchStartY;
-            if (diffY > 80) { // Trascinato in basso di oltre 80px
-                unlockMobileRadar();
             }
         }
         
@@ -3924,38 +3896,41 @@ function generateColormap() {
     }, { passive: true });
     
     window.addEventListener('touchmove', function(e) {
-        if (_isMobileCache) {
-            const scrollable = e.target.closest('.col-right, .col-left-body');
-            if (!scrollable) {
-                e.preventDefault();
-            }
-            return;
-        }
-
-        const hoverCard = e.target.closest('#mobile-hover-card');
-        if (hoverCard) {
-            e.preventDefault();
-            return;
-        }
-        
         const scrollable = e.target.closest('.col-right, .col-left-body');
         if (scrollable) return;
-        e.preventDefault();
         
-        if (!allowInteractions || isDetailView) return;
-        const menu = document.getElementById('col-left-body');
-        if (menu && menu.classList.contains('menu-open')) return;
-        
-        if (e.touches.length === 1 && touchStartY !== null) {
-            onUserInteraction(); // segnala interazione attiva
-            if (_isMobileCache && !mobileRadarLocked) lockMobileRadar();
-            const touch = e.touches[0];
-            const rect = container.getBoundingClientRect();
-            const absCenterX = rect.left + centerX;
-            const absCenterY = rect.top + centerY;
+        if (_isMobileCache) {
+            e.preventDefault(); // previene il rimbalzo iOS
             
-            mouseLineAngle = Math.atan2(touch.clientY - absCenterY, touch.clientX - absCenterX);
-            updateMobileScannerFromAngle(mouseLineAngle);
+            if (touchStartY !== null && !isDetailView) {
+                const diffY = e.touches[0].clientY - touchStartY;
+                touchStartY = e.touches[0].clientY;
+                
+                // Mappa il trascinamento verticale della schermata in rotazione raggio (scroll incrementale)
+                // lo swipe verso l'alto fa ruotare in senso orario (angolo positivo)
+                mouseLineAngle += diffY * -0.007;
+                
+                if (!mobileRadarLocked) {
+                    lockMobileRadar();
+                }
+                
+                updateMobileScannerFromAngle(mouseLineAngle);
+            }
+        } else {
+            const hoverCard = e.target.closest('#mobile-hover-card');
+            if (hoverCard) {
+                e.preventDefault();
+                return;
+            }
+            e.preventDefault();
+            if (!allowInteractions || isDetailView) return;
+            if (e.touches.length === 1 && touchStartY !== null) {
+                const touch = e.touches[0];
+                const diffY = touch.clientY - touchStartY;
+                touchStartY = touch.clientY;
+                mouseLineAngle += diffY * -0.007;
+                updateMobileScannerFromAngle(mouseLineAngle);
+            }
         }
     }, { passive: false });
     
@@ -4252,7 +4227,9 @@ function generateColormap() {
             isDetailView = false;
             isRadarTransitioning = false; // Forza il ripristino dell'interazione in ogni caso
             lastHoveredTarget = null;
-            currentSelectedTarget = null;
+            if (!isMobile()) {
+                currentSelectedTarget = null;
+            }
             closeBtn.style.display = 'none';
             // Ripristina gli stati di visualizzazione
             document.getElementById('about-state')?.classList.remove('active');
